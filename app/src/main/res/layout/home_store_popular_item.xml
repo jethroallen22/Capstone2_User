@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="16dp"
+    android:clickable="true"
+    app:cardCornerRadius="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:id="@+id/iv_pop_store"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ad_banner" />
+
+        <TextView
+            android:id="@+id/tv_pop_store_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/robotomedium"
+            android:text="Testi"
+            android:textAlignment="viewStart"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_pop_store_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/robotoregular"
+            android:text="Lorem ipsum dolor amet"
+            android:textAlignment="viewStart"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

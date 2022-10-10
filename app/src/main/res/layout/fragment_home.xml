@@ -89,7 +89,7 @@
                             android:id="@+id/cv_view_all_btn"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:layout_gravity="center|center_horizontal"
+                            android:layout_gravity="center_vertical"
                             android:layout_marginLeft="16dp"
                             android:clickable="true"
                             app:cardBackgroundColor="#FFF"

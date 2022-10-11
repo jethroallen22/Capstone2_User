@@ -12,6 +12,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
@@ -23,13 +30,19 @@ import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.HomeStorePopularModel;
 import com.example.myapplication.models.HomeStoreRecModel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment{
 
     private FragmentHomeBinding binding;
+    private static String JSON_URL="http://10.11.1.164/android_register_login/api.php";
 
     //Category Recycler View
     RecyclerView rv_category;
@@ -64,6 +77,7 @@ public class HomeFragment extends Fragment{
 
         rv_category = root.findViewById(R.id.rv_category);
         home_categ_list = new ArrayList<>();
+
         home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
@@ -78,6 +92,8 @@ public class HomeFragment extends Fragment{
 
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
         home_store_rec_list = new ArrayList<>();
+        extractResto();
+        /*
         home_store_rec_list.add(new HomeStoreRecModel(R.drawable.jollibee_logo, "Jollibee", "Binondo", "Fast Food", 3.5F));
         home_store_rec_list.add(new HomeStoreRecModel(R.drawable.burgerking_logo, "Burger King", "Taft Avenue", "Fast Food", 4.3F));
         home_store_rec_list.add(new HomeStoreRecModel(R.drawable.mcdo_logo, "Mcdonalds", "Abad Santos", "Fast Food", 4.5F));
@@ -86,6 +102,7 @@ public class HomeFragment extends Fragment{
         rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec.setHasFixedSize(true);
         rv_home_store_rec.setNestedScrollingEnabled(false);
+         */
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
@@ -131,6 +148,51 @@ public class HomeFragment extends Fragment{
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void extractResto(){
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray resto_info = new JSONArray(response);
+
+                            for(int i = 0; i < resto_info.length(); i++){
+                                JSONObject restoInfoObject = resto_info.getJSONObject(i);
+
+                                int r_id = restoInfoObject.getInt("resto_id");
+                                String r_name = restoInfoObject.getString("resto_name");
+                                String r_address = restoInfoObject.getString("resto_address");
+                                String r_open = restoInfoObject.getString("resto_open");
+                                String r_close = restoInfoObject.getString("resto_close");
+                                String r_category = restoInfoObject.getString("resto_category");
+                                float r_rating = (float) restoInfoObject.getDouble("resto_rating");
+                                String r_desc = restoInfoObject.getString("resto_desc");
+
+                                HomeStoreRecModel store = new HomeStoreRecModel(r_id,r_name,r_address,r_category,r_rating);
+                                home_store_rec_list.add(store);
+
+                            }
+                            homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
+                            rv_home_store_rec.setAdapter(homeStoreRecAdapter);
+                            rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+                            rv_home_store_rec.setHasFixedSize(true);
+                            rv_home_store_rec.setNestedScrollingEnabled(false);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(stringRequest);
     }
 
 }

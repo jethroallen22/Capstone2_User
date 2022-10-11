@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -20,7 +21,7 @@ public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapte
     Context context;
     List<HomeStoreRecModel> list;
 
-    public HomeStoreRecAdapter(Context context, List<HomeStoreRecModel> list) {
+    public HomeStoreRecAdapter(FragmentActivity context, List<HomeStoreRecModel> list) {
         this.context = context;
         this.list = list;
     }

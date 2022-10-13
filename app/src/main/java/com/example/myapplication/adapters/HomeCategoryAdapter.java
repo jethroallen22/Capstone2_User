@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.models.HomeCategoryModel;
 
@@ -34,7 +35,9 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull HomeCategoryAdapter.ViewHolder holder, int position) {
-        holder.iv_categ_icon.setImageResource(list.get(position).getImage());
+        Glide.with(context)
+                .load(list.get(position).getCateg_image())
+                .into(holder.iv_categ_icon);
         holder.tv_categ_name.setText(list.get(position).getCateg_name());
     }
 

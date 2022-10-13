@@ -51,8 +51,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HomeFragment extends Fragment{
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueue;
-    private static String JSON_URL="http://10.11.1.164/android_register_login/api.php";
+    private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg;
+    private static String JSON_URL_REC="http://10.11.1.164/android_register_login/api.php";
+    private static String JSON_URL_CATEG="http://10.11.1.164/android_register_login/apicateg.php";
+
 
     //Category Recycler View
     RecyclerView rv_category;
@@ -87,20 +89,23 @@ public class HomeFragment extends Fragment{
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        //HOME CATEGORY
+        /*
+        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
+         */
         rv_category = root.findViewById(R.id.rv_category);
-        home_categ_list = new ArrayList<>();
-
-        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
         homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list);
-        rv_category.setAdapter(homeCategoryAdapter);
         rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_category.setHasFixedSize(true);
         rv_category.setNestedScrollingEnabled(false);
+        requestQueueCateg = Singleton.getsInstance(getActivity()).getRequestQueue();
+        home_categ_list = new ArrayList<>();
+        extractCateg();
 
 
         //STORE REC 1
@@ -108,10 +113,9 @@ public class HomeFragment extends Fragment{
         rv_home_store_rec.setHasFixedSize(true);
         rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec.setNestedScrollingEnabled(false);
-        rv_home_store_rec = root.findViewById(R.id.home_store_rec);
-        requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueRec1 = Singleton.getsInstance(getActivity()).getRequestQueue();
         home_store_rec_list = new ArrayList<>();
-        extractDataRec();
+        extractDataRec1();
 
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
@@ -144,9 +148,11 @@ public class HomeFragment extends Fragment{
         rv_home_store_rec2.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec2.setNestedScrollingEnabled(false);
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
-        requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
         home_store_rec_list2 = new ArrayList<>();
-        extractDataRec();
+        extractDataRec1();
+        extractDataRec2();
+
         Collections.shuffle(home_store_rec_list2);
 
 
@@ -161,74 +167,10 @@ public class HomeFragment extends Fragment{
         binding = null;
     }
 
-    /*
-    private void extractResto(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest stringRequest = new StringRequest(JSON_URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                Gson gson = gsonBuilder.create();
-                HomeStoreRecModel[] resto_info=gson.fromJson(response,HomeStoreRecModel[].class);
-                rv_home_store_rec.setAdapter(new HomeStoreRecAdapter(getActivity().getApplicationContext(),resto_info));
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+    //Store Recommendation for RecView 1 and 2 Function
+    public void extractDataRec1(){
 
-            }
-        });
-
-        requestQueue.add(stringRequest);
-                /*
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONArray resto_info = new JSONArray("resto_info");
-
-                            for(int i = 0; i < resto_info.length(); i++){
-                                JSONObject restoInfoObject = resto_info.getJSONObject(i);
-
-                                int r_id = restoInfoObject.getInt("resto_id");
-                                String r_name = restoInfoObject.getString("resto_name");
-                                String r_address = restoInfoObject.getString("resto_address");
-                                String r_open = restoInfoObject.getString("resto_open");
-                                String r_close = restoInfoObject.getString("resto_close");
-                                String r_category = restoInfoObject.getString("resto_category");
-                                float r_rating = (float) restoInfoObject.getDouble("resto_rating");
-                                String r_desc = restoInfoObject.getString("resto_desc");
-
-
-                                HomeStoreRecModel store = new HomeStoreRecModel(R.drawable.mcdo_logo,r_name,r_address,r_category,r_rating);
-                                home_store_rec_list.add(store);
-
-                            }
-                            homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
-                            rv_home_store_rec.setAdapter(homeStoreRecAdapter);
-                            rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-                            rv_home_store_rec.setHasFixedSize(true);
-                            rv_home_store_rec.setNestedScrollingEnabled(false);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                });
-        requestQueue.add(stringRequest);
-
-
-    } */
-
-    public void extractDataRec(){
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -244,16 +186,50 @@ public class HomeFragment extends Fragment{
                         HomeStoreRecModel store = new HomeStoreRecModel(r_image,r_name,r_location,
                                 r_category, (float) r_rating);
                         home_store_rec_list.add(store);
-                        home_store_rec_list2.add(store);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
-                    homeStoreRecAdapter2 = new HomeStoreRecAdapter(getActivity(),home_store_rec_list2);
 
                     rv_home_store_rec.setAdapter(homeStoreRecAdapter);
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueueRec1.add(jsonArrayRequest);
+    }
+
+    public void extractDataRec2(){
+        JsonArrayRequest jsonArrayRequest2 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        String r_image = jsonObject.getString("r_image");
+                        String r_name = jsonObject.getString("r_name");
+                        String r_location = jsonObject.getString("r_location");
+                        String r_category = jsonObject.getString("r_category");
+                        double r_rating = jsonObject.getDouble("r_rating");
+
+                        HomeStoreRecModel store2 = new HomeStoreRecModel(r_image,r_name,r_location,
+                                r_category, (float) r_rating);
+                        home_store_rec_list2.add(store2);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    homeStoreRecAdapter2 = new HomeStoreRecAdapter(getActivity(),home_store_rec_list2);
                     rv_home_store_rec2.setAdapter(homeStoreRecAdapter2);
 
 
@@ -266,8 +242,43 @@ public class HomeFragment extends Fragment{
             }
         });
 
-        requestQueue.add(jsonArrayRequest);
+        requestQueueRec2.add(jsonArrayRequest2);
     }
+
+    //Popular Recommendation Function
+    //Category Function
+    public void extractCateg(){
+
+        JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL_CATEG, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject1 = response.getJSONObject(i);
+
+                        String categ_image = jsonObject1.getString("categ_image");
+                        String categ_name = jsonObject1.getString("categ_name");
+
+                        HomeCategoryModel categModel = new HomeCategoryModel(categ_image,categ_name);
+                        home_categ_list.add(categModel);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    homeCategoryAdapter = new HomeCategoryAdapter(getActivity(),home_categ_list);
+                    rv_category.setAdapter(homeCategoryAdapter);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueueCateg.add(jsonArrayRequest1);
+    }
+
 
 
 

@@ -1,20 +1,20 @@
 package com.example.myapplication.models;
 
 public class HomeCategoryModel {
-    int Image;
+    String categ_image;
     String categ_name;
 
-    public HomeCategoryModel(int image, String categ_name) {
-        Image = image;
+    public HomeCategoryModel(String categ_image, String categ_name) {
+        this.categ_image = categ_image;
         this.categ_name = categ_name;
     }
 
-    public int getImage() {
-        return Image;
+    public String getCateg_image() {
+        return categ_image;
     }
 
-    public void setImage(int image) {
-        Image = image;
+    public void setCateg_image(String categ_image) {
+        this.categ_image = categ_image;
     }
 
     public String getCateg_name() {

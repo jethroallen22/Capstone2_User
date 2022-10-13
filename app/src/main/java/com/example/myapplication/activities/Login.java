@@ -30,7 +30,7 @@ public class Login extends AppCompatActivity {
     private EditText login_email_text_input, login_password_text_input;
     private Button login_btn;
     private TextView tv_register_btn;
-    private static String URL_LOGIN = "http://10.11.1.164/android_register_login/login.php";
+    private static String URL_LOGIN = "http://10.11.1.198/android_register_login/login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

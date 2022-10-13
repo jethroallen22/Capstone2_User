@@ -26,6 +26,8 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
         this.list = list;
     }
 
+
+
     @NonNull
     @Override
     public HomeStorePopularAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

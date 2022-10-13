@@ -8,11 +8,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
+import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,10 +27,13 @@ import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
 import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.HomeStorePopularModel;
 import com.example.myapplication.models.HomeStoreRecModel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,9 +44,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class HomeFragment extends Fragment{
 
     private FragmentHomeBinding binding;
+    private RequestQueue requestQueue;
     private static String JSON_URL="http://10.11.1.164/android_register_login/api.php";
 
     //Category Recycler View
@@ -55,6 +65,8 @@ public class HomeFragment extends Fragment{
     HomeStoreRecAdapter homeStoreRecAdapter;
 
     RecyclerView rv_home_store_rec2;
+    List<HomeStoreRecModel> home_store_rec_list2;
+    HomeStoreRecAdapter homeStoreRecAdapter2;
 
     // Store Popular Recycler View
     RecyclerView rv_home_pop_store;
@@ -84,25 +96,23 @@ public class HomeFragment extends Fragment{
         home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
-        homeCategoryAdapter = new HomeCategoryAdapter(getActivity(),home_categ_list);
+        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list);
         rv_category.setAdapter(homeCategoryAdapter);
         rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_category.setHasFixedSize(true);
         rv_category.setNestedScrollingEnabled(false);
 
+
+        //STORE REC 1
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
-        home_store_rec_list = new ArrayList<>();
-        extractResto();
-        /*
-        home_store_rec_list.add(new HomeStoreRecModel(R.drawable.jollibee_logo, "Jollibee", "Binondo", "Fast Food", 3.5F));
-        home_store_rec_list.add(new HomeStoreRecModel(R.drawable.burgerking_logo, "Burger King", "Taft Avenue", "Fast Food", 4.3F));
-        home_store_rec_list.add(new HomeStoreRecModel(R.drawable.mcdo_logo, "Mcdonalds", "Abad Santos", "Fast Food", 4.5F));
-        homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
-        rv_home_store_rec.setAdapter(homeStoreRecAdapter);
-        rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec.setHasFixedSize(true);
+        rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec.setNestedScrollingEnabled(false);
-         */
+        rv_home_store_rec = root.findViewById(R.id.home_store_rec);
+        requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
+        home_store_rec_list = new ArrayList<>();
+        extractDataRec();
+
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
@@ -126,17 +136,18 @@ public class HomeFragment extends Fragment{
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
 
+
+
+        //STORE REC 2
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
-        home_store_rec_list = new ArrayList<>();
-        home_store_rec_list.add(new HomeStoreRecModel(R.drawable.jollibee_logo, "Jollibee", "Binondo", "Fast Food", 3.5F));
-        home_store_rec_list.add(new HomeStoreRecModel(R.drawable.burgerking_logo, "Burger King", "Taft Avenue", "Fast Food", 4.3F));
-        home_store_rec_list.add(new HomeStoreRecModel(R.drawable.mcdo_logo, "Mcdonalds", "Abad Santos", "Fast Food", 4.5F));
-        Collections.shuffle(home_store_rec_list);
-        homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
-        rv_home_store_rec2.setAdapter(homeStoreRecAdapter);
-        rv_home_store_rec2.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec2.setHasFixedSize(true);
+        rv_home_store_rec2.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec2.setNestedScrollingEnabled(false);
+        rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
+        requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
+        home_store_rec_list2 = new ArrayList<>();
+        extractDataRec();
+        Collections.shuffle(home_store_rec_list2);
 
 
         final TextView textView = binding.textHome;
@@ -150,13 +161,31 @@ public class HomeFragment extends Fragment{
         binding = null;
     }
 
+    /*
     private void extractResto(){
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest stringRequest = new StringRequest(JSON_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                Gson gson = gsonBuilder.create();
+                HomeStoreRecModel[] resto_info=gson.fromJson(response,HomeStoreRecModel[].class);
+                rv_home_store_rec.setAdapter(new HomeStoreRecAdapter(getActivity().getApplicationContext(),resto_info));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueue.add(stringRequest);
+                /*
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONArray resto_info = new JSONArray(response);
+                            JSONArray resto_info = new JSONArray("resto_info");
 
                             for(int i = 0; i < resto_info.length(); i++){
                                 JSONObject restoInfoObject = resto_info.getJSONObject(i);
@@ -170,7 +199,8 @@ public class HomeFragment extends Fragment{
                                 float r_rating = (float) restoInfoObject.getDouble("resto_rating");
                                 String r_desc = restoInfoObject.getString("resto_desc");
 
-                                HomeStoreRecModel store = new HomeStoreRecModel(r_id,r_name,r_address,r_category,r_rating);
+
+                                HomeStoreRecModel store = new HomeStoreRecModel(R.drawable.mcdo_logo,r_name,r_address,r_category,r_rating);
                                 home_store_rec_list.add(store);
 
                             }
@@ -191,8 +221,54 @@ public class HomeFragment extends Fragment{
 
                     }
                 });
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(stringRequest);
+
+
+    } */
+
+    public void extractDataRec(){
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        String r_image = jsonObject.getString("r_image");
+                        String r_name = jsonObject.getString("r_name");
+                        String r_location = jsonObject.getString("r_location");
+                        String r_category = jsonObject.getString("r_category");
+                        double r_rating = jsonObject.getDouble("r_rating");
+
+                        HomeStoreRecModel store = new HomeStoreRecModel(r_image,r_name,r_location,
+                                r_category, (float) r_rating);
+                        home_store_rec_list.add(store);
+                        home_store_rec_list2.add(store);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
+                    homeStoreRecAdapter2 = new HomeStoreRecAdapter(getActivity(),home_store_rec_list2);
+
+                    rv_home_store_rec.setAdapter(homeStoreRecAdapter);
+                    rv_home_store_rec2.setAdapter(homeStoreRecAdapter2);
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueue.add(jsonArrayRequest);
     }
+
+
 
 }

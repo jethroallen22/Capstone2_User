@@ -1,26 +1,26 @@
 package com.example.myapplication.models;
 
 public class HomeStoreRecModel {
-    int Image;
+    String store_image;
     String store_name;
     String store_location;
     String store_category;
     Float store_rating;
 
-    public HomeStoreRecModel(int image, String store_name, String store_location, String store_category, Float store_rating) {
-        Image = image;
+    public HomeStoreRecModel(String store_image, String store_name, String store_location, String store_category, Float store_rating) {
+        this.store_image = store_image;
         this.store_name = store_name;
         this.store_location = store_location;
         this.store_category = store_category;
         this.store_rating = store_rating;
     }
 
-    public int getImage() {
-        return Image;
+    public String getStore_image() {
+        return store_image;
     }
 
-    public void setImage(int image) {
-        Image = image;
+    public void setStore_image(String store_image) {
+        this.store_image = store_image;
     }
 
     public String getStore_name() {

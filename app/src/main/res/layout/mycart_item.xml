@@ -33,41 +33,52 @@
                 android:fontFamily="@font/robotomedium"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="@string/name"
+                android:text="Name"
                 android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/imageView7"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
-                    android:layout_marginTop="2dp"
-                    android:src="@drawable/star" />
+                    android:src="@drawable/star"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/detailed_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5.0"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imageView7"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/dollarsign" />
+                    android:src="@drawable/dollarsign"
+                    app:layout_constraintEnd_toStartOf="@+id/textView12"
+                    app:layout_constraintTop_toTopOf="@+id/textView12"/>
 
                 <TextView
+                    android:id="@+id/textView12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="18"/>
+                    android:text="18"
+                    android:fontFamily="@font/robotobold"
+                    android:layout_marginRight="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 

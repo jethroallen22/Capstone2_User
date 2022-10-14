@@ -14,12 +14,56 @@
     <fragment
         android:id="@+id/nav_gallery"
         android:name="com.example.myapplication.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
+        android:label="test"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.myapplication.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_profile"
+        android:name="com.example.myapplication.ui.profile.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_profile"/>
+
+    <fragment
+        android:id="@+id/nav_messages"
+        android:name="com.example.myapplication.ui.messages.MessagesFragment"
+        android:label="@string/menu_messages"
+        tools:layout="@layout/fragment_messages"/>
+
+    <fragment
+        android:id="@+id/nav_notifications"
+        android:name="com.example.myapplication.ui.notifications.NotificationsFragment"
+        android:label="@string/menu_notifications"
+        tools:layout="@layout/fragment_notifications"/>
+
+    <fragment
+        android:id="@id/nav_cart"
+        android:name="com.example.myapplication.ui.cart.CartFragment"
+        android:label="@string/menu_cart"
+        tools:layout="@layout/fragment_cart"/>
+
+    <fragment
+        android:id="@+id/nav_activities"
+        android:name="com.example.myapplication.ui.activities.ActivitiesFragment"
+        android:label="@string/menu_activities"
+        tools:layout="@layout/fragment_activities"/>
+
+    <fragment
+        android:id="@+id/nav_payment"
+        android:name="com.example.myapplication.ui.payment.PaymentFragment"
+        android:label="@string/menu_payment"
+        tools:layout="@layout/fragment_payment"/>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.myapplication.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings"/>
+
+    <fragment
+        android:id="@+id/nav_addresses"
+        android:name="com.example.myapplication.ui.addresses.AddressesFragment"
+        android:label="@string/menu_addresses"
+        tools:layout="@layout/fragment_addresses"/>
+
+
 </navigation>

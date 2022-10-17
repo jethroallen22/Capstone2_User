@@ -32,6 +32,7 @@ import com.example.myapplication.models.HomeCategoryModel;
 import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.HomeStorePopularModel;
 import com.example.myapplication.models.HomeStoreRecModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -155,6 +156,13 @@ public class HomeFragment extends Fragment{
 
         Collections.shuffle(home_store_rec_list2);
 
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Work in Progress!!! Magreredirect dapat sa cart screen", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
 
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);

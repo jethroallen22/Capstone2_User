@@ -6,9 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.notifications.NotificationsFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Notifications" />
-
+        android:id="@+id/rv_notification"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

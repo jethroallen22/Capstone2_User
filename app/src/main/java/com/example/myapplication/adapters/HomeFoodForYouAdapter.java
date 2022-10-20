@@ -11,30 +11,35 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.HomeFoodForYouModel;
+import com.example.myapplication.models.ProductModel;
 
 import org.w3c.dom.Text;
 
 import java.util.List;
 
 public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAdapter.ViewHolder> {
-    Context context;
-    List<HomeFoodForYouModel> list;
+    private final RecyclerViewInterface recyclerViewInterface;
 
-    public HomeFoodForYouAdapter(Context context, List<HomeFoodForYouModel> list) {
+    Context context;
+    List<ProductModel> list;
+
+    public HomeFoodForYouAdapter(Context context, List<ProductModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
     @NonNull
     @Override
     public HomeFoodForYouAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_food_for_you_item,parent,false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_food_for_you_item,parent,false),recyclerViewInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HomeFoodForYouAdapter.ViewHolder holder, int position) {
-        holder.iv_food_for_you.setImageResource(list.get(position).getImage());
+        holder.iv_food_for_you.setImageResource(list.get(position).getProduct_image());
         holder.tv_fff_prod_name.setText(list.get(position).getProduct_name());
         holder.tv_fff_store_name.setText(list.get(position).getStore_name());
         holder.tv_fff_prod_price.setText("P " + list.get(position).getProduct_price().toString());
@@ -55,7 +60,7 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
         TextView tv_fff_prod_price;
         TextView tv_fff_prod_cal;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             iv_food_for_you = itemView.findViewById(R.id.iv_food_for_you);
@@ -63,6 +68,19 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
             tv_fff_store_name = itemView.findViewById(R.id.tv_fff_store_name);
             tv_fff_prod_price = itemView.findViewById(R.id.tv_fff_prod_price);
             tv_fff_prod_cal = itemView.findViewById(R.id.tv_fff_prod_cal);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if(pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClickForYou(pos);
+                        }
+                    }
+                }
+            });
         }
     }
 }

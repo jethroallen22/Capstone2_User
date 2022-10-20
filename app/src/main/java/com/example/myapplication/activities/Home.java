@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.ui.profile.ProfileFragment;
+import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 

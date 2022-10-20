@@ -15,11 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.myapplication.R;
-import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.NotificationAdapter;
-import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentNotificationsBinding;
-import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.NotificationModel;
 
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ public class NotificationsFragment extends Fragment {
     private NotificationsViewModel mViewModel;
     private FragmentNotificationsBinding binding;
 
-    //Product List Recycler View
+    //Notification List Recycler View
     RecyclerView rv_notification;
     List<NotificationModel> notification_list;
     NotificationAdapter notificationAdapter;

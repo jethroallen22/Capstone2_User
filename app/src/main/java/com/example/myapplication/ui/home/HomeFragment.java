@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,33 +9,30 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
-import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
-import com.example.myapplication.models.HomeFoodForYouModel;
-import com.example.myapplication.models.HomeStorePopularModel;
 import com.example.myapplication.models.HomeStoreRecModel;
+import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.ui.product.ProductFragment;
+import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,13 +41,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg;
@@ -73,17 +66,18 @@ public class HomeFragment extends Fragment{
 
     // Store Popular Recycler View
     RecyclerView rv_home_pop_store;
-    List<HomeStorePopularModel> home_pop_store_list;
+    List<StoreModel> home_pop_store_list;
     HomeStorePopularAdapter homeStorePopularAdapter;
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
-    List<HomeFoodForYouModel> food_for_you_list;
+    List<ProductModel> food_for_you_list;
     HomeFoodForYouAdapter homeFoodForYouAdapter;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -121,10 +115,10 @@ public class HomeFragment extends Fragment{
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
-        home_pop_store_list.add(new HomeStorePopularModel(R.drawable.jollibee_logo,"Jollibee", "Chicken"));
-        home_pop_store_list.add(new HomeStorePopularModel(R.drawable.burgerking_logo, "Burger King", "Burger"));
-        home_pop_store_list.add(new HomeStorePopularModel(R.drawable.mcdo_logo, "McDonalds", "Chicken"));
-        homeStorePopularAdapter = new HomeStorePopularAdapter(getActivity(),home_pop_store_list);
+        home_pop_store_list.add(new StoreModel(R.drawable.jollibee_logo,"Jollibee", "Lorem ipsum dolor amet","143 Evangelista Street, Barangay Banalo, Bacoor City", "Fast Food",3.4F));
+        home_pop_store_list.add(new StoreModel(R.drawable.burgerking_logo, "Burger King", "Lorem ipsum dolor amet", "Esterling Heights Subdivision, Guintorilan City","Fast Food", 4.5F));
+        home_pop_store_list.add(new StoreModel(R.drawable.mcdo_logo, "McDonalds", "Lorem ipsum dolor amet", "330 Lakandula St. Tondo, Manila City", "Fast Food", 4.7F));
+        homeStorePopularAdapter = new HomeStorePopularAdapter(home_pop_store_list, getActivity(), this);
         rv_home_pop_store.setAdapter(homeStorePopularAdapter);
         rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_home_pop_store.setHasFixedSize(true);
@@ -132,15 +126,14 @@ public class HomeFragment extends Fragment{
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
-        food_for_you_list.add(new HomeFoodForYouModel(R.drawable.burger_mcdo,"Burger McDo","McDonalds",45F,350));
-        food_for_you_list.add(new HomeFoodForYouModel(R.drawable.chicken_joy,"Chicken Joy","Jollibee", 99F,420));
-        food_for_you_list.add(new HomeFoodForYouModel(R.drawable.whopper_king,"Whopper King", "BurgerKing",199F,542));
-        homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list);
+        food_for_you_list.add(new ProductModel(R.drawable.burger_mcdo,"Burger McDo","Lorem Ipsum Dolor Amet","McDonalds",45F,350));
+        food_for_you_list.add(new ProductModel(R.drawable.chicken_joy,"Chicken Joy","Lorem Ipsum Dolor Amet","Jollibee", 99F,420));
+        food_for_you_list.add(new ProductModel(R.drawable.whopper_king,"Whopper King", "Lorem Ipsum Dolor Amet","BurgerKing",199F,542));
+        homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,this);
         rv_food_for_you.setAdapter(homeFoodForYouAdapter);
         rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
-
 
 
         //STORE REC 2
@@ -288,6 +281,37 @@ public class HomeFragment extends Fragment{
     }
 
 
+    @Override
+    public void onItemClickForYou(int position) {
 
+        Bundle bundle = new Bundle();
+        bundle.putInt("Image", food_for_you_list.get(position).getProduct_image());
+        bundle.putString("Name", food_for_you_list.get(position).getProduct_name());
+        bundle.putString("Description", food_for_you_list.get(position).getProduct_description());
+        bundle.putString("StoreName", food_for_you_list.get(position).getStore_name());
+        bundle.putFloat("Price", food_for_you_list.get(position).getProduct_price());
+        bundle.putInt("Calorie", food_for_you_list.get(position).getProduct_calories());
+        ProductFragment productFragment = new ProductFragment();
+        productFragment.setArguments(bundle);
+        Log.d("TAG", "Success");
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,productFragment).commit();
+        Log.d("TAG", "Success");
+    }
 
+    @Override
+    public void onItemClickStorePopular(int position) {
+
+        Log.d("TAG", "Success");
+        Bundle bundle = new Bundle();
+        bundle.putInt("Image", home_pop_store_list.get(position).getStore_image());
+        bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
+        bundle.putString("StoreAddress", "Esterling Heights Subdivision, Guintorilan City");
+        bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());
+        StoreFragment fragment = new StoreFragment();
+        fragment.setArguments(bundle);
+        Log.d("TAG", "Success");
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
+        Log.d("TAG", "Success");
+
+    }
 }

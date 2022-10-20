@@ -12,18 +12,21 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.models.HomeStorePopularModel;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
+import com.example.myapplication.models.StoreModel;
 
 import java.util.List;
 
 public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopularAdapter.ViewHolder> {
+    private final RecyclerViewInterface recyclerViewInterface;
 
     Context context;
-    List<HomeStorePopularModel> list;
+    List<StoreModel> list;
 
-    public HomeStorePopularAdapter(Context context, List<HomeStorePopularModel> list) {
+    public HomeStorePopularAdapter(List<StoreModel> list, Context context, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
 
@@ -31,12 +34,12 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
     @NonNull
     @Override
     public HomeStorePopularAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_store_popular_item,parent,false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_store_popular_item,parent,false),recyclerViewInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HomeStorePopularAdapter.ViewHolder holder, int position) {
-        holder.iv_store_image.setImageResource(list.get(position).getImage());
+        holder.iv_store_image.setImageResource(list.get(position).getStore_image());
         holder.tv_store_name.setText(list.get(position).getStore_name());
         holder.tv_store_category.setText(list.get(position).getStore_category());
 
@@ -54,13 +57,26 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
         TextView tv_store_category;
         CardView card_view;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             iv_store_image = itemView.findViewById(R.id.iv_pop_store);
             tv_store_name = itemView.findViewById(R.id.tv_pop_store_name);
             tv_store_category = itemView.findViewById(R.id.tv_pop_store_category);
             card_view = itemView.findViewById(R.id.card_view);
+
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    if (recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if (pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClickStorePopular(pos);
+                        }
+                    }
+                }
+            });
         }
     }
 }

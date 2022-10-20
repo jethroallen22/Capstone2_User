@@ -5,7 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mosibusOffWhite"
-    tools:context=".activities.Product">
+    tools:context=".ui.product.ProductFragment">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        app:backgroundTint="@color/mosibusOffWhite"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,9 +30,10 @@
             android:paddingBottom="72dp">
 
             <ImageView
-                android:id="@+id/imageView7"
+                android:id="@+id/iv_product_imagee"
                 android:layout_width="wrap_content"
                 android:layout_height="250dp"
+                android:background="@drawable/bg_off_white_round"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ad_banner" />
 
@@ -32,7 +45,7 @@
                 android:paddingBottom="16dp">
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/tv_product_namee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -44,18 +57,18 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/tv_product_pricee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:fontFamily="@font/robotobold"
                     android:text="from P190.00"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView8"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_product_namee"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView8" />
+                    app:layout_constraintTop_toTopOf="@+id/tv_product_namee" />
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/tv_product_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -65,7 +78,7 @@
                     android:text="Klapeypey-klapeypey klapeypey-klapeypey jowa nakakalurky bakit jowabelles at jupang-pang majonders pamentos jowabelles intonses at ang"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_product_namee" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

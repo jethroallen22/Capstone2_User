@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.Store;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
@@ -57,11 +58,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //Store Reco Recycler View
     RecyclerView rv_home_store_rec;
-    List<HomeStoreRecModel> home_store_rec_list;
+    List<StoreModel> home_store_rec_list;
     HomeStoreRecAdapter homeStoreRecAdapter;
 
     RecyclerView rv_home_store_rec2;
-    List<HomeStoreRecModel> home_store_rec_list2;
+    List<StoreModel> home_store_rec_list2;
     HomeStoreRecAdapter homeStoreRecAdapter2;
 
     // Store Popular Recycler View
@@ -115,9 +116,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
-        home_pop_store_list.add(new StoreModel(R.drawable.jollibee_logo,"Jollibee", "Lorem ipsum dolor amet","143 Evangelista Street, Barangay Banalo, Bacoor City", "Fast Food",3.4F));
-        home_pop_store_list.add(new StoreModel(R.drawable.burgerking_logo, "Burger King", "Lorem ipsum dolor amet", "Esterling Heights Subdivision, Guintorilan City","Fast Food", 4.5F));
-        home_pop_store_list.add(new StoreModel(R.drawable.mcdo_logo, "McDonalds", "Lorem ipsum dolor amet", "330 Lakandula St. Tondo, Manila City", "Fast Food", 4.7F));
         homeStorePopularAdapter = new HomeStorePopularAdapter(home_pop_store_list, getActivity(), this);
         rv_home_pop_store.setAdapter(homeStorePopularAdapter);
         rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
@@ -180,11 +178,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
                         String r_image = jsonObject.getString("r_image");
                         String r_name = jsonObject.getString("r_name");
+                        String r_description = jsonObject.getString("r_description");
                         String r_location = jsonObject.getString("r_location");
                         String r_category = jsonObject.getString("r_category");
                         double r_rating = jsonObject.getDouble("r_rating");
 
-                        HomeStoreRecModel store = new HomeStoreRecModel(r_image,r_name,r_location,
+                        StoreModel store = new StoreModel(r_image,r_name,r_description,r_location,
                                 r_category, (float) r_rating);
                         home_store_rec_list.add(store);
 
@@ -219,11 +218,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
                         String r_image = jsonObject.getString("r_image");
                         String r_name = jsonObject.getString("r_name");
+                        String r_description = jsonObject.getString("r_description");
                         String r_location = jsonObject.getString("r_location");
                         String r_category = jsonObject.getString("r_category");
                         double r_rating = jsonObject.getDouble("r_rating");
 
-                        HomeStoreRecModel store2 = new HomeStoreRecModel(r_image,r_name,r_location,
+                        StoreModel store2 = new StoreModel(r_image,r_name,r_description,r_location,
                                 r_category, (float) r_rating);
                         home_store_rec_list2.add(store2);
 
@@ -303,7 +303,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         Log.d("TAG", "Success");
         Bundle bundle = new Bundle();
-        bundle.putInt("Image", home_pop_store_list.get(position).getStore_image());
+        bundle.putString("Image", home_pop_store_list.get(position).getStore_image());
         bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
         bundle.putString("StoreAddress", "Esterling Heights Subdivision, Guintorilan City");
         bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());

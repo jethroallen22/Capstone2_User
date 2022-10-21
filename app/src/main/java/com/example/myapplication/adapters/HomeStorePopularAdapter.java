@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.StoreModel;
@@ -39,7 +40,9 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
 
     @Override
     public void onBindViewHolder(@NonNull HomeStorePopularAdapter.ViewHolder holder, int position) {
-        holder.iv_store_image.setImageResource(list.get(position).getStore_image());
+        Glide.with(context)
+                .load(list.get(position).getStore_image())
+                .into(holder.iv_store_image);
         holder.tv_store_name.setText(list.get(position).getStore_name());
         holder.tv_store_category.setText(list.get(position).getStore_category());
 

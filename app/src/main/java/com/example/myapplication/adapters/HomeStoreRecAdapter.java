@@ -14,15 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.models.HomeStoreRecModel;
+import com.example.myapplication.models.StoreModel;
 
 import java.util.List;
 
 public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapter.ViewHolder> {
 
     Context context;
-    List<HomeStoreRecModel> list;
+    List<StoreModel> list;
 
-    public HomeStoreRecAdapter(FragmentActivity context, List<HomeStoreRecModel> list) {
+    public HomeStoreRecAdapter(FragmentActivity context, List<StoreModel> list) {
         this.context = context;
         this.list = list;
     }

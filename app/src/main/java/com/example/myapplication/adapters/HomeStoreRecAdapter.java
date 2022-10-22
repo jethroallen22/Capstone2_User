@@ -36,14 +36,14 @@ public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.tv_store_name.setText(list.get(position).getStore_name());
-        holder.tv_store_location.setText(list.get(position).getStore_location());
-        holder.tv_store_category.setText(list.get(position).getStore_category());
-        holder.tv_store_rating.setText(list.get(position).getStore_rating().toString());
 
         Glide.with(context)
                 .load(list.get(position).getStore_image())
                 .into(holder.iv_store_image);
+        holder.tv_store_name.setText(list.get(position).getStore_name());
+        holder.tv_store_location.setText(list.get(position).getStore_location());
+        holder.tv_store_category.setText(list.get(position).getStore_category());
+        holder.tv_store_rating.setText(list.get(position).getStore_rating().toString());
     }
 
     @Override

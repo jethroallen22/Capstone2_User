@@ -1,5 +1,8 @@
 package com.example.myapplication.ui.home;
 
+import static androidx.fragment.app.FragmentManager.TAG;
+
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,9 +49,20 @@ import java.util.List;
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg;
+    private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu;
+    //School IP
+    /*
+    private static String JSON_URL_REC="http://10.187.184.154/android_register_login/api.php";
+    private static String JSON_URL_CATEG="http://10.187.184.154/android_register_login/apicateg.php";
+    private static String JSON_URL_POPU="http://10.187.184.154/android_register_login/apipopu.php";
+     */
+
+    //Cafe IP
     private static String JSON_URL_REC="http://10.11.1.164/android_register_login/api.php";
     private static String JSON_URL_CATEG="http://10.11.1.164/android_register_login/apicateg.php";
+    private static String JSON_URL_POPU="http://10.11.1.164/android_register_login/apipopu.php";
+
+
 
 
     //Category Recycler View
@@ -86,16 +100,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         View root = binding.getRoot();
 
         //HOME CATEGORY
-        /*
-        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.jollibee_logo,"Manok"));
-         */
         rv_category = root.findViewById(R.id.rv_category);
-        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list);
         rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_category.setHasFixedSize(true);
         rv_category.setNestedScrollingEnabled(false);
@@ -116,11 +121,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
-        homeStorePopularAdapter = new HomeStorePopularAdapter(home_pop_store_list, getActivity(), this);
-        rv_home_pop_store.setAdapter(homeStorePopularAdapter);
         rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_home_pop_store.setHasFixedSize(true);
         rv_home_pop_store.setNestedScrollingEnabled(false);
+        requestQueuePopu = Singleton.getsInstance(getActivity()).getRequestQueue();
+        extractPopular();
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
@@ -142,10 +147,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
         requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
         home_store_rec_list2 = new ArrayList<>();
-        extractDataRec1();
         extractDataRec2();
-
-        Collections.shuffle(home_store_rec_list2);
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,17 +184,17 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String r_location = jsonObject.getString("r_location");
                         String r_category = jsonObject.getString("r_category");
                         double r_rating = jsonObject.getDouble("r_rating");
+                        int r_popularity = jsonObject.getInt("r_popularity");
 
-                        StoreModel store = new StoreModel(r_image,r_name,r_description,r_location,
-                                r_category, (float) r_rating);
-                        home_store_rec_list.add(store);
+
+                        StoreModel rec = new StoreModel(r_image,r_name,r_description,r_location,r_category, (float) r_rating, r_popularity);
+                        home_store_rec_list.add(rec);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
-
                     rv_home_store_rec.setAdapter(homeStoreRecAdapter);
 
 
@@ -204,7 +206,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
             }
         });
-
         requestQueueRec1.add(jsonArrayRequest);
     }
 
@@ -222,9 +223,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String r_location = jsonObject.getString("r_location");
                         String r_category = jsonObject.getString("r_category");
                         double r_rating = jsonObject.getDouble("r_rating");
+                        int r_popularity = jsonObject.getInt("r_popularity");
 
                         StoreModel store2 = new StoreModel(r_image,r_name,r_description,r_location,
-                                r_category, (float) r_rating);
+                                r_category, (float) r_rating, r_popularity);
                         home_store_rec_list2.add(store2);
 
                     } catch (JSONException e) {
@@ -239,14 +241,55 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
             }
         });
 
         requestQueueRec2.add(jsonArrayRequest2);
     }
 
-    //Popular Recommendation Function
+
+    public void extractPopular(){
+        HomeFragment homeFragment = this;
+
+        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL_POPU, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        String popu_image = jsonObject.getString("r_image");
+                        String popu_name = jsonObject.getString("r_name");
+                        String popu_description = jsonObject.getString("r_description");
+                        String popu_location = jsonObject.getString("r_location");
+                        String popu_category = jsonObject.getString("r_category");
+                        double popu_rating = jsonObject.getDouble("r_rating");
+                        int popu_popularity = jsonObject.getInt("r_popularity");
+
+
+                        StoreModel store3 = new StoreModel(popu_image,popu_name,popu_description, popu_location,popu_category, (float) popu_rating,popu_popularity);
+                        home_pop_store_list.add(store3);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    homeStorePopularAdapter = new HomeStorePopularAdapter(getActivity(), home_pop_store_list, homeFragment);
+                    rv_home_pop_store.setAdapter(homeStorePopularAdapter);
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueuePopu.add(jsonArrayRequest3);
+    }
+
     //Category Function
     public void extractCateg(){
 
@@ -312,6 +355,5 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TAG", "Success");
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
         Log.d("TAG", "Success");
-
     }
 }

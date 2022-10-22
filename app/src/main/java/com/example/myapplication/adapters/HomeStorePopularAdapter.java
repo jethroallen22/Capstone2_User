@@ -19,12 +19,12 @@ import com.example.myapplication.models.StoreModel;
 import java.util.List;
 
 public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopularAdapter.ViewHolder> {
-    private final RecyclerViewInterface recyclerViewInterface;
 
     Context context;
     List<StoreModel> list;
+    private final RecyclerViewInterface recyclerViewInterface;
 
-    public HomeStorePopularAdapter(List<StoreModel> list, Context context, RecyclerViewInterface recyclerViewInterface) {
+    public HomeStorePopularAdapter(Context context, List<StoreModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
         this.recyclerViewInterface = recyclerViewInterface;
@@ -67,19 +67,6 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
             tv_store_name = itemView.findViewById(R.id.tv_pop_store_name);
             tv_store_category = itemView.findViewById(R.id.tv_pop_store_category);
             card_view = itemView.findViewById(R.id.card_view);
-
-            itemView.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    if (recyclerViewInterface != null){
-                        int pos = getAdapterPosition();
-
-                        if (pos != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClickStorePopular(pos);
-                        }
-                    }
-                }
-            });
         }
     }
 }

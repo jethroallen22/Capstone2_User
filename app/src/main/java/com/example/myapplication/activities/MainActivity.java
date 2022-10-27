@@ -1,24 +1,28 @@
 package com.example.myapplication.activities;
 
-import static androidx.fragment.app.FragmentManager.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
@@ -27,6 +31,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     final static int PERMISSIONS_ALL = 1;
 
     LocationManager locationManager;
+    double curLong;
+    double curLat;
+
+
+    private final String weatherURL = "https://api.openweathermap.org/data/2.5/weather";
+    private final String appId = "d7484fc39538bf509fe729a4bbb0a90f";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if(Build.VERSION.SDK_INT >= 23){
             requestPermissions(PERMISSIONS, PERMISSIONS_ALL);
         }
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -47,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 MainActivity.this.startActivity(intent);
             }
         }, 3000);
+
     }
 
     @Override
@@ -76,9 +88,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        curLat = location.getLatitude();
+        curLong = location.getLongitude();
+        requestWeather();
         Log.d("my_log", "Location: "+location.getLatitude()+" , "+location.getLongitude());
         Toast.makeText(this, "Location: "+location.getLatitude()+" , "+location.getLongitude(), Toast.LENGTH_SHORT).show();
-        locationManager.removeUpdates(this);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -90,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 public void run() {
                     requestLocation();
                     handler.postDelayed(this,1000 * 60 * 5);
+
                 }
             },1000);
 
@@ -105,6 +120,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,1000, this);
             }
         }
+    }
+
+    public void requestWeather(){
+        String tempWeatherURL = weatherURL + "?lat=" + curLat + "&lon=" + curLong + "&appid=" + appId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, tempWeatherURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Weather", response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.toString().trim(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+
+
     }
 
     //private void setContentView(int activity_main) {

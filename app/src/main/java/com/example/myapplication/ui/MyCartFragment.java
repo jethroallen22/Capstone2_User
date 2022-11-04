@@ -28,18 +28,18 @@ public class MyCartFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_my_cart, container, false);
 
-        recyclerView = view.findViewById(R.id.cart_rec);
+        /*recyclerView = view.findViewById(R.id.cart_rec);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         list = new ArrayList<>();
-        list.add(new CartModel(R.drawable.s1,"Order 1","30","4.3"));
-        list.add(new CartModel(R.drawable.s2,"Order 1","$20","4.3"));
-        list.add(new CartModel(R.drawable.fav1,"Order 1","40","4.3"));
+        list.add(new CartModel(R.drawable.s1,"OrderModel 1","30","4.3"));
+        list.add(new CartModel(R.drawable.s2,"OrderModel 1","$20","4.3"));
+        list.add(new CartModel(R.drawable.fav1,"OrderModel 1","40","4.3"));
 
-        list.add(new CartModel(R.drawable.s1,"Order 1","$30","4.3"));
-        list.add(new CartModel(R.drawable.s2,"Order 1","$20","4.3"));
-        list.add(new CartModel(R.drawable.fav1,"Order 1","30","4.3"));
+        list.add(new CartModel(R.drawable.s1,"OrderModel 1","$30","4.3"));
+        list.add(new CartModel(R.drawable.s2,"OrderModel 1","$20","4.3"));
+        list.add(new CartModel(R.drawable.fav1,"OrderModel 1","30","4.3"));*/
 
-        cartAdapter = new CartAdapter(list);
+        //cartAdapter = new CartAdapter(list);
 
         return view;
     }

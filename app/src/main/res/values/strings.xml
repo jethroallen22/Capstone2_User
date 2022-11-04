@@ -17,4 +17,6 @@
     <string name="menu_payment">Payment</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_addresses">Addresses</string>
+    <string name="menu_product">Product</string>
+    <string name="menu_store">Store</string>
 </resources>

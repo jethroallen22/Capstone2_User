@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.store;
 
+import static androidx.navigation.Navigation.findNavController;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,16 +14,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.activities.Home;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.product.ProductFragment;
 
 import java.util.ArrayList;
@@ -34,6 +39,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     ImageView store_image;
     TextView store_name;
     TextView store_address;
+
+    public int stor_image;
+    public String stor_name;
+    public String stor_address;
+    public String stor_category;
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
@@ -59,18 +69,17 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         store_address = root.findViewById(R.id.tv_store_address);
 
         Bundle bundle = this.getArguments();
-        int stor_image = bundle.getInt("Image");
-        Log.d("Image", String.valueOf(stor_image));
-        String stor_name = bundle.getString("StoreName");
-        Log.d("Name", stor_name);
-        String stor_address = bundle.getString("StoreAddress");
-        Log.d("Address",stor_address);
-        String stor_category = bundle.getString("StoreCategory");
-        Log.d("Category", stor_category);
 
-        store_image.setImageResource(stor_image);
-        store_name.setText(stor_name);
-        store_address.setText(stor_address);
+        if(bundle != null){
+            stor_image = bundle.getInt("StoreImage");
+            stor_name = bundle.getString("StoreName");
+            stor_address = bundle.getString("StoreAddress");
+            stor_category = bundle.getString("StoreCategory");
+
+            store_image.setImageResource(stor_image);
+            store_name.setText(stor_name);
+            store_address.setText(stor_address);
+        }
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
@@ -99,6 +108,17 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         rv_products.setHasFixedSize(true);
         rv_products.setNestedScrollingEnabled(false);
 
+        binding.fabBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Test","Success1");
+                //Navigation.findNavController(view).navigate(R.id.action_nav_store_to_nav_home);
+                HomeFragment homeFragment = new HomeFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,homeFragment).commit();
+                Log.d("Test","Success2");
+            }
+        });
+
         return root;
     }
 
@@ -111,19 +131,30 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickForYou(int position) {
+
+
         Bundle bundle = new Bundle();
+
+        //Put Store Info
+        bundle.putInt ("StoreImage", stor_image);
+        bundle.putString("StoreName", stor_name);
+        bundle.putString("StoreAddress", stor_address);
+        bundle.putString("StoreCategory", stor_category);
+
+        //Put Product Info
         bundle.putInt("Image", food_for_you_list.get(position).getProduct_image());
         bundle.putString("Name", food_for_you_list.get(position).getProduct_name());
         bundle.putString("Description", food_for_you_list.get(position).getProduct_description());
         bundle.putString("StoreName", food_for_you_list.get(position).getStore_name());
         bundle.putFloat("Price", food_for_you_list.get(position).getProduct_price());
         bundle.putInt("Calorie", food_for_you_list.get(position).getProduct_calories());
+
         ProductFragment productFragment = new ProductFragment();
-        productFragment.setArguments(bundle);
-        Log.d("TAG", "Success");
+        productFragment.setArguments(bundle);Log.d("TAG", "Success");
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,productFragment).commit();
-        Log.d("TAG", "Success");
+
     }
+
 
     @Override
     public void onItemClickStorePopular(int position) {

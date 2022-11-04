@@ -9,7 +9,35 @@
         android:id="@+id/nav_home"
         android:name="com.example.myapplication.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_profile"
+            app:destination="@id/nav_profile" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_messages"
+            app:destination="@id/nav_messages" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_notifications"
+            app:destination="@id/nav_notifications" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_addresses"
+            app:destination="@id/nav_addresses" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_cart"
+            app:destination="@id/nav_cart" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_activities"
+            app:destination="@id/nav_activities" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_payment"
+            app:destination="@id/nav_payment" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_store"
+            app:destination="@id/nav_store" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_gallery"
@@ -21,54 +49,110 @@
         android:id="@+id/nav_profile"
         android:name="com.example.myapplication.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
-        tools:layout="@layout/fragment_profile"/>
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_nav_profile_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_messages"
         android:name="com.example.myapplication.ui.messages.MessagesFragment"
         android:label="@string/menu_messages"
-        tools:layout="@layout/fragment_messages"/>
+        tools:layout="@layout/fragment_messages">
+        <action
+            android:id="@+id/action_nav_messages_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_notifications"
         android:name="com.example.myapplication.ui.notifications.NotificationsFragment"
         android:label="@string/menu_notifications"
-        tools:layout="@layout/fragment_notifications"/>
+        tools:layout="@layout/fragment_notifications">
+        <action
+            android:id="@+id/action_nav_notifications_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@id/nav_cart"
         android:name="com.example.myapplication.ui.cart.CartFragment"
         android:label="@string/menu_cart"
-        tools:layout="@layout/fragment_cart"/>
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_nav_cart_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_activities"
         android:name="com.example.myapplication.ui.activities.ActivitiesFragment"
         android:label="@string/menu_activities"
-        tools:layout="@layout/fragment_activities"/>
+        tools:layout="@layout/fragment_activities">
+        <action
+            android:id="@+id/action_nav_activities_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_payment"
         android:name="com.example.myapplication.ui.payment.PaymentFragment"
         android:label="@string/menu_payment"
-        tools:layout="@layout/fragment_payment"/>
+        tools:layout="@layout/fragment_payment">
+        <action
+            android:id="@+id/action_nav_payment_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"
         android:name="com.example.myapplication.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings"/>
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_nav_settings_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_addresses"
         android:name="com.example.myapplication.ui.addresses.AddressesFragment"
         android:label="@string/menu_addresses"
-        tools:layout="@layout/fragment_addresses"/>
+        tools:layout="@layout/fragment_addresses">
+        <action
+            android:id="@+id/action_nav_addresses_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
     <fragment
         android:id="@+id/nav_store"
         android:name="com.example.myapplication.ui.store.StoreFragment"
-        android:label="Store"
-        tools:layout="@layout/fragment_store"/>
+        android:label="@string/menu_store"
+        tools:layout="@layout/fragment_store">
+        <action
+            android:id="@+id/action_nav_store_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_store_to_nav_product"
+            app:destination="@id/nav_product" />
+        <action
+            android:id="@+id/action_nav_store_to_nav_home2"
+            app:destination="@id/nav_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_product"
+        android:name="com.example.myapplication.ui.product.ProductFragment"
+        android:label="@string/menu_product"
+        tools:layout="@layout/fragment_product">
+
+        <action
+            android:id="@+id/action_nav_product_to_nav_store"
+            app:destination="@id/nav_store" />
+        <action
+            android:id="@+id/action_nav_product_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
 
 </navigation>

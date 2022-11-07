@@ -15,10 +15,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.adapters.HomeStoreRecAdapter;
+import com.example.myapplication.models.StoreModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,12 +31,14 @@ import java.util.Map;
 
 public class Register extends AppCompatActivity {
     private EditText register_name_text_input, register_email_text_input,
-            register_number_text_input, register_password_text_input;
+            register_number_text_input, register_password_text_input,
+            register_confpassword_text_input;
     private Button signup_btn;
     private TextView tv_login_btn;
 
     //Workspace IP
-    private static String URL_SIGNUP = "http://10.11.1.164/android_register_login/register.php";
+    private static String URL_SIGNUP = "http://192.168.68.109/android_register_login/register.php";
+    private static String URL_CHECK = "http://192.168.68.109/android_register_login/apiusers.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,12 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().hide();
         init();
+
+        register_name_text_input = findViewById(R.id.name_text_input);
+        register_email_text_input = findViewById(R.id.email_text_input);
+        register_number_text_input = findViewById(R.id.contact_text_input);
+        register_password_text_input = findViewById(R.id.password_text_input);
+        register_confpassword_text_input = findViewById(R.id.confpassword_text_input);
 
         tv_login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,8 +69,16 @@ public class Register extends AppCompatActivity {
                 String remail = register_email_text_input.getText().toString().trim();
                 String rnumber = register_number_text_input.getText().toString().trim();
                 String rpassword = register_password_text_input.getText().toString().trim();
+                String rconfpassword = register_confpassword_text_input.getText().toString().trim();
 
-                SignUp(rname, remail, rnumber,rpassword);
+                if (!rpassword.equals(rconfpassword)){
+                    register_password_text_input.setError("Passwords do not match");
+                    register_confpassword_text_input.setError("Passwords do not match");
+                } else if (!rname.equals("")&&!remail.equals("")&&!rnumber.equals("")&&!rpassword.equals("")){
+                    SignUp(rname, remail, rnumber, rpassword);
+
+                } else if (rname.equals("")||remail.equals("")||rnumber.equals("")||rpassword.equals("")){
+                }
             }
         });
 
@@ -75,38 +95,11 @@ public class Register extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_SIGNUP, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
 
-                    /*
-                    JSONArray jsonArray = jsonObject.getJSONArray("login");
+                Intent intent = new Intent(getApplicationContext(), Home.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                Register.this.startActivity(intent);
 
-
-                    if (success.equals("1")){
-                        for (int i = 0; i < jsonArray.length(); i++){
-
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            String name = object.getString("name").trim();
-                            String email = object.getString("email").trim();
-
-                            Toast.makeText(Login.this, "Success Login. \nYour Name : "
-                                    + name + "\nYour Email : "
-                                    + email, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                     */
-                    Intent intent = new Intent(getApplicationContext(), Home.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Register.this.startActivity(intent);
-                } catch (JSONException e) {
-                    /*
-                    e.printStackTrace();
-                    Toast.makeText(Login.this, "Error! "+ e.toString(),Toast.LENGTH_SHORT).show();*/
-
-                    Toast.makeText(Register.this, "Invalid Email and/or Password", Toast.LENGTH_SHORT).show();
-                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -127,6 +120,10 @@ public class Register extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+
+    }
+
+    private void Check(String register_email_text_input, String register_number_text_input, String inputEmail, String inputNumber){
 
     }
 }

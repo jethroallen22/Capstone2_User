@@ -51,10 +51,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
     //School IP (Change IP Address to your IP)
-    private static String JSON_URL_REC="http://10.187.184.154/android_register_login/api.php";
-    private static String JSON_URL_CATEG="http://10.187.184.154/android_register_login/apicateg.php";
-    private static String JSON_URL_POPU="http://10.187.184.154/android_register_login/apipopu.php";
-    private static String JSON_URL_FOOD="http://10.187.184.154/android_register_login/apifood.php";
+    private static String JSON_URL_REC="http://192.168.68.109/android_register_login/api.php";
+    private static String JSON_URL_CATEG="http://192.168.68.109/android_register_login/apicateg.php";
+    private static String JSON_URL_POPU="http://192.168.68.109/android_register_login/apipopu.php";
+    private static String JSON_URL_FOOD="http://192.168.68.109/android_register_login/apifood.php";
 
 
     //Cafe IP

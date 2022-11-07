@@ -56,7 +56,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_address;
     public String stor_category;
 
-    private static String JSON_URL_FOOD="http://10.187.184.154/android_register_login/apifood.php";
+    private static String JSON_URL_FOOD="http://192.168.68.109/android_register_login/apifood.php";
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;

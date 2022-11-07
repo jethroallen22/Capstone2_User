@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.HomeFoodForYouModel;
@@ -39,7 +40,9 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
 
     @Override
     public void onBindViewHolder(@NonNull HomeFoodForYouAdapter.ViewHolder holder, int position) {
-        holder.iv_food_for_you.setImageResource(list.get(position).getProduct_image());
+        Glide.with(context)
+                .load(list.get(position).getProduct_image())
+                .into(holder.iv_food_for_you);
         holder.tv_fff_prod_name.setText(list.get(position).getProduct_name());
         holder.tv_fff_store_name.setText(list.get(position).getStore_name());
         holder.tv_fff_prod_price.setText("P " + list.get(position).getProduct_price().toString());

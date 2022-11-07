@@ -18,16 +18,26 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.Home;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
+import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.product.ProductFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +45,7 @@ import java.util.List;
 public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentStoreBinding binding;
+    private RequestQueue requestQueueFood;
 
     ImageView store_image;
     TextView store_name;
@@ -44,6 +55,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_name;
     public String stor_address;
     public String stor_category;
+
+    private static String JSON_URL_FOOD="http://10.187.184.154/android_register_login/apifood.php";
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
@@ -83,14 +96,14 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
-        food_for_you_list.add(new ProductModel(R.drawable.burger_mcdo, "Burger McDo", "Lorem Ipsum Dolor Amet","McDonalds", 45F, 350));
-        food_for_you_list.add(new ProductModel(R.drawable.chicken_joy, "Chicken Joy", "Lorem Ipsum Dolor Amet","Jollibee", 99F, 420));
-        food_for_you_list.add(new ProductModel(R.drawable.whopper_king, "Whopper King", "Lorem Ipsum Dolor Amet","BurgerKing", 199F, 542));
         homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, this);
         rv_food_for_you.setAdapter(homeFoodForYouAdapter);
         rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
+        requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
+        extractFoodforyou();
+
 
         final String TAG = "Testing";
 
@@ -129,6 +142,43 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     }
 
 
+    public void extractFoodforyou(){
+        StoreFragment storeFragment = this;
+        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL_FOOD, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                        String p_image = jsonObjectFoodforyou.getString("p_image");
+                        String p_name = jsonObjectFoodforyou.getString("p_name");
+                        String p_description = jsonObjectFoodforyou.getString("p_description");
+                        float p_price = (float) jsonObjectFoodforyou.getDouble("p_price");
+                        int p_calories =  jsonObjectFoodforyou.getInt("p_name");
+                        String pR_id = jsonObjectFoodforyou.getString("r_id");
+                        String pR_name = jsonObjectFoodforyou.getString("r_name");
+
+                        ProductModel foodfyModel = new ProductModel(p_image,p_name,p_description,pR_name,p_price,p_calories);
+                        food_for_you_list.add(foodfyModel);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,storeFragment);
+                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueueFood.add(jsonArrayRequestFoodforyou);
+    }
+
+
     @Override
     public void onItemClickForYou(int position) {
 
@@ -142,7 +192,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         bundle.putString("StoreCategory", stor_category);
 
         //Put Product Info
-        bundle.putInt("Image", food_for_you_list.get(position).getProduct_image());
+        bundle.putString("Image", food_for_you_list.get(position).getProduct_image());
         bundle.putString("Name", food_for_you_list.get(position).getProduct_name());
         bundle.putString("Description", food_for_you_list.get(position).getProduct_description());
         bundle.putString("StoreName", food_for_you_list.get(position).getStore_name());

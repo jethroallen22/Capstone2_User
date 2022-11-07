@@ -31,10 +31,10 @@ public class Login extends AppCompatActivity {
     private Button login_btn;
     private TextView tv_register_btn;
     //School IP
-    //private static String URL_LOGIN = "http://10.187.184.154/android_register_login/login.php";
+    private static String URL_LOGIN = "http://10.187.184.154/android_register_login/login.php";
 
     //Workspace IP
-    private static String URL_LOGIN = "http://10.11.1.164/android_register_login/login.php";
+    //private static String URL_LOGIN = "http://10.11.1.164/android_register_login/login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

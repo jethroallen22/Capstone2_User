@@ -2,14 +2,14 @@ package com.example.myapplication.models;
 
 public class ProductModel {
 
-    int product_image;
+    String product_image;
     String product_name;
     String product_description;
     String store_name;
     Float product_price;
     int product_calories;
 
-    public ProductModel(int product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
+    public ProductModel(String product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
         this.product_image = product_image;
         this.product_name = product_name;
         this.product_description = product_description;
@@ -18,11 +18,11 @@ public class ProductModel {
         this.product_calories = product_calories;
     }
 
-    public int getProduct_image() {
+    public String getProduct_image() {
         return product_image;
     }
 
-    public void setProduct_image(int product_image) {
+    public void setProduct_image(String product_image) {
         this.product_image = product_image;
     }
 

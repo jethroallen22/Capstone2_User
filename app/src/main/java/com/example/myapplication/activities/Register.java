@@ -123,7 +123,10 @@ public class Register extends AppCompatActivity {
 
     }
 
+
     private void Check(String register_email_text_input, String register_number_text_input, String inputEmail, String inputNumber){
 
     }
+
+
 }

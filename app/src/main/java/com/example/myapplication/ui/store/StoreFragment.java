@@ -50,13 +50,15 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     ImageView store_image;
     TextView store_name;
     TextView store_address;
+    TextView store_description;
 
     public int stor_image;
     public String stor_name;
     public String stor_address;
     public String stor_category;
+    public String stor_description;
 
-    private static String JSON_URL_FOOD="http://192.168.68.109/android_register_login/apifood.php";
+    private static String JSON_URL_FOOD="http://192.168.68.106/android_register_login/apifood.php";
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
@@ -80,6 +82,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         store_image = root.findViewById(R.id.iv_store_image);
         store_name = root.findViewById(R.id.tv_store_name_main);
         store_address = root.findViewById(R.id.tv_store_address);
+        store_description = root.findViewById(R.id.tv_store_description);
 
         Bundle bundle = this.getArguments();
 
@@ -88,10 +91,12 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
             stor_name = bundle.getString("StoreName");
             stor_address = bundle.getString("StoreAddress");
             stor_category = bundle.getString("StoreCategory");
+            stor_description = bundle.getString("StoreDescription");
 
             store_image.setImageResource(stor_image);
             store_name.setText(stor_name);
             store_address.setText(stor_address);
+            store_description.setText(stor_description);
         }
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);

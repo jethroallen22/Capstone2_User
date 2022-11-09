@@ -51,10 +51,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
     //School IP (Change IP Address to your IP)
-    private static String JSON_URL_REC="http://192.168.68.109/android_register_login/api.php";
-    private static String JSON_URL_CATEG="http://192.168.68.109/android_register_login/apicateg.php";
-    private static String JSON_URL_POPU="http://192.168.68.109/android_register_login/apipopu.php";
-    private static String JSON_URL_FOOD="http://192.168.68.109/android_register_login/apifood.php";
+    private static String JSON_URL_REC="http://192.168.68.106/android_register_login/api.php";
+    private static String JSON_URL_CATEG="http://192.168.68.106/android_register_login/apicateg.php";
+    private static String JSON_URL_POPU="http://192.168.68.106/android_register_login/apipopu.php";
+    private static String JSON_URL_FOOD="http://192.168.68.106/android_register_login/apifood.php";
 
 
     //Cafe IP
@@ -386,6 +386,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
         bundle.putString("StoreAddress", home_pop_store_list.get(position).getStore_location());
         bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());
+        bundle.putString("StoreDescription", home_pop_store_list.get(position).getStore_category());
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         Log.d("TAG", "Success");

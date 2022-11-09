@@ -31,7 +31,7 @@ public class Login extends AppCompatActivity {
     private Button login_btn;
     private TextView tv_register_btn;
     //School IP
-    private static String URL_LOGIN = "http://192.168.68.109/android_register_login/login.php";
+    private static String URL_LOGIN = "http://192.168.68.106/android_register_login/login.php";
 
     //Workspace IP
     //private static String URL_LOGIN = "http://192.168.68.109/android_register_login/login.php";
@@ -111,6 +111,7 @@ public class Login extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), Home.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     Login.this.startActivity(intent);
+
                 } catch (JSONException e) {
                     /*
                     e.printStackTrace();

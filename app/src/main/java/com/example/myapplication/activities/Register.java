@@ -38,8 +38,9 @@ public class Register extends AppCompatActivity {
     private TextView tv_login_btn;
 
     //Workspace IP
-    private static String URL_SIGNUP = "http://192.168.68.100/android_register_login/register.php";
-    private static String URL_CHECK = "http://192.168.68.100/android_register_login/apiusers.php";
+    private static String URL_SIGNUP = "http://192.168.68.106/android_register_login/register.php";
+    private static String URL_SIGNUP1 = "http://192.168.68.106/android_register_login/resgister1.php";
+    private static String URL_CHECK = "http://192.168.68.109/android_register_login/apiusers.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,6 @@ public class Register extends AppCompatActivity {
                 } else if (!rname.equals("")&&!remail.equals("")&&!rnumber.equals("")&&!rpassword.equals("")){
                     SignUp(rname, remail, rnumber, rpassword);
 
-                } else if (rname.equals("")||remail.equals("")||rnumber.equals("")||rpassword.equals("")){
                 }
             }
         });
@@ -93,13 +93,28 @@ public class Register extends AppCompatActivity {
     private void SignUp(String register_name_text_input,  String register_email_text_input,
                         String register_number_text_input, String register_password_text_input){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_SIGNUP, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_SIGNUP1, new Response.Listener<String>() {
             @Override
-            public void onResponse(String response) {
+            public void onResponse(String result) {
+                Log.d("1 ", result );
+                try {
+                    Log.d("REGISTER: success= ", result);
+                    JSONObject jsonObject = new JSONObject(result);
+                    Log.d("REGISTER: success= ", "3" );
+                    String success = jsonObject.getString("success");
 
+                    Log.d("REGISTER: success= ", success );
+                    if (success.equals("1")){
                 Intent intent = new Intent(getApplicationContext(), Home.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 Register.this.startActivity(intent);
+                  } else {
+                        Toast.makeText(Register.this, "Email/Contact has been used ",Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                Log.d("REGISTER:", "catch" );
+                    Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
+                }
 
             }
         }, new Response.ErrorListener() {
@@ -113,7 +128,7 @@ public class Register extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put("name", register_name_text_input);
                 params.put("email", register_email_text_input);
-                params.put("number", register_number_text_input);
+                params.put("contact", register_number_text_input);
                 params.put("password", register_password_text_input);
                 return params;
             }
@@ -124,11 +139,7 @@ public class Register extends AppCompatActivity {
 
     }
 
-
-
     private void Check(String register_email_text_input, String register_number_text_input, String inputEmail, String inputNumber){
 
     }
-
-
 }

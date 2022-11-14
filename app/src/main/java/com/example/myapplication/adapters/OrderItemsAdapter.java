@@ -1,6 +1,7 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.models.OrderItemModel;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
     @NonNull
     @Override
     public OrderItemsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_order_item,parent,false));
+        return new OrderItemsAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cartorder_item,parent,false));
     }
 
     @Override
@@ -61,6 +60,13 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
             tv_order_item_name = itemView.findViewById(R.id.tv_order_item_name);
             tv_order_item_qty = itemView.findViewById(R.id.tv_order_item_qty);
             tv_order_total_price = itemView.findViewById(R.id.tv_order_item_total_price);
+
+            iv_close_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("Test","Success delete");
+                }
+            });
         }
     }
 }

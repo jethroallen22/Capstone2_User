@@ -49,15 +49,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             requestPermissions(PERMISSIONS, PERMISSIONS_ALL);
         }
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                MainActivity.this.startActivity(intent);
-            }
-        }, 3000);
+
 
     }
 
@@ -98,12 +90,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Handler handler = new Handler();
+
+            final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Intent intent = new Intent(getApplicationContext(), Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    MainActivity.this.startActivity(intent);
+                }
+            }, 2000);
+
+            Handler handler2 = new Handler();
+            handler2.postDelayed(new Runnable() {
+                @Override
+                public void run() {
                     requestLocation();
-                    handler.postDelayed(this,1000 * 60 * 5);
+                    handler2.postDelayed(this,5000);
 
                 }
             },1000);

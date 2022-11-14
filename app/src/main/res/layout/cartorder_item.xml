@@ -8,15 +8,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="16dp"
         android:paddingTop="8dp"
-        android:paddingRight="16dp"
         android:paddingBottom="8dp">
 
         <ImageView
             android:id="@+id/iv_close_btn"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -49,6 +48,7 @@
             android:id="@+id/tv_order_item_total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:fontFamily="@font/robotobold"
             android:text="P 621.00"
             android:textSize="16sp"

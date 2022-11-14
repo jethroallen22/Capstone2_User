@@ -31,10 +31,10 @@ public class Login extends AppCompatActivity {
     private Button login_btn;
     private TextView tv_register_btn;
     //School IP
-    //private static String URL_LOGIN = "http://10.187.184.154/android_register_login/login.php";
+    private static String URL_LOGIN = "http://192.168.68.106/android_register_login/login.php";
 
     //Workspace IP
-    private static String URL_LOGIN = "http://10.11.1.164/android_register_login/login.php";
+    //private static String URL_LOGIN = "http://192.168.68.109/android_register_login/login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class Login extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
-                    /*
+
                     JSONArray jsonArray = jsonObject.getJSONArray("login");
 
 
@@ -107,10 +107,11 @@ public class Login extends AppCompatActivity {
                                     + email, Toast.LENGTH_SHORT).show();
                         }
                     }
-                     */
+
                     Intent intent = new Intent(getApplicationContext(), Home.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     Login.this.startActivity(intent);
+
                 } catch (JSONException e) {
                     /*
                     e.printStackTrace();

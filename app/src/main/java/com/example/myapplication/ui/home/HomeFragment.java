@@ -34,7 +34,6 @@ import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
-import com.example.myapplication.models.HomeStoreRecModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.order.OrderFragment;
@@ -133,7 +132,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
-        home_pop_store_list.add(new StoreModel(R.drawable.mcdo_logo,"Mcdonalds","lorem ipsum dolor", "Binondo", "Fast Food", 3.5F,5));
+        //home_pop_store_list.add(new StoreModel(R.drawable.mcdo_logo,"Mcdonalds","lorem ipsum dolor", "Binondo", "Fast Food", 3.5F,5));
         homeStorePopularAdapter = new HomeStorePopularAdapter(home_pop_store_list, getActivity(), this);
         rv_home_pop_store.setAdapter(homeStorePopularAdapter);
         rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
@@ -142,9 +141,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
-        food_for_you_list.add(new ProductModel(R.drawable.burger_mcdo,"Burger McDo","Lorem Ipsum Dolor Amet","McDonalds",45F,350));
+        /*food_for_you_list.add(new ProductModel(R.drawable.burger_mcdo,"Burger McDo","Lorem Ipsum Dolor Amet","McDonalds",45F,350));
         food_for_you_list.add(new ProductModel(R.drawable.chicken_joy,"Chicken Joy","Lorem Ipsum Dolor Amet","Jollibee", 99F,420));
-        food_for_you_list.add(new ProductModel(R.drawable.whopper_king,"Whopper King", "Lorem Ipsum Dolor Amet","BurgerKing",199F,542));
+        food_for_you_list.add(new ProductModel(R.drawable.whopper_king,"Whopper King", "Lorem Ipsum Dolor Amet","BurgerKing",199F,542));*/
         homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,this);
         rv_food_for_you.setAdapter(homeFoodForYouAdapter);
         rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
@@ -352,7 +351,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         Log.d("TAG", "Success");
         Bundle bundle = new Bundle();
-        bundle.putInt("StoreImage", home_pop_store_list.get(position).getStore_image());
+        //bundle.putInt("StoreImage", home_pop_store_list.get(position).getStore_image());
         bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
         bundle.putString("StoreAddress", "Esterling Heights Subdivision, Guintorilan City");
         bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());
@@ -361,6 +360,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TAG", "Success");
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
         Log.d("TAG", "Success");
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
 
     }
 
@@ -387,7 +391,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
 
-        product_image.setImageResource(food_for_you_list.get(position).getProduct_image());
+        //product_image.setImageResource(food_for_you_list.get(position).getProduct_image());
         product_name.setText(food_for_you_list.get(position).getProduct_name());
         product_calorie.setText(Integer.toString(food_for_you_list.get(position).getProduct_calories()) + " Cals");
         product_description.setText(food_for_you_list.get(position).getProduct_description());

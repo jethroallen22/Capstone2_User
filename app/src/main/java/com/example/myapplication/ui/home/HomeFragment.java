@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -24,8 +22,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.MainActivity;
-import com.example.myapplication.activities.Store;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
@@ -34,14 +30,12 @@ import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
-import com.example.myapplication.models.HomeStoreRecModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.order.OrderFragment;
-import com.example.myapplication.ui.product.ProductFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.snackbar.Snackbar;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -170,7 +164,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             public void onClick(View view) {
                 //Snackbar.make(view, "Work in Progress!!! Magreredirect dapat sa cart screen", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
-                OrderFragment orderFragment = new OrderFragment();
+                CartFragment orderFragment = new CartFragment();
                 Log.d("TAG", "Success");
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,orderFragment).commit();
             }
@@ -361,6 +355,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TAG", "Success");
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
         Log.d("TAG", "Success");
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
 
     }
 

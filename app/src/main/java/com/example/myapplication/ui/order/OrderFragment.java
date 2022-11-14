@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
@@ -36,6 +37,9 @@ public class OrderFragment extends Fragment {
     private OrderViewModel mViewModel;
     private FragmentOrderBinding binding;
 
+    TextView tv_store_name;
+    public String store_name;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         OrderViewModel orderViewModel =
@@ -43,6 +47,14 @@ public class OrderFragment extends Fragment {
 
         binding = FragmentOrderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        tv_store_name = root.findViewById(R.id.tv_store_name);
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null){
+            store_name = bundle.getString("StoreName");
+            tv_store_name.setText(store_name);
+        }
 
         rv_order_items = root.findViewById(R.id.rv_order_items);
         order_item_list = new ArrayList<>();
@@ -63,5 +75,7 @@ public class OrderFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
 
 }

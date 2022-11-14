@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,8 +38,8 @@ public class Register extends AppCompatActivity {
     private TextView tv_login_btn;
 
     //Workspace IP
-    private static String URL_SIGNUP = "http://192.168.68.109/android_register_login/register.php";
-    private static String URL_CHECK = "http://192.168.68.109/android_register_login/apiusers.php";
+    private static String URL_SIGNUP = "http://192.168.68.100/android_register_login/register.php";
+    private static String URL_CHECK = "http://192.168.68.100/android_register_login/apiusers.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +123,7 @@ public class Register extends AppCompatActivity {
         requestQueue.add(stringRequest);
 
     }
+
 
 
     private void Check(String register_email_text_input, String register_number_text_input, String inputEmail, String inputNumber){

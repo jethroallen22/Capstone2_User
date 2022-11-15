@@ -8,9 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +39,9 @@ import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.product.ProductFragment;
 import com.example.myapplication.ui.store.StoreFragment;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,6 +93,15 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     RecyclerView rv_food_for_you;
     List<ProductModel> food_for_you_list;
     HomeFoodForYouAdapter homeFoodForYouAdapter;
+
+    //For Product Bottomsheet
+    LinearLayout linearLayout;
+    TextView product_name,product_calorie,product_price,product_description,tv_counter;
+    RoundedImageView product_image;
+    ConstraintLayout cl_product_add;
+    ConstraintLayout cl_product_minus;
+    Button btn_add_to_cart;
+    int product_count = 0;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -363,18 +377,19 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     @Override
     public void onItemClickForYou(int position) {
 
-        Bundle bundle = new Bundle();
-        bundle.putString("Image", food_for_you_list.get(position).getProduct_image());
-        bundle.putString("Name", food_for_you_list.get(position).getProduct_name());
-        bundle.putString("Description", food_for_you_list.get(position).getProduct_description());
-        bundle.putString("StoreName", food_for_you_list.get(position).getStore_name());
-        bundle.putFloat("Price", food_for_you_list.get(position).getProduct_price());
-        bundle.putInt("Calorie", food_for_you_list.get(position).getProduct_calories());
-        ProductFragment productFragment = new ProductFragment();
-        productFragment.setArguments(bundle);
-        Log.d("TAG", "Success");
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,productFragment).commit();
-        Log.d("TAG", "Success");
+//        Bundle bundle = new Bundle();
+//        bundle.putString("Image", food_for_you_list.get(position).getProduct_image());
+//        bundle.putString("Name", food_for_you_list.get(position).getProduct_name());
+//        bundle.putString("Description", food_for_you_list.get(position).getProduct_description());
+//        bundle.putString("StoreName", food_for_you_list.get(position).getStore_name());
+//        bundle.putFloat("Price", food_for_you_list.get(position).getProduct_price());
+//        bundle.putInt("Calorie", food_for_you_list.get(position).getProduct_calories());
+//        ProductFragment productFragment = new ProductFragment();
+//        productFragment.setArguments(bundle);
+//        Log.d("TAG", "Success");
+//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,productFragment).commit();
+//        Log.d("TAG", "Success");
+        showBottomSheet(position);
     }
 
     @Override
@@ -392,5 +407,69 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TAG", "Success");
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
         Log.d("TAG", "Success");
+    }
+
+    //Display Product BottomSheet
+
+    public void showBottomSheet(int position){
+        String TAG = "Bottomsheet";
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
+        View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext())
+                .inflate(
+                        R.layout.product_bottom_sheet_layout,
+                        getActivity().findViewById(R.id.product_bottomSheet_container)
+                );
+        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        product_image = bottomSheetView.findViewById(R.id.iv_product_imagee2);
+        product_name = bottomSheetView.findViewById(R.id.tv_product_namee2);
+        product_calorie = bottomSheetView.findViewById(R.id.tv_product_caloriee2);
+        product_description = bottomSheetView.findViewById(R.id.tv_product_description2);
+        product_price = bottomSheetView.findViewById(R.id.tv_product_pricee2);
+        btn_add_to_cart = bottomSheetView.findViewById(R.id.btn_add_to_cart);
+        cl_product_add = bottomSheetView.findViewById(R.id.cl_product_add);
+        cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
+        tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
+
+        //product_image.setImageResource(food_for_you_list.get(position).getProduct_image());
+        product_name.setText(food_for_you_list.get(position).getProduct_name());
+        product_calorie.setText(Integer.toString(food_for_you_list.get(position).getProduct_calories()) + " Cals");
+        product_description.setText(food_for_you_list.get(position).getProduct_description());
+        product_price.setText("P"+food_for_you_list.get(position).getProduct_price().toString());
+
+        btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(this,"Success!!!",Toast.LENGTH_SHORT).show();
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        //Add count to order
+        cl_product_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (product_count >= 0 ){
+                    cl_product_minus.setClickable(true);
+                    product_count +=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+
+        //Subtract count to order
+        cl_product_minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(product_count == 0){
+                    cl_product_minus.setClickable(false);
+                }else{
+                    product_count -=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
     }
 }

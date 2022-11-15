@@ -215,4 +215,9 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClickStorePopular(int position) {
 
     }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
 }

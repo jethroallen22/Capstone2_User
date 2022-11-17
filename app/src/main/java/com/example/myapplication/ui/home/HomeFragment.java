@@ -34,7 +34,6 @@ import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
-import com.example.myapplication.models.HomeStoreRecModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.product.ProductFragment;
@@ -56,10 +55,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
     //School IP (Change IP Address to your IP)
-    private static String JSON_URL_REC="http://192.168.68.106/android_register_login/api.php";
-    private static String JSON_URL_CATEG="http://192.168.68.106/android_register_login/apicateg.php";
-    private static String JSON_URL_POPU="http://192.168.68.106/android_register_login/apipopu.php";
-    private static String JSON_URL_FOOD="http://192.168.68.106/android_register_login/apifood.php";
+    private static String JSON_URL_REC="http://192.168.68.105/android_register_login/api.php";
+    private static String JSON_URL_CATEG="http://192.168.68.105/android_register_login/apicateg.php";
+    private static String JSON_URL_POPU="http://192.168.68.105/android_register_login/apipopu.php";
+    private static String JSON_URL_FOOD="http://192.168.68.105/android_register_login/apifood.php";
 
 
     //Cafe IP
@@ -180,7 +179,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         binding = null;
     }
 
-    //Store Recommendation for RecView 1 and 2 Function
+    //Database to Recommendation 1
     public void extractDataRec1(){
 
         JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
@@ -222,6 +221,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueueRec1.add(jsonArrayRequestRec1);
     }
 
+    //Database to Recommended 2
     public void extractDataRec2(){
         JsonArrayRequest jsonArrayRequestRec2 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
             @Override
@@ -260,7 +260,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueueRec2.add(jsonArrayRequestRec2);
     }
 
-
+    //Database to Popular
     public void extractPopular(){
         HomeFragment homeFragment = this;
 
@@ -303,7 +303,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueuePopu.add(jsonArrayRequest3);
     }
 
-    //Category Function
+    //Database to Category Function
     public void extractCateg(){
 
         JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL_CATEG, null, new Response.Listener<JSONArray>() {
@@ -407,6 +407,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TAG", "Success");
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
         Log.d("TAG", "Success");
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
     }
 
     //Display Product BottomSheet

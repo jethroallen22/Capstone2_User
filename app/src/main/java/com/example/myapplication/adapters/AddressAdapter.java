@@ -1,7 +1,10 @@
 package com.example.myapplication.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +66,27 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
             tv_address_address = itemView.findViewById(R.id.tv_address_address);
             iv_address_edit = itemView.findViewById(R.id.iv_address_edit);
             iv_address_delete = itemView.findViewById(R.id.iv_address_delete);
+
+            iv_address_delete.setOnClickListener(new View.OnClickListener() {
+               @Override
+                public void onClick(View v) {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Confirm delete").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No",dialogClickListener).show();
+                }
+            });
         }
     }
+
 }

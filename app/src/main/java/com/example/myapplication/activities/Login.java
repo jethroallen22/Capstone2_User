@@ -1,9 +1,12 @@
 package com.example.myapplication.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.ui.home.HomeFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +35,7 @@ public class Login extends AppCompatActivity {
     private Button login_btn;
     private TextView tv_register_btn;
     //School IP
-    private static String URL_LOGIN = "http://192.168.68.106/android_register_login/login.php";
+    private static String URL_LOGIN = "http://192.168.68.112/android_register_login/login.php";
 
     //Workspace IP
     //private static String URL_LOGIN = "http://192.168.68.109/android_register_login/login.php";
@@ -92,31 +96,56 @@ public class Login extends AppCompatActivity {
 
 
                     JSONArray jsonArray = jsonObject.getJSONArray("login");
-
+                    int id = 0;
+                    String name = "";
 
                     if (success.equals("1")){
                         for (int i = 0; i < jsonArray.length(); i++){
 
                             JSONObject object = jsonArray.getJSONObject(i);
 
-                            String name = object.getString("name").trim();
+                            name = object.getString("name").trim();
                             String email = object.getString("email").trim();
+                            id = object.getInt("id");
 
                             Toast.makeText(Login.this, "Success Login. \nYour Name : "
                                     + name + "\nYour Email : "
-                                    + email, Toast.LENGTH_SHORT).show();
+                                    + email + id, Toast.LENGTH_SHORT).show();
+
+                            Log.d("HELLO", name + email + id);
+
+//                            final FragmentManager fragmentManager = getSupportFragmentManager();
+//                            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                            final HomeFragment homeFragment = new HomeFragment();
+
+//                            Log.d("before bundling: ", String.valueOf(id));
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("id", id);
+//                            bundle.putString("name",name);
+//                            homeFragment.setArguments(bundle);
+//
+//                            fragmentTransaction.add(R.id.nav_host_fragment_content_home, homeFragment).commit();
+
                         }
+                        Intent intent = new Intent(getApplicationContext(), Home.class);
+                        intent.putExtra("name",name);
+                        intent.putExtra("id",id);
+                        Log.d("NAME LOGIN: " , name);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     }
 
-                    Intent intent = new Intent(getApplicationContext(), Home.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Login.this.startActivity(intent);
+
+
+
+
+
 
                 } catch (JSONException e) {
                     /*
                     e.printStackTrace();
                     Toast.makeText(Login.this, "Error! "+ e.toString(),Toast.LENGTH_SHORT).show();*/
-
+                    Log.d("Catch", String.valueOf(e));
                     Toast.makeText(Login.this, "Invalid Email and/or Password", Toast.LENGTH_SHORT).show();
                 }
             }

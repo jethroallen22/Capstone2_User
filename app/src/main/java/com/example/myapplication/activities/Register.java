@@ -98,12 +98,9 @@ public class Register extends AppCompatActivity {
             public void onResponse(String result) {
                 Log.d("1 ", result );
                 try {
-                    Log.d("REGISTER: success= ", result);
                     JSONObject jsonObject = new JSONObject(result);
-                    Log.d("REGISTER: success= ", "3" );
                     String success = jsonObject.getString("success");
 
-                    Log.d("REGISTER: success= ", success );
                     if (success.equals("1")){
                 Intent intent = new Intent(getApplicationContext(), Home.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -136,7 +133,6 @@ public class Register extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
-
     }
 
     private void Check(String register_email_text_input, String register_number_text_input, String inputEmail, String inputNumber){

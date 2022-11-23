@@ -41,12 +41,12 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
     @Override
     public void onBindViewHolder(@NonNull HomeFoodForYouAdapter.ViewHolder holder, int position) {
         Glide.with(context)
-                .load(list.get(position).getProduct_image())
+                .load(list.get(position).getProductImage())
                 .into(holder.iv_food_for_you);
-        holder.tv_fff_prod_name.setText(list.get(position).getProduct_name());
-        holder.tv_fff_store_name.setText(list.get(position).getStore_name());
-        holder.tv_fff_prod_price.setText("P " + list.get(position).getProduct_price().toString());
-        holder.tv_fff_prod_cal.setText(list.get(position).getProduct_calories() + "cal");
+        holder.tv_fff_prod_name.setText(list.get(position).getProductName());
+        //holder.tv_fff_store_name.setText(list.get(position).getStore_idStore());
+        holder.tv_fff_prod_price.setText("P " + list.get(position).getProductPrice());
+        //holder.tv_fff_prod_cal.setText(list.get(position).getProduct_calories() + "cal");
 
 
     }
@@ -84,6 +84,7 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
                     }
                 }
             });
+
         }
     }
 }

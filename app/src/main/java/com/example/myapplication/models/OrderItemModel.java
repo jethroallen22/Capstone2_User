@@ -1,37 +1,121 @@
 package com.example.myapplication.models;
 
-public class OrderItemModel {
-    String product_name;
-    int quantity;
-    float total_price;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    public OrderItemModel(String product_name, int quantity, float total_price) {
-        this.product_name = product_name;
-        this.quantity = quantity;
-        this.total_price = total_price;
+import androidx.annotation.NonNull;
+
+public class OrderItemModel implements Parcelable {
+    int idItem;
+    int product_idProduct;
+    float itemPrice;
+    int itemQuantity;
+    int order_idOrder;
+    String productName;
+
+    public OrderItemModel(int idItem, int product_idProduct, float itemPrice, int itemQuantity, int order_idOrder, String productName) {
+        this.idItem = idItem;
+        this.product_idProduct = product_idProduct;
+        this.itemPrice = itemPrice;
+        this.itemQuantity = itemQuantity;
+        this.order_idOrder = order_idOrder;
+        this.productName = productName;
     }
 
-    public String getProduct_name() {
-        return product_name;
+//    public OrderItemModel(String product_name, int quantity, float total_price) {
+//        this.product_name = product_name;
+//        this.quantity = quantity;
+//        this.total_price = total_price;
+//    }
+
+
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getIdItem() {
+        return idItem;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setIdItem(int idItem) {
+        this.idItem = idItem;
     }
 
-    public float getTotal_price() {
-        return total_price;
+    public int getProduct_idProduct() {
+        return product_idProduct;
     }
 
-    public void setTotal_price(float total_price) {
-        this.total_price = total_price;
+    public void setProduct_idProduct(int product_idProduct) {
+        this.product_idProduct = product_idProduct;
+    }
+
+    public float getItemPrice() {
+        return itemPrice;
+    }
+
+    public void setItemPrice(float itemPrice) {
+        this.itemPrice = itemPrice;
+    }
+
+    public int getItemQuantity() {
+        return itemQuantity;
+    }
+
+    public void setItemQuantity(int itemQuantity) {
+        this.itemQuantity = itemQuantity;
+    }
+
+    public int getOrder_idOrder() {
+        return order_idOrder;
+    }
+
+    public void setOrder_idOrder(int order_idOrder) {
+        this.order_idOrder = order_idOrder;
+    }
+
+    protected OrderItemModel(Parcel in) {
+//        product_name = in.readString();
+//        quantity = in.readInt();
+//        total_price = in.readFloat();
+        idItem = in.readInt();
+        product_idProduct = in.readInt();
+        itemPrice = in.readFloat();
+        itemQuantity = in.readInt();
+        order_idOrder = in.readInt();
+    }
+
+    public static final Creator<OrderItemModel> CREATOR = new Creator<OrderItemModel>() {
+        @Override
+        public OrderItemModel createFromParcel(Parcel in) {
+            return new OrderItemModel(in);
+        }
+
+        @Override
+        public OrderItemModel[] newArray(int size) {
+            return new OrderItemModel[size];
+        }
+    };
+
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+//        dest.writeString(product_name);
+//        dest.writeInt(quantity);
+//        dest.writeFloat(total_price);
+        dest.writeInt(idItem);
+        dest.writeInt(product_idProduct);
+        dest.writeFloat(itemPrice);
+        dest.writeInt(itemQuantity);
+        dest.writeInt(order_idOrder);
     }
 }

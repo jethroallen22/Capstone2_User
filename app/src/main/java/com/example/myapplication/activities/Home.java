@@ -9,11 +9,14 @@ import android.view.Menu;
 import android.widget.ImageView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.profile.ProfileFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -28,6 +31,11 @@ public class Home extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityHomeBinding binding;
     private ImageView profileImage;
+    String name = "";
+    int id;
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,24 @@ public class Home extends AppCompatActivity {
 
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Intent intent = getIntent();
+        if(intent.getStringExtra("name") != null){
+            name = intent.getStringExtra("name");
+            id = intent.getIntExtra("id",0);
+            Log.d("name",name + id);
+
+            Bundle b = new Bundle();
+            HomeFragment homeFragment = new HomeFragment();
+            b.putString("name", name);
+            Log.d("name in bundle: ",name);
+            homeFragment.setArguments(b);
+            fragmentTransaction.add(R.id.nav_host_fragment_content_home, homeFragment).commit();
+        } else {
+            Log.d("Intent: ", "intent is null");
+        }
+
+
 
         setSupportActionBar(binding.appBarHome.toolbar);
 

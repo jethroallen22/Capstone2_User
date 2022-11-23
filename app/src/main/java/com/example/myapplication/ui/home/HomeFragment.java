@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +25,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.Home;
 import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.activities.Store;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
@@ -34,8 +38,11 @@ import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
+import com.example.myapplication.models.OrderItemModel;
+import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.order.OrderFragment;
 import com.example.myapplication.ui.product.ProductFragment;
 import com.example.myapplication.ui.store.StoreFragment;
@@ -54,10 +61,15 @@ import java.util.List;
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg;
-    private static String JSON_URL_REC="http://10.11.1.164/android_register_login/api.php";
-    private static String JSON_URL_CATEG="http://10.11.1.164/android_register_login/apicateg.php";
+    private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
+    //School IP (Change IP Address to your IP)
+    private static String JSON_URL_REC="http://192.168.68.112/android_register_login/api.php";
+    private static String JSON_URL_CATEG="http://192.168.68.112/android_register_login/apicateg.php";
+    private static String JSON_URL_POPU="http://192.168.68.112/android_register_login/apipopu.php";
+    private static String JSON_URL_FOOD="http://192.168.68.112/android_register_login/apifood.php";
 
+    List<OrderItemModel> order_item_temp_list;
+    List<OrderModel> order_temp_list;
 
     //Category Recycler View
     RecyclerView rv_category;
@@ -92,6 +104,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     Button btn_add_to_cart;
     int product_count = 0;
 
+    //Getting Bundle
+    int userId = 0;
+    String name = "";
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -100,6 +117,25 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+       //name = ;
+
+        Bundle bundle = getArguments();
+//        Log.d("BUNDLE SIZE" , String.valueOf(bundle.size()));
+       // bundle.
+        //if(bundle.getString("name") != null) {
+//            name = bundle.getString("name");
+           // Log.d("INSIDE BUNDLE", "HELLO");
+        //}
+       Log.d("HOME FRAGMENT name:" , name);
+       //name = get().getString("name");
+
+//        Bundle bundle = getArguments();
+//        int id = bundle.getInt("id");
+//        String name = bundle.getString("name");
+
+        //Log.d("Mama", name);
+
 
         //HOME CATEGORY
         /*
@@ -125,31 +161,26 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_home_store_rec.setHasFixedSize(true);
         rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_home_store_rec.setNestedScrollingEnabled(false);
+        home_store_rec_list = new ArrayList<>();
         requestQueueRec1 = Singleton.getsInstance(getActivity()).getRequestQueue();
-
         extractDataRec1();
 
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
-        //home_pop_store_list.add(new StoreModel(R.drawable.mcdo_logo,"Mcdonalds","lorem ipsum dolor", "Binondo", "Fast Food", 3.5F,5));
-        homeStorePopularAdapter = new HomeStorePopularAdapter(home_pop_store_list, getActivity(), this);
-        rv_home_pop_store.setAdapter(homeStorePopularAdapter);
         rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_home_pop_store.setHasFixedSize(true);
         rv_home_pop_store.setNestedScrollingEnabled(false);
+        requestQueuePopu = Singleton.getsInstance(getActivity()).getRequestQueue();
+        extractPopular();
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
-        /*food_for_you_list.add(new ProductModel(R.drawable.burger_mcdo,"Burger McDo","Lorem Ipsum Dolor Amet","McDonalds",45F,350));
-        food_for_you_list.add(new ProductModel(R.drawable.chicken_joy,"Chicken Joy","Lorem Ipsum Dolor Amet","Jollibee", 99F,420));
-        food_for_you_list.add(new ProductModel(R.drawable.whopper_king,"Whopper King", "Lorem Ipsum Dolor Amet","BurgerKing",199F,542));*/
-        homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,this);
-        rv_food_for_you.setAdapter(homeFoodForYouAdapter);
         rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
-
+        requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
+        extractFoodforyou();
 
         //STORE REC 2
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
@@ -159,7 +190,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
         requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
         home_store_rec_list2 = new ArrayList<>();
-        extractDataRec1();
         extractDataRec2();
 
         Collections.shuffle(home_store_rec_list2);
@@ -169,9 +199,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             public void onClick(View view) {
                 //Snackbar.make(view, "Work in Progress!!! Magreredirect dapat sa cart screen", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
-                OrderFragment orderFragment = new OrderFragment();
-                Log.d("TAG", "Success");
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,orderFragment).commit();
+                CartFragment cartFragment = new CartFragment();
+                Log.d("CART", "Success");
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,cartFragment).commit();
             }
         });
 
@@ -179,6 +209,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
+
     @Override
     public void onStart(){
         super.onStart();
@@ -212,31 +243,36 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //Store Recommendation for RecView 1 and 2 Function
     public void extractDataRec1(){
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
                     try {
-                        JSONObject jsonObject = response.getJSONObject(i);
+                        JSONObject jsonObjectRec1 = response.getJSONObject(i);
+                        long r_id = jsonObjectRec1.getLong("idStore");
+                        long m_id = jsonObjectRec1.getLong("merchant_idMerchant");
+                        String r_image = jsonObjectRec1.getString("storeImage");
+                        String r_name = jsonObjectRec1.getString("storeName");
+                        String r_description = jsonObjectRec1.getString("storeDescription");
+                        String r_location = jsonObjectRec1.getString("storeLocation");
+                        String r_category = jsonObjectRec1.getString("storeCategory");
+                        float r_rating = (float) jsonObjectRec1.getDouble("storeRating");
+                        int r_popularity = jsonObjectRec1.getInt("storePopularity");
+                        String r_open = jsonObjectRec1.getString("storeStartTime");
+                        String r_close = jsonObjectRec1.getString("storeEndTime");
+                        String r_tags = jsonObjectRec1.getString("storeTag");
 
-                        String r_image = jsonObject.getString("r_image");
-                        String r_name = jsonObject.getString("r_name");
-                        String r_description = jsonObject.getString("r_description");
-                        String r_location = jsonObject.getString("r_location");
-                        String r_category = jsonObject.getString("r_category");
-                        double r_rating = jsonObject.getDouble("r_rating");
+                        StoreModel rec = new StoreModel(r_id,m_id,r_image,r_name,r_description,r_location,r_category,
+                                                        (float) r_rating, r_popularity, r_open, r_close, r_tags);
+                        home_store_rec_list.add(rec);
 
-                        //StoreModel store = new StoreModel(r_image,r_name,r_description,r_location,
-                        //        r_category, (float) r_rating);
-                        //home_store_rec_list.add(store);
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list);
-
                     rv_home_store_rec.setAdapter(homeStoreRecAdapter);
 
 
@@ -248,30 +284,32 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
             }
         });
-
-        requestQueueRec1.add(jsonArrayRequest);
+        requestQueueRec1.add(jsonArrayRequestRec1);
     }
 
     public void extractDataRec2(){
-        JsonArrayRequest jsonArrayRequest2 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestRec2 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
-
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
+                        long r_id = jsonObject.getLong("idStore");
+                        long m_id = jsonObject.getLong("merchant_idMerchant");
+                        String r_image = jsonObject.getString("storeImage");
+                        String r_name = jsonObject.getString("storeName");
+                        String r_description = jsonObject.getString("storeDescription");
+                        String r_location = jsonObject.getString("storeLocation");
+                        String r_category = jsonObject.getString("storeCategory");
+                        float r_rating = (float) jsonObject.getDouble("storeRating");
+                        int r_popularity = jsonObject.getInt("storePopularity");
+                        String r_open = jsonObject.getString("storeStartTime");
+                        String r_close = jsonObject.getString("storeEndTime");
+                        String r_tags = jsonObject.getString("storeTag");
 
-                        String r_image = jsonObject.getString("r_image");
-                        String r_name = jsonObject.getString("r_name");
-                        response.getJSONObject(i).getString("r_image");
-                        String r_description = jsonObject.getString("r_description");
-                        String r_location = jsonObject.getString("r_location");
-                        String r_category = jsonObject.getString("r_category");
-                        double r_rating = jsonObject.getDouble("r_rating");
-
-                        //StoreModel store2 = new StoreModel(r_image,r_name,r_description,r_location,
-                        //        r_category, (float) r_rating);
-                        //home_store_rec_list2.add(store2);
+                        StoreModel store2 = new StoreModel(r_id,m_id,r_image,r_name,r_description,r_location,r_category,
+                                (float) r_rating, r_popularity, r_open, r_close, r_tags);
+                        home_store_rec_list2.add(store2);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -285,14 +323,56 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
             }
         });
-
-        requestQueueRec2.add(jsonArrayRequest2);
+        requestQueueRec2.add(jsonArrayRequestRec2);
     }
 
     //Popular Recommendation Function
+    public void extractPopular(){
+        HomeFragment homeFragment = this;
+
+        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL_POPU, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectPop = response.getJSONObject(i);
+                        long r_id = jsonObjectPop.getLong("idStore");
+                        long m_id = jsonObjectPop.getLong("merchant_idMerchant");
+                        String r_image = jsonObjectPop.getString("storeImage");
+                        String r_name = jsonObjectPop.getString("storeName");
+                        String r_description = jsonObjectPop.getString("storeDescription");
+                        String r_location = jsonObjectPop.getString("storeLocation");
+                        String r_category = jsonObjectPop.getString("storeCategory");
+                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
+                        int r_popularity = jsonObjectPop.getInt("storePopularity");
+                        String r_open = jsonObjectPop.getString("storeStartTime");
+                        String r_close = jsonObjectPop.getString("storeEndTime");
+                        String r_tags = jsonObjectPop.getString("storeTag");
+
+                        StoreModel store3 = new StoreModel(r_id,m_id,r_image,r_name,r_description,r_location,r_category,
+                                (float) r_rating, r_popularity, r_open, r_close, r_tags);
+                        home_pop_store_list.add(store3);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    homeStorePopularAdapter = new HomeStorePopularAdapter( home_pop_store_list,getActivity(), homeFragment);
+                    rv_home_pop_store.setAdapter(homeStorePopularAdapter);
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueuePopu.add(jsonArrayRequest3);
+    }
     //Category Function
     public void extractCateg(){
 
@@ -302,9 +382,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject1 = response.getJSONObject(i);
-
                         String categ_image = jsonObject1.getString("categ_image");
                         String categ_name = jsonObject1.getString("categ_name");
+
+                        Log.d("Category", categ_image + categ_name);
 
                         HomeCategoryModel categModel = new HomeCategoryModel(categ_image,categ_name);
                         home_categ_list.add(categModel);
@@ -322,8 +403,45 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
             }
         });
-
         requestQueueCateg.add(jsonArrayRequest1);
+    }
+
+    //Food For You
+    public void extractFoodforyou(){
+        HomeFragment homeFragment = this;
+        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL_FOOD, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                        int store_idStore = jsonObjectFoodforyou.getInt("store_idStore");
+                        String productName = jsonObjectFoodforyou.getString("productName");
+                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                        String productImage = jsonObjectFoodforyou.getString("productImage");
+                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                        String productTag = jsonObjectFoodforyou.getString("productTag");
+                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+
+                        ProductModel foodfyModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime);
+                        food_for_you_list.add(foodfyModel);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,homeFragment);
+                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueFood.add(jsonArrayRequestFoodforyou);
     }
 
 
@@ -346,20 +464,22 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
+
+
     @Override
     public void onItemClickStorePopular(int position) {
 
-        Log.d("TAG", "Success");
+        Log.d("CLICKPOPU", "Success");
         Bundle bundle = new Bundle();
-        //bundle.putInt("StoreImage", home_pop_store_list.get(position).getStore_image());
+        bundle.putLong("StoreId", home_pop_store_list.get(position).getStore_id());
+        bundle.putString("Image", home_pop_store_list.get(position).getStore_image());
         bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
-        bundle.putString("StoreAddress", "Esterling Heights Subdivision, Guintorilan City");
+        bundle.putString("StoreAddress", home_pop_store_list.get(position).getStore_location());
         bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());
+        bundle.putString("StoreDescription", home_pop_store_list.get(position).getStore_category());
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        Log.d("TAG", "Success");
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-        Log.d("TAG", "Success");
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
 
     }
 
@@ -391,16 +511,37 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
 
-        //product_image.setImageResource(food_for_you_list.get(position).getProduct_image());
-        product_name.setText(food_for_you_list.get(position).getProduct_name());
-        product_calorie.setText(Integer.toString(food_for_you_list.get(position).getProduct_calories()) + " Cals");
-        product_description.setText(food_for_you_list.get(position).getProduct_description());
-        product_price.setText("P"+food_for_you_list.get(position).getProduct_price().toString());
+        //product_image.setImageResource(food_for_you_list.get(position).getProductImage());
+        Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
+        product_name.setText(food_for_you_list.get(position).getProductName());
+        //product_calorie.setText(Integer.toString(food_for_you_list.get(position).getProduct_calories()) + " Cals");
+        product_description.setText(food_for_you_list.get(position).getProductDescription());
+        product_price.setText("P"+food_for_you_list.get(position).getProductPrice());
 
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(this,"Success!!!",Toast.LENGTH_SHORT).show();
+                //if(arraylist.isEmpty())
+                //orderlist.add.orderModel
+                //else
+                float tempPrice = 0;
+                order_item_temp_list.add(new OrderItemModel(6,food_for_you_list.get(position).getIdProduct(),food_for_you_list.get(position).getProductPrice()*product_count,
+                        product_count,10 , food_for_you_list.get(position).getProductName()));
+                for (int i = 0 ; i < order_item_temp_list.size() ; i++){
+                    tempPrice += order_item_temp_list.get(i).getItemPrice();
+                }
+                order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
+                                                  userId, order_item_temp_list));
+
+                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList(order_temp_list);
+                CartFragment fragment = new CartFragment();
+                //bundle.putSerializable("OrderSummary", order_list);
+                bundle.putParcelableArrayList("tempOrderList", (ArrayList<? extends Parcelable>) order_temp_list);
+                //order.putParcelable("Order",order_list.get(position));
+                fragment.setArguments(bundle);
+                Log.d("Bundling tempOrderList", "Success");
                 bottomSheetDialog.dismiss();
             }
         });
@@ -432,5 +573,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
     }
+
+
 
 }

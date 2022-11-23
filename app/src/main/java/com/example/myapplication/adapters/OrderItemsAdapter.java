@@ -34,10 +34,10 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull OrderItemsAdapter.ViewHolder holder, int position) {
-        holder.iv_close_btn.setImageResource(R.drawable.ic_baseline_close_24);
-        holder.tv_order_item_name.setText(list.get(position).getProduct_name());
-        holder.tv_order_item_qty.setText("Qty:" + list.get(position).getQuantity() + "x");
-        holder.tv_order_total_price.setText("P " + list.get(position).getTotal_price());
+//        holder.iv_close_btn.setImageResource(R.drawable.ic_baseline_close_24);
+//        holder.tv_order_item_name.setText(list.get(position).getProduct_name());
+//        holder.tv_order_item_qty.setText("Qty:" + list.get(position).getQuantity() + "x");
+//        holder.tv_order_total_price.setText("P " + list.get(position).getTotal_price());
     }
 
     @Override

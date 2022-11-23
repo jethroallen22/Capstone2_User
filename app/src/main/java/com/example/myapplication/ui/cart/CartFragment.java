@@ -21,6 +21,7 @@ import com.example.myapplication.adapters.CartAdapter;
 import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.CartModel;
+import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.ui.order.OrderFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 
@@ -42,6 +43,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     CheckBox cb_cart_item;
     CheckBox checkBox;
 
+    List<OrderModel> order_list;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         CartViewModel cartViewModel =
@@ -50,10 +53,19 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         binding = FragmentCartBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        order_list = new ArrayList<>();
+
+        Bundle bundle = this.getArguments();
+
+        if(bundle != null){
+            order_list = bundle.getParcelableArrayList("tempOrderList");
+            Log.d("Checking laman: ", String.valueOf(order_list.size()));
+        }
+
         rv_cart = root.findViewById(R.id.rv_cart);
         cart_list = new ArrayList<>();
-        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Binondo", 3, "45", "3.5"));
-        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Abad Santos", 5, "30", "1.5"));
+//        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Binondo", 3, "45", "3.5"));
+//        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Abad Santos", 5, "30", "1.5"));
         cartAdapter = new CartAdapter(getActivity(),cart_list, this);
         rv_cart.setAdapter(cartAdapter);
         rv_cart.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
@@ -97,7 +109,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClick(int position) {
         Log.d("TAG", "Success");
         Bundle bundle = new Bundle();
-        bundle.putString("StoreName", cart_list.get(position).getStore_name());
+        //bundle.putString("StoreName", cart_list.get(position).getStore_name());
 
         OrderFragment fragment = new OrderFragment();
         fragment.setArguments(bundle);

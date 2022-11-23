@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.models.HomeFoodForYouModel;
+import com.example.myapplication.models.ProductModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,9 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
     Context context;
-    List<HomeFoodForYouModel> list;
+    List<ProductModel> list;
 
-    public ProductAdapter(Context context, List<HomeFoodForYouModel> list) {
+    public ProductAdapter(Context context, List<ProductModel> list) {
         this.context = context;
         this.list = list;
     }
@@ -36,11 +37,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ProductAdapter.ViewHolder holder, int position) {
         Glide.with(context)
-                .load(list.get(position).getImage())
+                .load(list.get(position).getProductImage())
                 .into(holder.iv_product_image);
-        holder.tv_product_name.setText(list.get(position).getProduct_name());
-        holder.tv_product_price.setText(list.get(position).getProduct_price().toString());
-        holder.tv_product_cal.setText(list.get(position).getProduct_calories() + "cal");
+        holder.tv_product_name.setText(list.get(position).getProductName());
+        holder.tv_product_price.setText(String.valueOf(list.get(position).getProductPrice()));
+        //holder.tv_product_cal.setText(list.get(position).getProduct_calories() + "cal");
 
 
     }

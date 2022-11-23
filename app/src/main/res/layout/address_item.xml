@@ -34,6 +34,7 @@
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/robotobold"
                 android:text="Home"
+                android:textColor="#000000"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/iv_address_icon"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -48,6 +49,7 @@
                 android:lines="2"
                 android:maxLines="2"
                 android:text="330 Sansdazz St. Manila City"
+                android:textColor="#000000"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/iv_address_icon"
                 app:layout_constraintTop_toBottomOf="@+id/tv_address_name" />
@@ -72,6 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
                     android:layout_weight="1"
+                    android:clickable="true"
                     app:srcCompat="@android:drawable/ic_menu_delete" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

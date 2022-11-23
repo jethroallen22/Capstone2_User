@@ -105,8 +105,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     int product_count = 0;
 
     //Getting Bundle
+
     int userId = 0;
-    String name = "";
+    String userName = "";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -120,21 +121,17 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
        //name = ;
 
-        Bundle bundle = getArguments();
-//        Log.d("BUNDLE SIZE" , String.valueOf(bundle.size()));
-       // bundle.
-        //if(bundle.getString("name") != null) {
-//            name = bundle.getString("name");
-           // Log.d("INSIDE BUNDLE", "HELLO");
-        //}
-       Log.d("HOME FRAGMENT name:" , name);
-       //name = get().getString("name");
 
-//        Bundle bundle = getArguments();
-//        int id = bundle.getInt("id");
-//        String name = bundle.getString("name");
 
-        //Log.d("Mama", name);
+
+        Intent intent = getActivity().getIntent();
+        if(intent.getStringExtra("name") != null) {
+            userName = intent.getStringExtra("name");
+            userId = intent.getIntExtra("id",0);
+            Log.d("HOME FRAG name", userName + userId);
+        } else {
+            Log.d("HOME FRAG name", "FAIL");
+        }
 
 
         //HOME CATEGORY

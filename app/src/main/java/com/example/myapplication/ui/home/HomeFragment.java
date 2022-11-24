@@ -8,10 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -27,9 +25,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.Home;
-import com.example.myapplication.activities.MainActivity;
-import com.example.myapplication.activities.Store;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
@@ -43,11 +38,8 @@ import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
-import com.example.myapplication.ui.order.OrderFragment;
-import com.example.myapplication.ui.product.ProductFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.snackbar.Snackbar;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -62,11 +54,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
-    //School IP (Change IP Address to your IP)
-    private static String JSON_URL_REC="http://192.168.68.112/android_register_login/api.php";
-    private static String JSON_URL_CATEG="http://192.168.68.112/android_register_login/apicateg.php";
-    private static String JSON_URL_POPU="http://192.168.68.112/android_register_login/apipopu.php";
-    private static String JSON_URL_FOOD="http://192.168.68.112/android_register_login/apifood.php";
+
+    private static String JSON_URL="http://192.168.68.117/android_register_login/";
+
 
     List<OrderItemModel> order_item_temp_list;
     List<OrderModel> order_temp_list;
@@ -97,7 +87,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //For Product Bottomsheet
     LinearLayout linearLayout;
-    TextView product_name,product_calorie,product_price,product_description,tv_counter;
+    TextView product_name,product_resto,product_price,product_description,tv_counter;
     RoundedImageView product_image;
     ConstraintLayout cl_product_add;
     ConstraintLayout cl_product_minus;
@@ -133,7 +123,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             Log.d("HOME FRAG name", "FAIL");
         }
 
-
+        order_item_temp_list = new ArrayList<>();
+        order_temp_list = new ArrayList<>();
         //HOME CATEGORY
         /*
         home_categ_list.add(new HomeCategoryModel(R.drawable.mcdo_logo,"Chicken"));
@@ -240,7 +231,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //Store Recommendation for RecView 1 and 2 Function
     public void extractDataRec1(){
-        JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"api.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -285,7 +276,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void extractDataRec2(){
-        JsonArrayRequest jsonArrayRequestRec2 = new JsonArrayRequest(Request.Method.GET, JSON_URL_REC, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestRec2 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"api.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -329,7 +320,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     public void extractPopular(){
         HomeFragment homeFragment = this;
 
-        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL_POPU, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -373,7 +364,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     //Category Function
     public void extractCateg(){
 
-        JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL_CATEG, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicateg.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -406,7 +397,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     //Food For You
     public void extractFoodforyou(){
         HomeFragment homeFragment = this;
-        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL_FOOD, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -421,8 +412,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
                         String productTag = jsonObjectFoodforyou.getString("productTag");
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                        String storeName = jsonObjectFoodforyou.getString("storeName");
 
-                        ProductModel foodfyModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime);
+                        ProductModel foodfyModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,productImage,
+                                                                    productServingSize,productTag,productPrepTime,storeName);
                         food_for_you_list.add(foodfyModel);
 
                     } catch (JSONException e) {
@@ -500,7 +493,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d(TAG,"bottomSheetView = LayoutInflater.from");
         product_image = bottomSheetView.findViewById(R.id.iv_product_imagee2);
         product_name = bottomSheetView.findViewById(R.id.tv_product_namee2);
-        product_calorie = bottomSheetView.findViewById(R.id.tv_product_caloriee2);
+        product_resto = bottomSheetView.findViewById(R.id.tv_product_restos);
         product_description = bottomSheetView.findViewById(R.id.tv_product_description2);
         product_price = bottomSheetView.findViewById(R.id.tv_product_pricee2);
         btn_add_to_cart = bottomSheetView.findViewById(R.id.btn_add_to_cart);
@@ -511,7 +504,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         //product_image.setImageResource(food_for_you_list.get(position).getProductImage());
         Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
         product_name.setText(food_for_you_list.get(position).getProductName());
-        //product_calorie.setText(Integer.toString(food_for_you_list.get(position).getProduct_calories()) + " Cals");
+        product_resto.setText(food_for_you_list.get(position).getProductRestoName());
         product_description.setText(food_for_you_list.get(position).getProductDescription());
         product_price.setText("P"+food_for_you_list.get(position).getProductPrice());
 
@@ -525,20 +518,25 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 float tempPrice = 0;
                 Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
                 Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getIdProduct()));
-                order_item_temp_list.add(new OrderItemModel(6,food_for_you_list.get(position).getIdProduct(),food_for_you_list.get(position).getProductPrice()*product_count,
-                        product_count,10 , food_for_you_list.get(position).getProductName()));
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductPrice()));
+                Log.d("idProduct: ", String.valueOf(product_count));
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductName()));
+                order_item_temp_list.add(new OrderItemModel(6,food_for_you_list.get(position).getIdProduct(),
+                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,10 ,
+                                food_for_you_list.get(position).getProductName()));
                 Log.d("ADD TO CART: ", "AFTER ORDER_ITEM");
                 for (int i = 0 ; i < order_item_temp_list.size() ; i++){
                     tempPrice += order_item_temp_list.get(i).getItemPrice();
                 }
-                order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
-                                                  userId, order_item_temp_list));
+//                order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
+//                                                  userId, order_item_temp_list));
+                Log.d("ordertemp", String.valueOf(order_temp_list));
 
                 Bundle bundle = new Bundle();
 //                bundle.putParcelableArrayList(order_temp_list);
                 CartFragment fragment = new CartFragment();
                 //bundle.putSerializable("OrderSummary", order_list);
-                bundle.putParcelableArrayList("tempOrderList", (ArrayList<? extends Parcelable>) order_temp_list);
+                bundle.putParcelableArrayList("tempOrderList", (ArrayList<? extends Parcelable>) order_item_temp_list);
                 //order.putParcelable("Order",order_list.get(position));
                 fragment.setArguments(bundle);
                 Log.d("Bundling tempOrderList", "Success");

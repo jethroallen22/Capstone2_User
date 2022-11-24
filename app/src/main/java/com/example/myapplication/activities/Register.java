@@ -37,10 +37,7 @@ public class Register extends AppCompatActivity {
     private Button signup_btn;
     private TextView tv_login_btn;
 
-    //Workspace IP
-    private static String URL_SIGNUP = "http://192.168.68.105/android_register_login/register.php";
-    private static String URL_SIGNUP1 = "http://192.168.68.105/android_register_login/resgister1.php";
-    private static String URL_CHECK = "http://192.168.68.109/android_register_login/apiusers.php";
+    private static String JSON_URL = "http://192.168.68.105/android_register_login/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +90,7 @@ public class Register extends AppCompatActivity {
     private void SignUp(String register_name_text_input,  String register_email_text_input,
                         String register_number_text_input, String register_password_text_input){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_SIGNUP, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"register.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String result) {
                 Log.d("1 ", result );

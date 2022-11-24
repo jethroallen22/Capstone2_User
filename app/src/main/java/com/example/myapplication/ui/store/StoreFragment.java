@@ -63,8 +63,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_category;
     public String stor_description;
 
-    private static String JSON_URL_FOOD="http://192.168.68.112/android_register_login/apifood.php";
-    private static String JSON_URL_PROD="http://192.168.68.112/android_register_login/apiprod.php";
+    private static String JSON_URL="http://192.168.68.117/android_register_login/";
 
 
     //Food For You Recycler View
@@ -151,7 +150,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     public void extractFoodforyou(){
         StoreFragment storeFragment = this;
-        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL_FOOD, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -166,8 +165,9 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
                         String productTag = jsonObjectFoodforyou.getString("productTag");
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                        String storeName = jsonObjectFoodforyou.getString("storeName");
 
-                        ProductModel foodfyModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime);
+                        ProductModel foodfyModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime,storeName);
                         food_for_you_list.add(foodfyModel);
 
                     } catch (JSONException e) {
@@ -188,7 +188,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     private void SendtoDb(long stor_id){
         Log.d("SendtoDB: ", "im in");
-        JsonArrayRequest jsonArrayRequestProd= new JsonArrayRequest(Request.Method.GET, JSON_URL_PROD, null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestProd= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiprod.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -203,9 +203,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
                         String productTag = jsonObjectFoodforyou.getString("productTag");
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                        String storeName = jsonObjectFoodforyou.getString("storeName");
 
                         if(store_idStore == stor_id){
-                            ProductModel productModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime);
+                            ProductModel productModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,
+                                                            productImage,productServingSize,productTag,productPrepTime,storeName);
                             products_list.add(productModel);
                         }
 

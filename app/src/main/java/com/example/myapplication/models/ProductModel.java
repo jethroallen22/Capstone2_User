@@ -16,6 +16,7 @@ public class ProductModel implements Parcelable {
     String productServingSize;
     String productTag;
     int productPrepTime;
+    String productRestoName;
 
 
 
@@ -39,7 +40,7 @@ public class ProductModel implements Parcelable {
 //    }
 
 
-    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, Float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime) {
+    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, Float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName) {
         this.idProduct = idProduct;
         this.store_idStore = store_idStore;
         this.productName = productName;
@@ -49,6 +50,7 @@ public class ProductModel implements Parcelable {
         this.productServingSize = productServingSize;
         this.productTag = productTag;
         this.productPrepTime = productPrepTime;
+        this.productRestoName = productRestoName;
     }
 
     public ProductModel(){}
@@ -67,6 +69,7 @@ public class ProductModel implements Parcelable {
         productServingSize = in.readString();
         productTag = in.readString();
         productPrepTime = in.readInt();
+        productRestoName = in.readString();
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -153,6 +156,14 @@ public class ProductModel implements Parcelable {
         this.productPrepTime = productPrepTime;
     }
 
+    public String getProductRestoName() {
+        return productRestoName;
+    }
+
+    public void setProductRestoName(String productRestoName) {
+        this.productRestoName = productRestoName;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -174,5 +185,6 @@ public class ProductModel implements Parcelable {
         parcel.writeString(productServingSize);
         parcel.writeString(productTag);
         parcel.writeInt(productPrepTime);
+        parcel.writeString(productRestoName);
     }
 }

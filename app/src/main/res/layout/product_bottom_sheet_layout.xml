@@ -61,15 +61,15 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_product_caloriee2" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_product_restos" />
 
         <TextView
-            android:id="@+id/tv_product_caloriee2"
+            android:id="@+id/tv_product_restos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/robotomedium"
-            android:text="230 Cals"
+            android:text="Store"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/tv_product_namee2"
             app:layout_constraintTop_toBottomOf="@+id/tv_product_namee2" />

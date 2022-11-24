@@ -34,11 +34,8 @@ public class Login extends AppCompatActivity {
     private EditText login_email_text_input, login_password_text_input;
     private Button login_btn;
     private TextView tv_register_btn;
-    //School IP
-    private static String URL_LOGIN = "http://192.168.68.112/android_register_login/login.php";
 
-    //Workspace IP
-    //private static String URL_LOGIN = "http://192.168.68.109/android_register_login/login.php";
+    private static String JSON_URL = "http://192.168.68.117/android_register_login/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +84,7 @@ public class Login extends AppCompatActivity {
     //Login
     private void LogIn(String login_email_text_input, String login_password_text_input){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_LOGIN, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"login.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {

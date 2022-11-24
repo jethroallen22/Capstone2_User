@@ -44,7 +44,7 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
                 .load(list.get(position).getProductImage())
                 .into(holder.iv_food_for_you);
         holder.tv_fff_prod_name.setText(list.get(position).getProductName());
-        //holder.tv_fff_store_name.setText(list.get(position).getStore_idStore());
+        holder.tv_fff_store_name.setText(list.get(position).getProductRestoName());
         holder.tv_fff_prod_price.setText("P " + list.get(position).getProductPrice());
         //holder.tv_fff_prod_cal.setText(list.get(position).getProduct_calories() + "cal");
 
@@ -70,7 +70,7 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
             tv_fff_prod_name = itemView.findViewById(R.id.tv_fff_prod_name);
             tv_fff_store_name = itemView.findViewById(R.id.tv_fff_store_name);
             tv_fff_prod_price = itemView.findViewById(R.id.tv_fff_prod_price);
-            tv_fff_prod_cal = itemView.findViewById(R.id.tv_fff_prod_cal);
+            //tv_fff_prod_cal = itemView.findViewById(R.id.tv_fff_prod_cal);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

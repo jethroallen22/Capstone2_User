@@ -2,7 +2,6 @@ package com.example.myapplication.models;
 
 public class StoreModel {
     long store_id;
-    long merchant_id;
     String store_image;
     String store_name;
     String store_description;
@@ -12,13 +11,11 @@ public class StoreModel {
     int store_popularity;
     String store_open;
     String store_closing;
-    String store_tag;
 
-    public StoreModel(long store_id,long merchant_id, String store_image, String store_name, String store_description,
+    public StoreModel(long store_id, String store_image, String store_name, String store_description,
                       String store_location, String store_category, Float store_rating, int store_popularity,String store_open,
-                      String store_closing, String store_tag) {
+                      String store_closing) {
         this.store_id = store_id;
-        this.merchant_id = merchant_id;
         this.store_image = store_image;
         this.store_name = store_name;
         this.store_description = store_description;
@@ -28,7 +25,6 @@ public class StoreModel {
         this.store_popularity = store_popularity;
         this.store_open = store_open;
         this.store_closing = store_closing;
-        this.store_tag = store_tag;
     }
 
     public long getStore_id() {
@@ -37,14 +33,6 @@ public class StoreModel {
 
     public void setStore_id(long store_id) {
         this.store_id = store_id;
-    }
-
-    public long getMerchant_id() {
-        return merchant_id;
-    }
-
-    public void setMerchant_id(long merchant_id) {
-        this.merchant_id = merchant_id;
     }
 
     public String getStore_image() {
@@ -117,13 +105,5 @@ public class StoreModel {
 
     public void setStore_closing(String store_closing) {
         this.store_closing = store_closing;
-    }
-
-    public String getStore_tag() {
-        return store_tag;
-    }
-
-    public void setStore_tag(String store_tag) {
-        this.store_tag = store_tag;
     }
 }

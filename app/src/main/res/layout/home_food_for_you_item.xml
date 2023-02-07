@@ -32,6 +32,7 @@
             android:fontFamily="@font/robotomedium"
             android:text="Testi"
             android:textAlignment="viewStart"
+            android:maxLines="1"
             android:textSize="16sp" />
 
         <TextView
@@ -43,6 +44,7 @@
             android:fontFamily="@font/robotoregular"
             android:text="Lorem ipsum dolor amet"
             android:textAlignment="viewStart"
+            android:maxLines="1"
             android:textSize="12sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

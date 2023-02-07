@@ -12,14 +12,18 @@ public class OrderModel implements Parcelable {
     float orderItemTotalPrice;
     String orderStatus;
     int store_idstore;
+    String store_image;
+    String store_name;
     int users_id;
     List<OrderItemModel> orderItem_list;
 
-    public OrderModel(int idOrder, float orderItemTotalPrice, String orderStatus, int store_idstore, int users_id, List<OrderItemModel> orderItem_list) {
+    public OrderModel(int idOrder, float orderItemTotalPrice, String orderStatus, int store_idstore, String store_image, String store_name, int users_id, List<OrderItemModel> orderItem_list) {
         this.idOrder = idOrder;
         this.orderItemTotalPrice = orderItemTotalPrice;
         this.orderStatus = orderStatus;
         this.store_idstore = store_idstore;
+        this.store_image = store_image;
+        this.store_name = store_name;
         this.users_id = users_id;
         this.orderItem_list = orderItem_list;
     }
@@ -117,6 +121,22 @@ public class OrderModel implements Parcelable {
         this.orderItem_list = orderItem_list;
     }
 
+    public String getStore_image() {
+        return store_image;
+    }
+
+    public void setStore_image(String store_image) {
+        this.store_image = store_image;
+    }
+
+    public String getStore_name() {
+        return store_name;
+    }
+
+    public void setStore_name(String store_name) {
+        this.store_name = store_name;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -128,6 +148,8 @@ public class OrderModel implements Parcelable {
         dest.writeFloat(orderItemTotalPrice);
         dest.writeString(orderStatus);
         dest.writeInt(store_idstore);
+        dest.writeString(store_name);
+        dest.writeString(store_image);
         dest.writeInt(users_id);
         dest.writeTypedList(orderItem_list);
     }

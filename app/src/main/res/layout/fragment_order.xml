@@ -34,18 +34,6 @@
                     android:text="McDonalds - Taft Avenue"
                     android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/tv_store_addresss"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/robotomedium"
-                    android:text="2399 Taft Ave, Malate, Manila, 1004 Metro Manila" />
-
-                <TextView
-                    android:id="@+id/tv_distance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Distance from you: 5.4km" />
             </LinearLayout>
 
             <LinearLayout
@@ -185,6 +173,10 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/radioGroup">
 
+                    <WebView
+                        android:id="@+id/webPay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 

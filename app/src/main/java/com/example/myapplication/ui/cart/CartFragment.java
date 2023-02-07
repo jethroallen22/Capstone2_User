@@ -21,10 +21,12 @@ import com.example.myapplication.adapters.CartAdapter;
 import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.CartModel;
+import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.ui.order.OrderFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,14 +38,14 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     //Cart List Recycler View
     RecyclerView rv_cart;
-    List<CartModel> cart_list;
+    List<OrderModel> cart_list;
     CartAdapter cartAdapter;
 
     Button btn_remove;
     CheckBox cb_cart_item;
     CheckBox checkBox;
 
-    List<OrderModel> order_list;
+    List<OrderModel> temp_order_list;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,19 +55,21 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         binding = FragmentCartBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        order_list = new ArrayList<>();
+        cart_list = new ArrayList<>();
 
-        Bundle bundle = this.getArguments();
-
-        if(bundle != null){
-            order_list = bundle.getParcelableArrayList("tempOrderList");
-            Log.d("Checking laman: ", String.valueOf(order_list.size()));
-        }
+        Bundle bundle = new Bundle();
+        cart_list = (List<OrderModel>) getArguments().getSerializable("tempOrderList");
+//        Log.d("CART FRAG: ", String.valueOf(temp_order_list.size()));
 
         rv_cart = root.findViewById(R.id.rv_cart);
-        cart_list = new ArrayList<>();
+//        cart_list = new ArrayList<>();
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Binondo", 3, "45", "3.5"));
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Abad Santos", 5, "30", "1.5"));
+
+//        for(int i = 0;i < temp_order_list.size(); i++){
+//            CartModel cartModel = new CartModel(temp_order_list);
+//            cart_list.add(cartModel);
+//        }
         cartAdapter = new CartAdapter(getActivity(),cart_list, this);
         rv_cart.setAdapter(cartAdapter);
         rv_cart.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
@@ -106,6 +110,21 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
+    public void onItemClickStoreRec(int position) {
+
+    }
+
+    @Override
+    public void onItemClickStoreRec2(int position) {
+
+    }
+
+    @Override
+    public void onItemClickSearch(int pos) {
+
+    }
+
+    @Override
     public void onItemClick(int position) {
         Log.d("TAG", "Success");
         Bundle bundle = new Bundle();
@@ -113,6 +132,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
         OrderFragment fragment = new OrderFragment();
         fragment.setArguments(bundle);
+        bundle.putSerializable("order_item_list", (Serializable) cart_list.get(position).getOrderItem_list());
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
         Log.d("Test","Test success");
     }

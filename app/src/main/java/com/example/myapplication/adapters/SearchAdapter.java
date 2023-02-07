@@ -1,0 +1,78 @@
+package com.example.myapplication.adapters;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.myapplication.R;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
+import com.example.myapplication.models.SearchModel;
+
+import java.util.List;
+
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
+    private final RecyclerViewInterface recyclerViewInterface;
+
+    Context context;
+    List<SearchModel> list;
+
+    public SearchAdapter(Context context, List<SearchModel> list, RecyclerViewInterface recyclerViewInterface) {
+        this.recyclerViewInterface = recyclerViewInterface;
+        this.context = context;
+        this.list = list;
+    }
+
+    @NonNull
+    @Override
+    public SearchAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.search_item,parent,false),recyclerViewInterface);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
+        Glide.with(context)
+                .load(list.get(position).getSearchImage())
+                .into(holder.iv_search_item_img);
+        holder.tv_search_item_name.setText(list.get(position).getSearchName());
+        holder.tv_search_item_tag.setText(list.get(position).getSearchTag());
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView iv_search_item_img;
+        TextView tv_search_item_name;
+        TextView tv_search_item_tag;
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
+            super(itemView);
+
+            iv_search_item_img = itemView.findViewById(R.id.iv_search_item_img);
+            tv_search_item_name = itemView.findViewById(R.id.tv_search_item_name);
+            tv_search_item_tag = itemView.findViewById(R.id.tv_search_item_tag);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if(pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClickSearch(pos);
+                        }
+                    }
+                }
+            });
+        }
+    }
+}

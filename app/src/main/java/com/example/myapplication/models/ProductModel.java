@@ -17,6 +17,7 @@ public class ProductModel implements Parcelable {
     String productTag;
     int productPrepTime;
     String productRestoName;
+    String productRestoImage;
 
 
 
@@ -40,7 +41,7 @@ public class ProductModel implements Parcelable {
 //    }
 
 
-    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, Float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName) {
+    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, Float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage) {
         this.idProduct = idProduct;
         this.store_idStore = store_idStore;
         this.productName = productName;
@@ -51,6 +52,7 @@ public class ProductModel implements Parcelable {
         this.productTag = productTag;
         this.productPrepTime = productPrepTime;
         this.productRestoName = productRestoName;
+        this.productRestoImage = productRestoImage;
     }
 
     public ProductModel(){}
@@ -70,6 +72,7 @@ public class ProductModel implements Parcelable {
         productTag = in.readString();
         productPrepTime = in.readInt();
         productRestoName = in.readString();
+        productRestoImage = in.readString();
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -164,6 +167,14 @@ public class ProductModel implements Parcelable {
         this.productRestoName = productRestoName;
     }
 
+    public String getProductRestoImage() {
+        return productRestoImage;
+    }
+
+    public void setProductRestoImage(String productRestoImage) {
+        this.productRestoImage = productRestoImage;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -186,5 +197,6 @@ public class ProductModel implements Parcelable {
         parcel.writeString(productTag);
         parcel.writeInt(productPrepTime);
         parcel.writeString(productRestoName);
+        parcel.writeString(productRestoImage);
     }
 }

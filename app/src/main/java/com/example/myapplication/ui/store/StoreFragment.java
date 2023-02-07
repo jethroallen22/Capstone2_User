@@ -7,11 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.Login;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
@@ -33,14 +37,20 @@ import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeFoodForYouModel;
+import com.example.myapplication.models.OrderItemModel;
+import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.product.ProductFragment;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,18 +73,33 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_category;
     public String stor_description;
 
-    private static String JSON_URL="http://192.168.68.117/android_register_login/";
+    private static String JSON_URL="http://10.154.162.184/mosibus_php/user/";
 
+
+    List<OrderItemModel> order_item_temp_list;
+    List<OrderModel> order_temp_list;
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
     List<ProductModel> food_for_you_list;
     HomeFoodForYouAdapter homeFoodForYouAdapter;
 
+    //For Product Bottomsheet
+    LinearLayout linearLayout;
+    TextView product_name,product_resto,product_price,product_description,tv_counter;
+    RoundedImageView product_image;
+    ConstraintLayout cl_product_add;
+    ConstraintLayout cl_product_minus;
+    Button btn_add_to_cart;
+    int product_count = 0;
+
     //Product List Recycler View
     RecyclerView rv_products;
     List<ProductModel> products_list;
     ProductAdapter productAdapter;
+
+    int userId = 0;
+    String userName = "";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -105,6 +130,9 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
             store_address.setText(stor_address);
             store_description.setText(stor_description);
         }
+
+        order_item_temp_list = new ArrayList<>();
+        order_temp_list = new ArrayList<>();
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
@@ -138,6 +166,24 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
+        binding.fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("ON CLICK", "SUCCESS");
+                //Snackbar.make(view, "Work in Progress!!! Magreredirect dapat sa cart screen", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+
+                Bundle bundle2 = new Bundle();
+                CartFragment fragment2 = new CartFragment();
+                bundle2.putSerializable("tempOrderList", (Serializable) order_temp_list);
+                fragment2.setArguments(bundle2);
+                Log.d("Bundling tempOrderItemList", String.valueOf(bundle2.size()));
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment2).commit();
+                Log.d("END" , "END");
+            }
+        });
+
+
         return root;
     }
 
@@ -157,7 +203,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                     try {
                         JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
                         int idProduct = jsonObjectFoodforyou.getInt("idProduct");
-                        int store_idStore = jsonObjectFoodforyou.getInt("store_idStore");
+                        int idStore = jsonObjectFoodforyou.getInt("idStore");
                         String productName = jsonObjectFoodforyou.getString("productName");
                         String productDescription = jsonObjectFoodforyou.getString("productDescription");
                         float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
@@ -166,8 +212,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String productTag = jsonObjectFoodforyou.getString("productTag");
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
                         String storeName = jsonObjectFoodforyou.getString("storeName");
-
-                        ProductModel foodfyModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime,storeName);
+                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                        ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime,storeName,storeImage);
                         food_for_you_list.add(foodfyModel);
 
                     } catch (JSONException e) {
@@ -195,7 +241,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                     try {
                         JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
                         int idProduct = jsonObjectFoodforyou.getInt("idProduct");
-                        int store_idStore = jsonObjectFoodforyou.getInt("store_idStore");
+                        int idStore = jsonObjectFoodforyou.getInt("idStore");
                         String productName = jsonObjectFoodforyou.getString("productName");
                         String productDescription = jsonObjectFoodforyou.getString("productDescription");
                         float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
@@ -204,10 +250,13 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String productTag = jsonObjectFoodforyou.getString("productTag");
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
                         String storeName = jsonObjectFoodforyou.getString("storeName");
+                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
 
-                        if(store_idStore == stor_id){
-                            ProductModel productModel = new ProductModel(idProduct,store_idStore,productName,productDescription,productPrice,
-                                                            productImage,productServingSize,productTag,productPrepTime,storeName);
+                        Log.d("storeid", String.valueOf(stor_id));
+                        if(idStore == stor_id){
+                            Log.d("storeid", String.valueOf(idStore));
+                            ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
+                                                            productImage,productServingSize,productTag,productPrepTime,storeName,storeImage);
                             products_list.add(productModel);
                         }
 
@@ -233,25 +282,25 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClickForYou(int position) {
 
 
-        Bundle bundle = new Bundle();
-
-        //Put Store Info
-        bundle.putInt ("StoreImage", stor_image);
-        bundle.putString("StoreName", stor_name);
-        bundle.putString("StoreAddress", stor_address);
-        bundle.putString("StoreCategory", stor_category);
-
-        //Put Product Info
-        bundle.putString("Image", food_for_you_list.get(position).getProductImage());
-        bundle.putString("Name", food_for_you_list.get(position).getProductName());
-        bundle.putString("Description", food_for_you_list.get(position).getProductDescription());
-        bundle.putString("StoreName", String.valueOf(food_for_you_list.get(position).getStore_idStore()));
-        bundle.putFloat("Price", food_for_you_list.get(position).getProductPrice());
-
-        ProductFragment productFragment = new ProductFragment();
-        productFragment.setArguments(bundle);Log.d("TAG", "Success");
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,productFragment).commit();
-
+//        Bundle bundle = new Bundle();
+//
+//        //Put Store Info
+//        bundle.putInt ("StoreImage", stor_image);
+//        bundle.putString("StoreName", stor_name);
+//        bundle.putString("StoreAddress", stor_address);
+//        bundle.putString("StoreCategory", stor_category);
+//
+//        //Put Product Info
+//        bundle.putString("Image", food_for_you_list.get(position).getProductImage());
+//        bundle.putString("Name", food_for_you_list.get(position).getProductName());
+//        bundle.putString("Description", food_for_you_list.get(position).getProductDescription());
+//        bundle.putString("StoreName", String.valueOf(food_for_you_list.get(position).getStore_idStore()));
+//        bundle.putFloat("Price", food_for_you_list.get(position).getProductPrice());
+//
+//        ProductFragment productFragment = new ProductFragment();
+//        productFragment.setArguments(bundle);Log.d("TAG", "Success");
+//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,productFragment).commit()
+        showBottomSheet(position);
     }
 
 
@@ -263,5 +312,115 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     @Override
     public void onItemClick(int position) {
 
+    }
+
+    @Override
+    public void onItemClickStoreRec(int position) {
+
+    }
+
+    @Override
+    public void onItemClickStoreRec2(int position) {
+
+    }
+
+    @Override
+    public void onItemClickSearch(int pos) {
+
+    }
+
+    public void showBottomSheet(int position){
+        String TAG = "Bottomsheet";
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
+        View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext())
+                .inflate(
+                        R.layout.product_bottom_sheet_layout,
+                        getActivity().findViewById(R.id.product_bottomSheet_container)
+                );
+        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        product_image = bottomSheetView.findViewById(R.id.iv_product_imagee2);
+        product_name = bottomSheetView.findViewById(R.id.tv_product_namee2);
+        product_resto = bottomSheetView.findViewById(R.id.tv_product_restos);
+        product_description = bottomSheetView.findViewById(R.id.tv_product_description2);
+        product_price = bottomSheetView.findViewById(R.id.tv_product_pricee2);
+        btn_add_to_cart = bottomSheetView.findViewById(R.id.btn_add_to_cart);
+        cl_product_add = bottomSheetView.findViewById(R.id.cl_product_add);
+        cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
+        tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
+
+        //product_image.setImageResource(food_for_you_list.get(position).getProductImage());
+        Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
+        product_name.setText(food_for_you_list.get(position).getProductName());
+        product_resto.setText(food_for_you_list.get(position).getProductRestoName());
+        product_description.setText(food_for_you_list.get(position).getProductDescription());
+        product_price.setText("P"+food_for_you_list.get(position).getProductPrice());
+
+        btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(this,"Success!!!",Toast.LENGTH_SHORT).show();
+                //if(arraylist.isEmpty())
+                //orderlist.add.orderModel
+                //else
+                float tempPrice = 0;
+                Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
+                order_item_temp_list.add(new OrderItemModel(6,food_for_you_list.get(position).getIdProduct(),
+                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,10 ,
+                        food_for_you_list.get(position).getProductName()));
+                Log.d("ADD TO CART: ", "AFTER ORDER_ITEM");
+                for (int i = 0 ; i < order_item_temp_list.size() ; i++){
+                    tempPrice += order_item_temp_list.get(i).getItemPrice();
+                }
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getIdProduct()));
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductPrice()));
+                Log.d("idProduct: ", String.valueOf(product_count));
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductName()));
+
+                order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
+                        food_for_you_list.get(position).getProductRestoName(),food_for_you_list.get(position).getProductRestoImage(),
+                        userId, order_item_temp_list));
+                Log.d("ordertemp", String.valueOf(order_item_temp_list.size()));
+                Log.d("order", String.valueOf(order_temp_list.size()));
+
+
+//                Bundle bundle = new Bundle();
+////                bundle.putParcelableArrayList(order_temp_list);
+//                CartFragment fragment = new CartFragment();
+//                //bundle.putSerializable("OrderSummary", order_list);
+//                bundle.putParcelableArrayList("tempOrderItemList", (ArrayList<? extends Parcelable>) order_item_temp_list);
+//                //order.putParcelable("Order",order_list.get(position));
+//                fragment.setArguments(bundle);
+//                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        //Add count to order
+        cl_product_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (product_count >= 0 ){
+                    cl_product_minus.setClickable(true);
+                    product_count +=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+
+        //Subtract count to order
+        cl_product_minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(product_count == 0){
+                    cl_product_minus.setClickable(false);
+                }else{
+                    product_count -=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
     }
 }

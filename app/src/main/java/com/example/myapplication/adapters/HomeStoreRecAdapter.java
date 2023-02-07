@@ -13,24 +13,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.StoreModel;
 
 import java.util.List;
 
 public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapter.ViewHolder> {
+    private final RecyclerViewInterface recyclerViewInterface;
 
     Context context;
     List<StoreModel> list;
 
-    public HomeStoreRecAdapter(FragmentActivity context, List<StoreModel> list) {
+    public HomeStoreRecAdapter(FragmentActivity context, List<StoreModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
     @NonNull
     @Override
     public HomeStoreRecAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_store_rec_item,parent,false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_store_rec_item,parent,false),recyclerViewInterface);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapte
         TextView tv_store_category;
         TextView tv_store_rating;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             iv_store_image = itemView.findViewById(R.id.iv_food_image);
@@ -66,6 +69,19 @@ public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapte
             tv_store_location = itemView.findViewById(R.id.tv_food_price);
             tv_store_category = itemView.findViewById(R.id.tv_store_category);
             tv_store_rating = itemView.findViewById(R.id.tv_store_rating);
+
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    if (recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if (pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClickStoreRec(pos);
+                        }
+                    }
+                }
+            });
         }
     }
 }

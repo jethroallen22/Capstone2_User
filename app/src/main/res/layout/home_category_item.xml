@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="80dp"
-    android:layout_height="80dp"
-    android:layout_marginLeft="16dp"
-    app:cardBackgroundColor="#FFF"
-    app:cardCornerRadius="60dp"
-    app:contentPadding="8dp">
+    android:layout_height="110dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_marginLeft="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal|center_vertical"
-        android:orientation="vertical">
+    <androidx.cardview.widget.CardView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:cardBackgroundColor="#FFF"
+        app:cardCornerRadius="60dp"
+        app:contentPadding="8dp">>
 
-        <ImageView
-            android:id="@+id/iv_categ_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="4dp"
-            android:baselineAlignBottom="false"
-            app:srcCompat="@drawable/ic_menu_gallery" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_categ_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/robotomedium"
-            android:text="Lorem"
-            android:textAlignment="center"
-            android:textSize="16sp" />
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_categ_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                android:baselineAlignBottom="false"
+                app:srcCompat="@drawable/ic_menu_gallery" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-</androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/tv_categ_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/robotomedium"
+        android:text="Lorem"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+</LinearLayout>
+

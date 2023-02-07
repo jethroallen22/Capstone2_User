@@ -11,33 +11,61 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
+import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.OrderItemModel;
+import com.example.myapplication.models.OrderModel;
 
 import java.util.List;
 
 public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.ViewHolder> {
+    private final RecyclerViewInterface recyclerViewInterface;
 
     Context context;
     List<OrderItemModel> list;
 
-    public OrderItemsAdapter(Context context, List<OrderItemModel> list) {
+    public OrderItemsAdapter(Context context, List<OrderItemModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
     @NonNull
     @Override
     public OrderItemsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new OrderItemsAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cartorder_item,parent,false));
+        return new OrderItemsAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cartorder_item,parent,false), recyclerViewInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderItemsAdapter.ViewHolder holder, int position) {
-//        holder.iv_close_btn.setImageResource(R.drawable.ic_baseline_close_24);
-//        holder.tv_order_item_name.setText(list.get(position).getProduct_name());
-//        holder.tv_order_item_qty.setText("Qty:" + list.get(position).getQuantity() + "x");
-//        holder.tv_order_total_price.setText("P " + list.get(position).getTotal_price());
+//        if(list.size() != 0) {
+//            int i, j = 0;
+//            float total_price = 0;
+//            Log.d("CART ADAPTER: ", String.valueOf(list.size()));
+//            Log.d("CART ADAPTER: ", String.valueOf(position));
+//
+//            for (i = 0; i < list.get(position).getOrder_list().size(); i++) {
+//                Log.d("INSIDE FOR LOOP", String.valueOf(i));
+//                for (j=0; j<list.get(position).getOrder_list().get(i).getOrderItem_list().size();j++){
+//                    total_price = list.get(position).getOrder_list().get(i).getOrderItem_list().get(j).getItemPrice();
+//                    holder.tv_order_item_name.setText(list.get(position).getOrder_list().get(i).getOrderItem_list().get(j).getProductName());
+//                    holder.tv_order_item_qty.setText("Qty:" + list.get(position).getOrder_list().get(i).getOrderItem_list().get(j).getItemQuantity() + "x");
+//                    holder.tv_order_total_price.setText("P " + total_price);
+//                }
+//                holder.iv_close_btn.setImageResource(R.drawable.ic_baseline_close_24);
+//
+//            }
+////            holder.tv_order_info.setText(text);
+////            holder.tv_order_item_info.setText("Qty: " + list.get(position).getOrderItem_list().size());
+//        }
+        holder.tv_order_item_name.setText(list.get(position).getProductName());
+        holder.tv_order_item_qty.setText("Qty:" + list.get(position).getItemQuantity() + "x");
+        Log.d("QTY: " , String.valueOf(list.get(position).getItemQuantity()));
+        holder.tv_order_total_price.setText("P " + list.get(position).getItemPrice());
+
+
     }
 
     @Override
@@ -53,7 +81,7 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
         TextView tv_order_item_qty;
         TextView tv_order_total_price;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
             
             iv_close_btn = itemView.findViewById(R.id.iv_close_btn);
@@ -65,6 +93,19 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
                 @Override
                 public void onClick(View v) {
                     Log.d("Test","Success delete");
+                }
+            });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if(pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClick(pos);
+                        }
+                    }
                 }
             });
         }

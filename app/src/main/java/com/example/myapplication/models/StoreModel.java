@@ -1,6 +1,13 @@
 package com.example.myapplication.models;
 
-public class StoreModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+import com.example.myapplication.activities.Store;
+
+public class StoreModel implements Parcelable {
     long store_id;
     String store_image;
     String store_name;
@@ -26,6 +33,31 @@ public class StoreModel {
         this.store_open = store_open;
         this.store_closing = store_closing;
     }
+
+    public StoreModel(Parcel in) {
+        store_id = in.readLong();
+        store_image = in.readString();
+        store_name = in.readString();
+        store_description = in.readString();
+        store_location = in.readString();
+        store_category = in.readString();
+        store_rating = in.readFloat();
+        store_popularity = in.readInt();
+        store_open = in.readString();
+        store_closing = in.readString();
+    }
+
+    public static final Creator<StoreModel> CREATOR = new Creator<StoreModel>() {
+        @Override
+        public StoreModel createFromParcel(Parcel in) {
+            return new StoreModel(in);
+        }
+
+        @Override
+        public StoreModel[] newArray(int size) {
+            return new StoreModel[size];
+        }
+    };
 
     public long getStore_id() {
         return store_id;
@@ -105,5 +137,25 @@ public class StoreModel {
 
     public void setStore_closing(String store_closing) {
         this.store_closing = store_closing;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeLong(store_id);
+        dest.writeString(store_image);
+        dest.writeString(store_name);
+        dest.writeString(store_description);
+        dest.writeString(store_location);
+        dest.writeString(store_category);
+        dest.writeFloat(store_rating);
+        dest.writeInt(store_popularity);
+        dest.writeString(store_open);
+        dest.writeString(store_closing);
+
     }
 }

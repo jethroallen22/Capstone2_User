@@ -7,5 +7,5 @@ public interface RecyclerViewInterface {
     void onItemClickStoreRec(int position);
     void onItemClickStoreRec2(int position);
 
-    void onItemClickSearch(int pos);
+    void onItemClickSearch(int position);
 }

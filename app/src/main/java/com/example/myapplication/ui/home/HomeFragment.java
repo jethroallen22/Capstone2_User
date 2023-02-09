@@ -1,16 +1,21 @@
 package com.example.myapplication.ui.home;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -30,6 +35,7 @@ import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
+import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -40,6 +46,8 @@ import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
+import com.example.myapplication.ui.categories.CategoryFragment;
+import com.example.myapplication.ui.messages.MessagesFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -59,7 +67,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    private static String JSON_URL="http://10.154.162.184/mosibus_php/user/";
+    private static String JSON_URL="http://10.46.188.126/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -92,6 +100,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     //Search
     SearchView searchView;
     List<SearchModel> searchModelList;
+
 
     //For Product Bottomsheet
     LinearLayout linearLayout;
@@ -141,7 +150,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Asian"));
 
         rv_category = root.findViewById(R.id.rv_category);
-        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list,HomeFragment.this);
+        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list, this);
         rv_category.setAdapter(homeCategoryAdapter);
         rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_category.setHasFixedSize(true);
@@ -186,14 +195,29 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         //Search List
         searchView = root.findViewById(R.id.searchView2);
+
+//
+//        //Check if list is not empty
+//        if (food_for_you_list.size() != 0) {
+//            for (int i = 0; i < food_for_you_list.size(); i++) {
+//                searchModelList.add(new SearchModel(food_for_you_list.get(i).getProductImage(),food_for_you_list.get(i).getProductName(),food_for_you_list.get(i).getProductTag()));
+//                Log.d("Result", food_for_you_list.get(i).getProductName());
+//            }
+//        }
+//        if (home_store_rec_list.size() != 0) {
+//            for (int k = 0; k < home_store_rec_list.size(); k++)
+//                searchModelList.add(new SearchModel(home_store_rec_list.get(k).getStore_image(), home_store_rec_list.get(k).getStore_name(), home_store_rec_list.get(k).getStore_category()));
+//        }
+
+
+        //adapter = new ArrayAdapter<String>(this.getContext(), R.layout.search_item, list);
+        //rv_search.setAdapter(adapter);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Bundle bundle = new Bundle();
                 bundle.putString("search",query);
                 bundle.putSerializable("SearchList", (Serializable) searchModelList);
-                bundle.putSerializable("ProductList", (Serializable) food_for_you_list);
-                bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
                 SearchFragment fragment = new SearchFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -202,6 +226,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                //adapter.getFilter().filter(newText);
                 return false;
             }
         });
@@ -209,9 +234,15 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Snackbar.make(view, "Work in Progress!!! Magreredirect dapat sa cart screen", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+
                 Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList(order_temp_list);
                 CartFragment fragment = new CartFragment();
+                //bundle.putSerializable("OrderSummary", order_list);
                 bundle.putSerializable("tempOrderList", (Serializable) order_temp_list);
+                //order.putParcelable("Order",order_list.get(position));
                 fragment.setArguments(bundle);
                 Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -276,7 +307,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         StoreModel rec = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
                                                         (float) r_rating, r_popularity, r_open, r_close);
                         SearchModel searchModel = new SearchModel(r_image, r_name, r_category);
-                        searchModelList.add(searchModel);
+                         searchModelList.add(searchModel);
                         home_store_rec_list.add(rec);
                         //list.add(r_name);
 
@@ -473,18 +504,15 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClickStorePopular(int position) {
         Log.d("CLICKPOPU", "Success");
         Bundle bundle = new Bundle();
-//        bundle.putLong("StoreId", home_pop_store_list.get(position).getStore_id());
-//        bundle.putString("Image", home_pop_store_list.get(position).getStore_image());
-//        bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
-//        bundle.putString("StoreAddress", home_pop_store_list.get(position).getStore_location());
-//        bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());
-//        bundle.putString("StoreDescription", home_pop_store_list.get(position).getStore_category());
-        StoreModel storeModel = home_pop_store_list.get(position);
-        bundle.putParcelable("StoreClass", storeModel);
+        bundle.putLong("StoreId", home_pop_store_list.get(position).getStore_id());
+        bundle.putString("Image", home_pop_store_list.get(position).getStore_image());
+        bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
+        bundle.putString("StoreAddress", home_pop_store_list.get(position).getStore_location());
+        bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());
+        bundle.putString("StoreDescription", home_pop_store_list.get(position).getStore_category());
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
-
     }
 
     @Override
@@ -496,26 +524,34 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClickStoreRec(int position) {
         Log.d("CLICKPOPU", "Success");
         Bundle bundle = new Bundle();
-//        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
-//        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
-//        bundle.putString("StoreName", home_store_rec_list.get(position).getStore_name());
-//        bundle.putString("StoreAddress", home_store_rec_list.get(position).getStore_location());
-//        bundle.putString("StoreCategory", home_store_rec_list.get(position).getStore_category());
-//        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
-        StoreModel storeModel = home_store_rec_list.get(position);
-        bundle.putParcelable("StoreClass", storeModel);
+        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
+        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
+        bundle.putString("StoreName", home_store_rec_list.get(position).getStore_name());
+        bundle.putString("StoreAddress", home_store_rec_list.get(position).getStore_location());
+        bundle.putString("StoreCategory", home_store_rec_list.get(position).getStore_category());
+        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
     }
 
     @Override
-    public void onItemClickStoreRec2(int position) {
-
+    public void onItemClickCategory(int position) {
+        Log.d("CLICKCATEG", "Success");
+        Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList(order_temp_list);
+        CategoryFragment fragment = new CategoryFragment();
+        //bundle.putSerializable("OrdterSummary", order_list);
+        bundle.putString("categoryName", home_categ_list.get(position).getCateg_name());
+        bundle.putSerializable("tempStoreList", (Serializable) home_store_rec_list);
+        //order.putParcelable("Order",order_list.get(position));
+        fragment.setArguments(bundle);
+        Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
     }
 
     @Override
-    public <HEAD> void onItemClickCategory(int position) {
+    public void onItemClickStoreRec2(int position) {
 
     }
 

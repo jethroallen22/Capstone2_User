@@ -225,4 +225,9 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
 //            }
 //        }
     }
+
+    @Override
+    public void onItemClickCategory(int pos) {
+
+    }
 }

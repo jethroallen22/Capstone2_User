@@ -193,36 +193,34 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
 
     @Override
     public void onItemClickSearch(int position) {
-        Bundle bundle = new Bundle();
-        StoreFragment fragment = new StoreFragment();
-        StoreModel storeModel = storeModelList.get(position);
-        bundle.putParcelable("StoreClass", storeModel);
-        fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-        Log.d("CLICK", "CLICK!!!");
+//        Bundle bundle = new Bundle();
+//        StoreFragment fragment = new StoreFragment();
+//        StoreModel storeModel = storeModelList.get(position);
+//        bundle.putParcelable("StoreClass", storeModel);
+//        fragment.setArguments(bundle);
+//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+//        Log.d("CLICK", "CLICK!!!");
         //Scan store list if query exists
-//        for (int i = 0 ; i < storeModelList.size() ; i++){
-//            if(tempSearchModelList.get(pos).getSearchName().toLowerCase().compareTo(storeModelList.get(i).getStore_name().toLowerCase()) == 0){
-//                Log.d("Result: ", "Success");
-//                Bundle bundle = new Bundle();
-//                StoreFragment fragment = new StoreFragment();
-//                bundle.putSerializable("StoreModel", (Serializable) storeModelList.get(i));
-//                fragment.setArguments(bundle);
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-//            }
-//        }
-
-
-
+        for (int i = 0 ; i < storeModelList.size() ; i++){
+            if(tempSearchModelList.get(position).getSearchName().toLowerCase().compareTo(storeModelList.get(i).getStore_name().toLowerCase()) == 0){
+                Log.d("Result: ", "Success");
+                Bundle bundle = new Bundle();
+                StoreFragment fragment = new StoreFragment();
+                bundle.putParcelable("StoreClass", storeModelList.get(i));
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        }
         //Scan product list if query exists
-//        for (int k = 0 ; k < productModelList.size() ; k++){
-//            if(tempSearchModelList.get(pos).getSearchName().toLowerCase().compareTo(productModelList.get(k).getProductName().toLowerCase()) == 0){
-//                Bundle bundle = new Bundle();
-//                ProductFragment fragment = new ProductFragment();
-//                bundle.putSerializable("ProductModel", (Serializable) productModelList.get(k));
-//                fragment.setArguments(bundle);
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-//            }
-//        }
+        for (int k = 0 ; k < productModelList.size() ; k++){
+            if(tempSearchModelList.get(position).getSearchName().toLowerCase().compareTo(productModelList.get(k).getProductName().toLowerCase()) == 0){
+                Bundle bundle = new Bundle();
+                ProductFragment fragment = new ProductFragment();
+                bundle.putSerializable("StoreList", (Serializable) storeModelList);
+                bundle.putParcelable("ProductClass", productModelList.get(k));
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        }
     }
 }

@@ -483,7 +483,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putParcelable("StoreClass", storeModel);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 
     }
 
@@ -506,7 +506,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putParcelable("StoreClass", storeModel);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
     }
 
     @Override

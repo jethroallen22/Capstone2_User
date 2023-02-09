@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.AddonAdapter;
 import com.example.myapplication.adapters.ChooseAdapter;
@@ -29,6 +30,9 @@ import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.databinding.FragmentProductBinding;
 import com.example.myapplication.models.AddonModel;
 import com.example.myapplication.models.ChooseModel;
+import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.SearchModel;
+import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartViewModel;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -56,11 +60,7 @@ public class ProductFragment extends Fragment {
     ImageView product_image;
     TextView product_description;
 
-    public int store_image;
-    public String store_name;
-    public String store_address;
-    public String store_category;
-
+    ProductModel productModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -78,21 +78,27 @@ public class ProductFragment extends Fragment {
 
 
         Bundle bundle = this.getArguments();
-        int prod_image = bundle.getInt("Image");
-        String prod_name = bundle.getString("Name");
-        String prod_description = bundle.getString("Description");
-        Float prod_price = bundle.getFloat("Price");
+        String prod_image;
+        String prod_name;
+        String prod_description;
+        Float prod_price;
 
-        store_image = bundle.getInt("StoreImage");
-        store_name = bundle.getString("StoreName");
-        store_address = bundle.getString("StoreAddress");
-        store_category = bundle.getString("StoreCategory");
+        if(bundle != null){
+            if (bundle.getParcelable("ProductClass") != null){
+                productModel = (ProductModel) (bundle.getParcelable("ProductClass"));
+                prod_image = productModel.getProductImage();
+                prod_name = productModel.getProductName();
+                prod_description = productModel.getProductDescription();
+                prod_price = productModel.getProductPrice();
 
-        product_image.setImageResource(prod_image);
-        product_name.setText(prod_name);
-        product_price.setText("P " + prod_price.toString());
-        product_description.setText(prod_description);
-
+                Glide.with(getActivity().getApplicationContext())
+                        .load(prod_image)
+                        .into(product_image);
+                product_name.setText(prod_name);
+                product_description.setText(prod_description);
+                product_price.setText("P " + prod_price);
+            }
+        }
 
         rv_choose = root.findViewById(R.id.rv_choose);
         choose_list = new ArrayList<>();
@@ -138,16 +144,27 @@ public class ProductFragment extends Fragment {
                 //Log.d("TAG", "Success");
                 //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,storeFragment).commit();
 
-                bundle.putInt ("StoreImage", store_image);
+                /*bundle.putInt ("StoreImage", store_image);
                 bundle.putString("StoreName", store_name);
                 bundle.putString("StoreAddress", store_address);
-                bundle.putString("StoreCategory", store_category);
+                bundle.putString("StoreCategory", store_category);*/
+                List<StoreModel> list = new ArrayList<>();
+                list = (List<StoreModel>) getArguments().getSerializable("StoreList");
 
-                StoreFragment storeFragment = new StoreFragment();
-                storeFragment.setArguments(bundle);
-                Log.d("TAG", "Success");
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,storeFragment).commit();
-                Log.d("Test","Success2");
+                for (int i = 0 ; i < list.size() ; i++){
+                    if(list.get(i).getStore_id() == productModel.getStore_idStore()){
+                        Bundle bundle = new Bundle();
+                        StoreFragment fragment = new StoreFragment();
+                        bundle.putParcelable("StoreClass", list.get(i));
+                        fragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                    }
+                }
+//                StoreFragment storeFragment = new StoreFragment();
+//                storeFragment.setArguments(bundle);
+//                Log.d("TAG", "Success");
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,storeFragment).commit();
+//                Log.d("Test","Success2");
             }
         });
 

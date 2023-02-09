@@ -141,7 +141,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Asian"));
 
         rv_category = root.findViewById(R.id.rv_category);
-        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list);
+        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list,HomeFragment.this);
         rv_category.setAdapter(homeCategoryAdapter);
         rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_category.setHasFixedSize(true);
@@ -483,7 +483,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putParcelable("StoreClass", storeModel);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 
     }
 
@@ -506,7 +506,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putParcelable("StoreClass", storeModel);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
     }
 
     @Override
@@ -516,6 +516,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickSearch(int pos) {
+
+    }
+
+    @Override
+    public void onItemClickCategory(int pos) {
 
     }
 

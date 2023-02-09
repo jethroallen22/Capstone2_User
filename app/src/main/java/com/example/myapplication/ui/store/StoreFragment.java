@@ -325,7 +325,15 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
-    public void onItemClickSearch(int pos) {
+    public void onItemClickCategory(int position) {
+
+    }
+
+    @Override
+    public void onItemClickSearch(int pos)
+
+
+    {
 
     }
 

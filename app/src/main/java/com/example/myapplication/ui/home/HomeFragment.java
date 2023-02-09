@@ -46,6 +46,7 @@ import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
+import com.example.myapplication.ui.categories.CategoryFragment;
 import com.example.myapplication.ui.messages.MessagesFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
@@ -66,7 +67,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    private static String JSON_URL="http://10.154.162.184/mosibus_php/user/";
+    private static String JSON_URL="http://10.46.188.126/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -99,6 +100,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     //Search
     SearchView searchView;
     List<SearchModel> searchModelList;
+
 
     //For Product Bottomsheet
     LinearLayout linearLayout;
@@ -137,6 +139,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         searchModelList = new ArrayList<>();
         //HOME CATEGORY
         home_categ_list = new ArrayList<>();
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Western"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Fast Food"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Burgers"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Breakfast"));
@@ -148,7 +151,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Asian"));
 
         rv_category = root.findViewById(R.id.rv_category);
-        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list);
+        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list, this);
         rv_category.setAdapter(homeCategoryAdapter);
         rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_category.setHasFixedSize(true);
@@ -306,7 +309,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         StoreModel rec = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
                                                         (float) r_rating, r_popularity, r_open, r_close);
                         SearchModel searchModel = new SearchModel(r_image, r_name, r_category);
-                        searchModelList.add(searchModel);
+                         searchModelList.add(searchModel);
                         home_store_rec_list.add(rec);
                         //list.add(r_name);
 
@@ -512,7 +515,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
-
     }
 
     @Override
@@ -533,6 +535,21 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,fragment).commit();
+    }
+
+    @Override
+    public void onItemClickCategory(int position) {
+        Log.d("CLICKCATEG", "Success");
+        Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList(order_temp_list);
+        CategoryFragment fragment = new CategoryFragment();
+        //bundle.putSerializable("OrdterSummary", order_list);
+        bundle.putString("categoryName", home_categ_list.get(position).getCateg_name());
+        bundle.putSerializable("tempStoreList", (Serializable) home_store_rec_list);
+        //order.putParcelable("Order",order_list.get(position));
+        fragment.setArguments(bundle);
+        Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
     }
 
     @Override

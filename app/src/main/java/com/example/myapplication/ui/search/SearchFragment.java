@@ -90,8 +90,6 @@ public class SearchFragment extends Fragment {
             rv_search.setNestedScrollingEnabled(false);
         }
 
-
-
         return root;
     }
 

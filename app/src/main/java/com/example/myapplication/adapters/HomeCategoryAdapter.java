@@ -13,16 +13,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.HomeCategoryModel;
 
 import java.util.List;
 
 public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapter.ViewHolder> {
 
+    private final RecyclerViewInterface recyclerViewInterface;
+
     Context context;
     List<HomeCategoryModel> list;
 
-    public HomeCategoryAdapter(Context context, List<HomeCategoryModel> list) {
+    public HomeCategoryAdapter(Context context, List<HomeCategoryModel> list, RecyclerViewInterface recyclerViewInterface) {
+        this.recyclerViewInterface = recyclerViewInterface;
         this.context = context;
         this.list = list;
     }
@@ -55,6 +59,19 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
             iv_categ_icon = itemView.findViewById(R.id.iv_categ_icon);
             tv_categ_name = itemView.findViewById(R.id.tv_categ_name);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if(pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClickCategory(pos);
+                        }
+                    }
+                }
+            });
         }
     }
 }

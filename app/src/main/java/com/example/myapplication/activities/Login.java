@@ -35,7 +35,7 @@ public class Login extends AppCompatActivity {
     private Button login_btn;
     private TextView tv_register_btn;
 
-    private static String JSON_URL = "http://10.154.162.184/mosibus_php/user/";
+    private static String JSON_URL = "http://10.46.188.126/mosibus_php/user/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -146,6 +146,11 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
+    public void onItemClickCategory(int position) {
+
+    }
+
+    @Override
     public void onItemClickSearch(int pos) {
 
     }

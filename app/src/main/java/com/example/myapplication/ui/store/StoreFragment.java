@@ -2,6 +2,7 @@ package com.example.myapplication.ui.store;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.product.ProductFragment;
@@ -67,7 +69,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     TextView store_description;
 
     public long stor_id;
-    public int stor_image;
+    public String stor_image;
     public String stor_name;
     public String stor_address;
     public String stor_category;
@@ -100,6 +102,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     int userId = 0;
     String userName = "";
+    Context context;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -116,19 +119,24 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         store_description = root.findViewById(R.id.tv_store_description);
 
         Bundle bundle = this.getArguments();
-
+//        Log.d("Result Store: " , bundle.getParcelable("StoreClass"));
         if(bundle != null){
-            stor_id = bundle.getLong("StoreId");
-            stor_image = bundle.getInt("StoreImage");
-            stor_name = bundle.getString("StoreName");
-            stor_address = bundle.getString("StoreAddress");
-            stor_category = bundle.getString("StoreCategory");
-            stor_description = bundle.getString("StoreDescription");
+            if (bundle.getParcelable("StoreClass") != null){
+                StoreModel storeModel = (StoreModel) (bundle.getParcelable("StoreClass"));
+                stor_id = storeModel.getStore_id();
+                stor_image = storeModel.getStore_image();
+                stor_name = storeModel.getStore_name();
+                stor_address = storeModel.getStore_location();
+                stor_category = storeModel.getStore_category();
+                stor_description = storeModel.getStore_description();
 
-            store_image.setImageResource(stor_image);
-            store_name.setText(stor_name);
-            store_address.setText(stor_address);
-            store_description.setText(stor_description);
+                Glide.with(getActivity().getApplicationContext())
+                        .load(storeModel.getStore_image())
+                        .into(store_image);
+                store_name.setText(stor_name);
+                store_address.setText(stor_address);
+                store_description.setText(stor_description);
+            }
         }
 
         order_item_temp_list = new ArrayList<>();

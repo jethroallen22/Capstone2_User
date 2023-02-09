@@ -120,6 +120,11 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
+    public void onItemClickCategory(int position) {
+        
+    }
+
+    @Override
     public void onItemClickSearch(int pos) {
 
     }

@@ -25,11 +25,12 @@ import com.example.myapplication.databinding.FragmentSearchBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.ui.store.StoreFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements RecyclerViewInterface{
 
     private CategoryViewModel mViewModel;
 
@@ -66,8 +67,8 @@ public class CategoryFragment extends Fragment {
         tempCategoryListModel = new ArrayList<>();
 
         if(bundle != null){
-            getCategoryQuery = bundle.getString("categoryName");
-            categoryListModel = (List<StoreModel>) getArguments().getSerializable("tempStoreList");
+            getCategoryQuery = bundle.getString("categoryString");
+            categoryListModel = (List<StoreModel>) getArguments().getSerializable("StoreList");
             Log.d("Store List: ", String.valueOf(categoryListModel.size()));
             tv_category.setText(getCategoryQuery);
         }
@@ -80,7 +81,7 @@ public class CategoryFragment extends Fragment {
                 tempCategoryListModel.add(storeModel);
             }
         }
-        homeStoreRecAdapter = new HomeStoreRecAdapter(getContext(),tempCategoryListModel, recyclerViewInterface);
+        homeStoreRecAdapter = new HomeStoreRecAdapter(getContext(),tempCategoryListModel, CategoryFragment.this);
         rv_category.setAdapter(homeStoreRecAdapter);
         rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
         rv_category.setHasFixedSize(true);
@@ -96,4 +97,47 @@ public class CategoryFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
+    @Override
+    public void onItemClickForYou(int position) {
+
+    }
+
+    @Override
+    public void onItemClickStorePopular(int position) {
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+    @Override
+    public void onItemClickStoreRec(int position) {
+        for (int i = 0 ; i < categoryListModel.size() ; i++){
+            if(tempCategoryListModel.get(position).getStore_name().toLowerCase().compareTo(categoryListModel.get(i).getStore_name().toLowerCase()) == 0){
+                Log.d("Result: ", "Success");
+                Bundle bundle = new Bundle();
+                StoreFragment fragment = new StoreFragment();
+                bundle.putParcelable("StoreClass", categoryListModel.get(i));
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        }
+    }
+
+    @Override
+    public void onItemClickStoreRec2(int position) {
+
+    }
+
+    @Override
+    public void onItemClickSearch(int position) {
+
+    }
+
+    @Override
+    public void onItemClickCategory(int pos) {
+
+    }
 }

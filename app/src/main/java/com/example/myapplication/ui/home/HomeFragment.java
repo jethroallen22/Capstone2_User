@@ -40,6 +40,7 @@ import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
+import com.example.myapplication.ui.categories.CategoryFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -59,7 +60,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    private static String JSON_URL="http://10.154.162.184/mosibus_php/user/";
+    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -102,6 +103,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     Button btn_add_to_cart;
     int product_count = 0;
 
+    //Category
+    List<StoreModel> tempStoreList;
+    String category;
+
     //Getting Bundle
     int userId = 0;
     String userName = "";
@@ -128,8 +133,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
         searchModelList = new ArrayList<>();
+        tempStoreList = new ArrayList<>();
         //HOME CATEGORY
         home_categ_list = new ArrayList<>();
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Western"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Fast Food"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Burgers"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Breakfast"));
@@ -521,6 +528,15 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickCategory(int pos) {
+        category = home_categ_list.get(pos).getCateg_name();
+
+        Log.d("Result: ", "Success");
+        Bundle bundle = new Bundle();
+        CategoryFragment fragment = new CategoryFragment();
+        bundle.putString("categoryString",category);
+        bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 
     }
 

@@ -40,6 +40,7 @@ import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
+import com.example.myapplication.ui.notifications.NotificationsFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -106,6 +107,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     int userId = 0;
     String userName = "";
     HomeFragment homeFragment = this;
+
+    //Drawer
+    TextView tv_view_profile;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -183,6 +187,16 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_store_rec_list2 = new ArrayList<>();
         extractDataRec2();
         Collections.shuffle(home_store_rec_list2);
+
+        //View Profile
+//        tv_view_profile = root.findViewById(R.id.tv_view_profile);
+//        tv_view_profile.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                NotificationsFragment fragment = new NotificationsFragment();
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+//            }
+//        });
 
         //Search List
         searchView = root.findViewById(R.id.searchView2);

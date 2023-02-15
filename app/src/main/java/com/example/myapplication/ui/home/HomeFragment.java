@@ -44,6 +44,7 @@ import com.example.myapplication.ui.categories.CategoryFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -60,7 +61,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
+    private static String JSON_URL="http://10.154.162.184/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -129,6 +130,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
+
+
 
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
@@ -335,7 +338,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     }
                     homeStoreRecAdapter2 = new HomeStoreRecAdapter(getActivity(),home_store_rec_list2, homeFragment);
                     rv_home_store_rec2.setAdapter(homeStoreRecAdapter2);
-                    Log.d("Result", String.valueOf(searchModelList.size()));
+                    Log.d("SEARCH", String.valueOf(searchModelList.size()));
 
 
                 }

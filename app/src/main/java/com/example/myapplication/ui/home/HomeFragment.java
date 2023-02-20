@@ -11,19 +11,24 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
@@ -53,7 +58,9 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
@@ -109,6 +116,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //Getting Bundle
     int userId = 0;
+    int tempCount = 0;
     String userName = "";
     HomeFragment homeFragment = this;
 
@@ -488,6 +496,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 //        bundle.putString("StoreDescription", home_pop_store_list.get(position).getStore_category());
         StoreModel storeModel = home_pop_store_list.get(position);
         bundle.putParcelable("StoreClass", storeModel);
+        bundle.putInt("user", userId);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -511,6 +520,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 //        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
         StoreModel storeModel = home_store_rec_list.get(position);
         bundle.putParcelable("StoreClass", storeModel);
+        bundle.putInt("user", userId);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -572,10 +582,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         btn_add_to_cart.setEnabled(false);
 
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
+            int temp_count = 0;
             @Override
             public void onClick(View v) {
                 float tempPrice = 0;
-                int temp_count = 0;
+
                 Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
                 //Check if CartList is empty
                 if(order_temp_list.isEmpty()){
@@ -618,7 +629,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                             order_item_temp_list.add(new OrderItemModel(6, food_for_you_list.get(position).getIdProduct(),
                                     food_for_you_list.get(position).getProductPrice() * temp_count, temp_count, 10,
                                     food_for_you_list.get(position).getProductName()));
-                            product_count = 1;
+                                    product_count = 1;
                             for (int j = 0; j < order_item_temp_list.size(); j++) {
                                 tempPrice += order_item_temp_list.get(j).getItemPrice();
                             }
@@ -628,6 +639,47 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         }
                     }
                 }
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("1 ", result );
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            String success = jsonObject.getString("success");
+
+                            if (success.equals("1")){
+                                Log.d("TEMP CART INSERT", "success");
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted",Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            Log.d("TEMP CART", "catch" );
+                            Toast.makeText(getActivity().getApplicationContext(), "Catch ",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                    }
+                }){
+                    @Nullable
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("temp_productId", String.valueOf(food_for_you_list.get(position).getIdProduct()));
+                        params.put("temp_storeId", String.valueOf(food_for_you_list.get(position).getStore_idStore()));
+                        params.put("temp_usersId", String.valueOf(userId));
+                        params.put("temp_productName", food_for_you_list.get(position).getProductName());
+                        params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
+                        params.put("temp_productQuantity", String.valueOf(temp_count));
+                        return params;
+                    }
+
+                };
+
+                RequestQueue requestQueueTempCart = Volley.newRequestQueue(getActivity().getApplicationContext());
+                requestQueueTempCart.add(stringRequest);
                 bottomSheetDialog.dismiss();
             }
         });

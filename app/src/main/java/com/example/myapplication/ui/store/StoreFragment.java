@@ -3,6 +3,7 @@ package com.example.myapplication.ui.store;
 import static androidx.navigation.Navigation.findNavController;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,7 +33,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.Home;
 import com.example.myapplication.activities.Login;
+import com.example.myapplication.activities.Register;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
@@ -61,7 +65,7 @@ import java.util.Map;
 public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentStoreBinding binding;
-    private RequestQueue requestQueueFood,requestQueueProd;
+    private RequestQueue requestQueueFood,requestQueueProd,requestQueueTempCart;
 
     ImageView store_image;
     TextView store_name;
@@ -75,7 +79,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_category;
     public String stor_description;
 
-    private static String JSON_URL="http://10.154.162.184/mosibus_php/user/";
+    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -105,6 +109,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     Context context;
 
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         StoreViewModel storeViewModel =
@@ -129,6 +134,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 stor_address = storeModel.getStore_location();
                 stor_category = storeModel.getStore_category();
                 stor_description = storeModel.getStore_description();
+                userId = bundle.getInt("user");
 
                 Glide.with(getActivity().getApplicationContext())
                         .load(storeModel.getStore_image())
@@ -136,6 +142,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 store_name.setText(stor_name);
                 store_address.setText(stor_address);
                 store_description.setText(stor_description);
+
             }
         }
 
@@ -375,6 +382,44 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("QueryResult", result );
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            String success = jsonObject.getString("success");
+
+                            if (success.equals("1")){
+                                Log.d("TEMP CART INSERT", "success");
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted",Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            Log.d("TEMP CART", "catch" );
+                            Toast.makeText(getActivity().getApplicationContext(), "Catch ",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                    }
+                }){
+                    @Nullable
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("temp_productId", String.valueOf(food_for_you_list.get(position).getIdProduct()));
+                        params.put("temp_storeId", String.valueOf(food_for_you_list.get(position).getStore_idStore()));
+                        params.put("temp_usersId", String.valueOf(userId));
+                        params.put("temp_productName", food_for_you_list.get(position).getProductName());
+                        params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
+                        params.put("temp_productQuantity", String.valueOf(product_count));
+                        return params;
+                    }
+
+                };
                 //Toast.makeText(this,"Success!!!",Toast.LENGTH_SHORT).show();
                 //if(arraylist.isEmpty())
                 //orderlist.add.orderModel
@@ -394,11 +439,14 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductName()));
 
                 order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
-                        food_for_you_list.get(position).getProductRestoName(),food_for_you_list.get(position).getProductRestoImage(),
+                        food_for_you_list.get(position).getProductRestoImage(),food_for_you_list.get(position).getProductRestoName(),
                         userId, order_item_temp_list));
                 Log.d("ordertemp", String.valueOf(order_item_temp_list.size()));
                 Log.d("order", String.valueOf(order_temp_list.size()));
 
+
+                RequestQueue requestQueueTempCart = Volley.newRequestQueue(getActivity().getApplicationContext());
+                requestQueueTempCart.add(stringRequest);
 
 //                Bundle bundle = new Bundle();
 ////                bundle.putParcelableArrayList(order_temp_list);
@@ -439,4 +487,5 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
     }
+
 }

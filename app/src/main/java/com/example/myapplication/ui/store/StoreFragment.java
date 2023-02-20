@@ -79,7 +79,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_category;
     public String stor_description;
 
-    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
+    private static String JSON_URL="http://192.168.254.106/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -228,8 +228,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
-                        ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,productServingSize,productTag,productPrepTime,storeName,storeImage);
-                        food_for_you_list.add(foodfyModel);
+
+                        if(idStore == stor_id) {
+                            ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage, productServingSize, productTag, productPrepTime, storeName, storeImage);
+                            food_for_you_list.add(foodfyModel);
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();

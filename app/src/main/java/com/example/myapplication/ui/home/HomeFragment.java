@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    private static String JSON_URL="http://10.154.162.184/mosibus_php/user/";
+    private static String JSON_URL="http://192.168.254.106/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -547,6 +547,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Bundle bundle = new Bundle();
         CategoryFragment fragment = new CategoryFragment();
         bundle.putString("categoryString",category);
+        bundle.putInt("user", userId);
         bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -586,9 +587,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             int temp_count = 0;
+            float tempPrice = 0;
             @Override
             public void onClick(View v) {
-                float tempPrice = 0;
+
 
                 Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
                 //Check if CartList is empty
@@ -676,6 +678,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         params.put("temp_productName", food_for_you_list.get(position).getProductName());
                         params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
                         params.put("temp_productQuantity", String.valueOf(temp_count));
+                        params.put("temp_totalProductPrice", String.valueOf(tempPrice));
                         return params;
                     }
 

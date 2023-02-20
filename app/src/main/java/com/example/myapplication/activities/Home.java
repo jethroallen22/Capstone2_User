@@ -12,7 +12,15 @@ import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
+import com.example.myapplication.interfaces.Singleton;
+import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.UserModel;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.notifications.NotificationsFragment;
 import com.example.myapplication.ui.profile.ProfileFragment;
@@ -32,6 +40,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.databinding.ActivityHomeBinding;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Home extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -42,6 +58,10 @@ public class Home extends AppCompatActivity {
     final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
     TextView tv_view_profile;
     TextView tv_user_name;
+    private static String JSON_URL = "http://10.154.162.184/mosibus_php/user/";
+    private RequestQueue requestQueue1;
+    List<UserModel> userList;
+    UserModel userModel;
 
 
     @Override
@@ -59,6 +79,8 @@ public class Home extends AppCompatActivity {
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
+        userList = new ArrayList();
+        requestQueue1 = Singleton.getsInstance(this).getRequestQueue();
 
         setSupportActionBar(binding.appBarHome.toolbar);
 
@@ -90,11 +112,58 @@ public class Home extends AppCompatActivity {
         tv_view_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProfileFragment fragment = new ProfileFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                //Bundle bundle = new Bundle()
+                profile_user();
+                Log.d("CLICK", "CLICK");
             }
         });
 
+
+    }
+
+    public void profile_user(){
+
+        JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "profile.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Response Product: ", String.valueOf(response.length()));
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        Log.d("Try P: ", "Im in");
+                        JSONObject jsonObjectRec1 = response.getJSONObject(i);
+
+                        //USER DB
+                        int id = jsonObjectRec1.getInt("id");
+                        String name = jsonObjectRec1.getString("name");
+                        String email = jsonObjectRec1.getString("email");
+                        int contact = jsonObjectRec1.getInt("contact");
+                        String password = jsonObjectRec1.getString("password");
+
+                        userModel = new UserModel(id, name, email, contact, password);
+                        userList.add(userModel);
+                        Log.d("USERTEST: ", String.valueOf(userList.size()));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("OnError P: ", String.valueOf(error));
+            }
+        });
+        requestQueue1.add(jsonArrayRequestRec1);
+        Bundle bundle = new Bundle();
+        bundle.putInt("id",id);
+        bundle.putSerializable("user", (Serializable) userList);
+        Log.d("USERTEST: ", String.valueOf(userList.size()));
+
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.setArguments(bundle);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 
     }
 

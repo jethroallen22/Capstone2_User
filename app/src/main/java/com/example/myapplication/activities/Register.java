@@ -37,7 +37,7 @@ public class Register extends AppCompatActivity {
     private Button signup_btn;
     private TextView tv_login_btn;
 
-    private static String JSON_URL = "http://10.154.162.184/mosibus_php/user/";
+    private static String JSON_URL = "http://10.112.133.235/mosibus_php/user/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

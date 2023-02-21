@@ -81,11 +81,13 @@ public class CategoryFragment extends Fragment implements RecyclerViewInterface{
                 tempCategoryListModel.add(storeModel);
             }
         }
-        homeStoreRecAdapter = new HomeStoreRecAdapter(getContext(),tempCategoryListModel, CategoryFragment.this);
-        rv_category.setAdapter(homeStoreRecAdapter);
-        rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
-        rv_category.setHasFixedSize(true);
-        rv_category.setNestedScrollingEnabled(false);
+        Log.d("CategSize", String.valueOf(tempCategoryListModel.size()));
+
+          homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),tempCategoryListModel,CategoryFragment.this);
+          rv_category.setAdapter(homeStoreRecAdapter);
+          RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+          rv_category.setLayoutManager(layoutManager);
+
 
         return root;
     }

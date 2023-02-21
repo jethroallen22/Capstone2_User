@@ -129,6 +129,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
+
+
     @Override
     public void onItemClick(int position) {
         Log.d("TAG", "Success");

@@ -1,7 +1,10 @@
 package com.example.myapplication.models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -138,6 +141,12 @@ public class StoreModel implements Parcelable {
     public void setStore_closing(String store_closing) {
         this.store_closing = store_closing;
     }
+
+    public Bitmap getBitmapImage(){
+        byte[] byteArray = Base64.decode(store_image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
+        return bitmap;
+    };
 
     @Override
     public int describeContents() {

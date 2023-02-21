@@ -39,10 +39,15 @@ import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.RealPathUtil;
 import com.example.myapplication.activities.Home;
+import com.example.myapplication.activities.Login;
 import com.example.myapplication.databinding.FragmentProfileBinding;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.UserModel;
 import com.example.myapplication.ui.home.HomeFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,12 +62,13 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel mViewModel;
     private FragmentProfileBinding binding;
 
+    private static String JSON_URL = "http://10.154.162.184/mosibus_php/user/";
+
     ImageView iv_image_placeholder, iv_edit_name, iv_edit_email, iv_edit_password, iv_edit_contact , iv_save_name, iv_save_email, iv_save_password, iv_save_contact;
     CardView cv_edit_picture;
     EditText tv_edit_name, tv_edit_password, tv_edit_email, tv_edit_contact;
     Button btn_save_edit;
-    String name, email, password;
-    int contact;
+    String image, name, email, contact, password;
     UserModel userModel;
     List<UserModel> userModelList;
     int id;
@@ -89,6 +95,7 @@ public class ProfileFragment extends Fragment {
                     email = userModelList.get(i).getEmail();
                     password = userModelList.get(i).getPassword();
                     contact = userModelList.get(i).getContact();
+                    bitmap = userModelList.get(i).getBitmapImage();
                     Log.d("TESTNAME: ", userModelList.get(i).getName());
                 }
             }
@@ -100,31 +107,26 @@ public class ProfileFragment extends Fragment {
         cv_edit_picture = root.findViewById(R.id.cv_edit_picture);
         tv_edit_name = root.findViewById(R.id.tv_profile_name);
         tv_edit_email = root.findViewById(R.id.tv_profile_email);
-        tv_edit_password = root.findViewById(R.id.tv_profile_password);
         tv_edit_contact = root.findViewById(R.id.tv_profile_contact);
         btn_save_edit = root.findViewById(R.id.btn_save_edit);
         iv_edit_name = root.findViewById(R.id.iv_edit_name);
         iv_edit_email = root.findViewById(R.id.iv_edit_email);
-        iv_edit_password = root.findViewById(R.id.iv_edit_password);
         iv_edit_contact = root.findViewById(R.id.iv_edit_contact);
         iv_save_name = root.findViewById(R.id.iv_save_name);
         iv_save_email = root.findViewById(R.id.iv_save_email);
-        iv_save_password = root.findViewById(R.id.iv_save_password);
         iv_save_contact = root.findViewById(R.id.iv_save_contact);
 
         //Disable edit texts
         tv_edit_name.setEnabled(false);
         tv_edit_email.setEnabled(false);
-        tv_edit_password.setEnabled(false);
         tv_edit_contact.setEnabled(false);
 
         //Set default profile image
-        iv_image_placeholder.setImageResource(R.drawable.logo);
+        iv_image_placeholder.setImageBitmap(bitmap);
 
         //Set edit text hints
         tv_edit_name.setHint(name);
         tv_edit_email.setHint(email);
-        tv_edit_password.setHint(password);
         tv_edit_contact.setHint(String.valueOf(contact));
 
         iv_edit_name.setOnClickListener(new View.OnClickListener() {
@@ -141,13 +143,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        iv_edit_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tv_edit_password.setEnabled(true);
-            }
-        });
-
         iv_edit_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +154,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 tv_edit_name.setEnabled(false);
-                name = String.valueOf(tv_edit_name.getText());
+                name = tv_edit_name.getText().toString().trim();
                 Log.d("EDIT", name);
             }
         });
@@ -168,15 +163,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 iv_save_email.setEnabled(false);
-                email = String.valueOf(tv_edit_email);
-            }
-        });
-
-        iv_save_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iv_save_password.setEnabled(false);
-                email = String.valueOf(tv_edit_password);
+                email = tv_edit_email.toString().trim();
             }
         });
 
@@ -184,14 +171,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 iv_save_contact.setEnabled(false);
-                password = String.valueOf(tv_edit_contact);
-            }
-        });
-
-        btn_save_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+                password = tv_edit_contact.toString().trim();
             }
         });
 
@@ -229,29 +209,56 @@ public class ProfileFragment extends Fragment {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                     byte[] bytes = byteArrayOutputStream.toByteArray();
                     final String base64Image = Base64.encodeToString(bytes, Base64.DEFAULT);
+                    final String name2 = name;
+                    final String email2 = email;
+                    final String contact2 = contact;
+                    final String password2 = password;
 
                     RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-                    String url ="";
+                    String url ="update_profile.php";
 
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST,JSON_URL+ "update_prof.php",
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    if(response.equals("success")){
-                                        Toast.makeText(getActivity().getApplicationContext(), "Image uploaded!", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(getActivity().getApplicationContext(), "Failed to upload image!", Toast.LENGTH_SHORT).show();
+                                    try {
+//
+//                                            Bundle bundle = new Bundle();
+//                                            UserModel userModel = new UserModel(id, base64Image, name2, email2, contact2, password2);
+//                                            bundle.putParcelable("user", userModel);
+//                                            HomeFragment fragment = new HomeFragment();
+//                                            fragment.setArguments(bundle);
+//                                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+
+                                            Intent intent = new Intent(getContext(), Home.class);
+                                            intent.putExtra("name",name2);
+                                            intent.putExtra("id",id);
+                                            intent.putExtra("image", base64Image);
+                                            intent.putExtra("email", email2);
+                                            intent.putExtra("contact", contact2);
+                                            intent.putExtra("password", password2);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+//                                        }
+                                    }
+                                    catch (Throwable e) {
+                                        Log.d("Catch", String.valueOf(e));
+                                        //Toast.makeText(Login.this, "Invalid Email and/or Password", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }){
                         protected Map<String, String> getParams(){
                             Map<String, String> paramV = new HashMap<>();
+                            paramV.put("id", String.valueOf(id));
                             paramV.put("image", base64Image);
+                            paramV.put("name", name2);
+                            paramV.put("email", email2);
+                            paramV.put("contact", contact2);
                             return paramV;
                         }
                     };

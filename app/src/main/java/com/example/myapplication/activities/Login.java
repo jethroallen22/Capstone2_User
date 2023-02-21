@@ -95,6 +95,7 @@ public class Login extends AppCompatActivity {
                     JSONArray jsonArray = jsonObject.getJSONArray("login");
                     int id = 0;
                     String name = "";
+                    String image = "";
 
                     if (success.equals("1")){
                         for (int i = 0; i < jsonArray.length(); i++){
@@ -104,6 +105,7 @@ public class Login extends AppCompatActivity {
                             name = object.getString("name").trim();
                             String email = object.getString("email").trim();
                             id = object.getInt("id");
+                            image = object.getString("image");
 
                             Toast.makeText(Login.this, "Success Login. \nYour Name : "
                                     + name + "\nYour Email : "
@@ -127,6 +129,7 @@ public class Login extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), Home.class);
                         intent.putExtra("name",name);
                         intent.putExtra("id",id);
+                        intent.putExtra("image",image);
                         Log.d("NAME LOGIN: " , name);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

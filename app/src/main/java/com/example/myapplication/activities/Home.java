@@ -3,8 +3,11 @@ package com.example.myapplication.activities;
 import static android.app.PendingIntent.getActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.ProductModel;
@@ -56,12 +60,14 @@ public class Home extends AppCompatActivity {
     public static int id;
     FragmentManager fragmentManager = getSupportFragmentManager();
     final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    ImageView iv_user_image;
     TextView tv_view_profile;
     TextView tv_user_name;
     private static String JSON_URL = "http://10.154.162.184/mosibus_php/user/";
     private RequestQueue requestQueue1;
     List<UserModel> userList;
     UserModel userModel;
+    String image;
 
 
     @Override
@@ -75,13 +81,14 @@ public class Home extends AppCompatActivity {
         if(intent.getStringExtra("name") != null) {
             name = intent.getStringExtra("name");
             id = intent.getIntExtra("id",0);
-            Log.d("HOME FRAG name", name + id);
+            image = intent.getStringExtra("image");
+            Log.d("HOME FRAG name", name + id + image);
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
         userList = new ArrayList();
         requestQueue1 = Singleton.getsInstance(this).getRequestQueue();
-
+        profile_user();
         setSupportActionBar(binding.appBarHome.toolbar);
 
         DrawerLayout drawer = binding.drawerLayout;
@@ -105,15 +112,31 @@ public class Home extends AppCompatActivity {
                 return false;
             }
         });
+
+
+
+        Log.d("USERSIZE", String.valueOf(userList.size()));
+        iv_user_image = navigationView.getHeaderView(0).findViewById(R.id.iv_user_image);
         tv_user_name = navigationView.getHeaderView(0).findViewById(R.id.tv_user_name);
         tv_view_profile = navigationView.getHeaderView(0).findViewById(R.id.tv_view_profile);
 
+        byte[] byteArray = Base64.decode(image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
+        iv_user_image.setImageBitmap(bitmap);
         tv_user_name.setText(name);
         tv_view_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Bundle bundle = new Bundle()
-                profile_user();
+                Bundle bundle = new Bundle();
+                bundle.putInt("id",id);
+                bundle.putSerializable("user", (Serializable) userList);
+                Log.d("USERTEST: ", String.valueOf(userList.size()));
+
+                ProfileFragment fragment = new ProfileFragment();
+                fragment.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
                 Log.d("CLICK", "CLICK");
             }
         });
@@ -135,11 +158,12 @@ public class Home extends AppCompatActivity {
                         //USER DB
                         int id = jsonObjectRec1.getInt("id");
                         String name = jsonObjectRec1.getString("name");
+                        String image = jsonObjectRec1.getString("image");
                         String email = jsonObjectRec1.getString("email");
-                        int contact = jsonObjectRec1.getInt("contact");
+                        String contact = jsonObjectRec1.getString("contact");
                         String password = jsonObjectRec1.getString("password");
 
-                        userModel = new UserModel(id, name, email, contact, password);
+                        userModel = new UserModel(id, image, name, email, contact, password);
                         userList.add(userModel);
                         Log.d("USERTEST: ", String.valueOf(userList.size()));
 
@@ -155,17 +179,9 @@ public class Home extends AppCompatActivity {
             }
         });
         requestQueue1.add(jsonArrayRequestRec1);
-        Bundle bundle = new Bundle();
-        bundle.putInt("id",id);
-        bundle.putSerializable("user", (Serializable) userList);
-        Log.d("USERTEST: ", String.valueOf(userList.size()));
-
-        ProfileFragment fragment = new ProfileFragment();
-        fragment.setArguments(bundle);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

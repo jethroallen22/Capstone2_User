@@ -1,20 +1,26 @@
 package com.example.myapplication.models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
 public class UserModel implements Parcelable {
 
     int id;
+    String image;
     String name;
     String email;
-    int contact;
+    String contact;
     String password;
 
-    public UserModel(int id, String name, String email, int contact, String password) {
+
+    public UserModel(int id, String image, String name, String email, String contact, String password) {
         this.id = id;
+        this.image = image;
         this.name = name;
         this.email = email;
         this.contact = contact;
@@ -23,9 +29,10 @@ public class UserModel implements Parcelable {
 
     protected UserModel(Parcel in) {
         id = in.readInt();
+        image = in.readString();
         name = in.readString();
         email = in.readString();
-        contact = in.readInt();
+        contact = in.readString();
         password = in.readString();
     }
 
@@ -65,11 +72,11 @@ public class UserModel implements Parcelable {
         this.email = email;
     }
 
-    public int getContact() {
+    public String getContact() {
         return contact;
     }
 
-    public void setContact(int contact) {
+    public void setContact(String contact) {
         this.contact = contact;
     }
 
@@ -81,6 +88,20 @@ public class UserModel implements Parcelable {
         this.password = password;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Bitmap getBitmapImage(){
+        byte[] byteArray = Base64.decode(image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
+        return bitmap;
+    };
+
     @Override
     public int describeContents() {
         return 0;
@@ -89,9 +110,10 @@ public class UserModel implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeInt(id);
+        dest.writeString(image);
         dest.writeString(name);
         dest.writeString(email);
-        dest.writeInt(contact);
+        dest.writeString(contact);
         dest.writeString(password);
     }
 }

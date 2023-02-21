@@ -288,26 +288,6 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickForYou(int position) {
-
-
-//        Bundle bundle = new Bundle();
-//
-//        //Put Store Info
-//        bundle.putInt ("StoreImage", stor_image);
-//        bundle.putString("StoreName", stor_name);
-//        bundle.putString("StoreAddress", stor_address);
-//        bundle.putString("StoreCategory", stor_category);
-//
-//        //Put Product Info
-//        bundle.putString("Image", food_for_you_list.get(position).getProductImage());
-//        bundle.putString("Name", food_for_you_list.get(position).getProductName());
-//        bundle.putString("Description", food_for_you_list.get(position).getProductDescription());
-//        bundle.putString("StoreName", String.valueOf(food_for_you_list.get(position).getStore_idStore()));
-//        bundle.putFloat("Price", food_for_you_list.get(position).getProductPrice());
-//
-//        ProductFragment productFragment = new ProductFragment();
-//        productFragment.setArguments(bundle);Log.d("TAG", "Success");
-//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,productFragment).commit()
         showBottomSheet(position);
     }
 

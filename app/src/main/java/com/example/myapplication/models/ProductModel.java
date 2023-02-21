@@ -1,7 +1,10 @@
 package com.example.myapplication.models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -174,6 +177,12 @@ public class ProductModel implements Parcelable {
     public void setProductRestoImage(String productRestoImage) {
         this.productRestoImage = productRestoImage;
     }
+
+    public Bitmap getBitmapImage(){
+        byte[] byteArray = Base64.decode(productImage, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
+        return bitmap;
+    };
 
     @Override
     public int describeContents() {

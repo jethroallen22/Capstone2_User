@@ -29,6 +29,7 @@ import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.CartModel;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.StoreModel;
@@ -68,7 +69,11 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     RequestQueue requestQueue;
     RequestQueue requestQueueCart;
 
-    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
+    int userID = 0;
+
+    //School IP
+    private static String JSON_URL;
+    private IPModel ipModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -78,10 +83,14 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         binding = FragmentCartBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        cart_list = new ArrayList<>();
+        ipModel = new IPModel();
+        JSON_URL = ipModel.getURL();
 
-
-        Bundle bundle = new Bundle();
+        Bundle bundle = getArguments();
+        if(bundle != null) {
+            userID = bundle.getInt("userID");
+            Log.d("USERID", String.valueOf(userID));
+        }
 
         // to comment out
 //        cart_list = (List<OrderModel>) getArguments().getSerializable("tempOrderList");
@@ -89,9 +98,14 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 //        Log.d("CART FRAG: ", String.valueOf(temp_order_list.size()));
 
         rv_cart = root.findViewById(R.id.rv_cart);
+        cart_list = new ArrayList<>();
         requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
+
+        rv_cart.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+        rv_cart.setHasFixedSize(true);
+        rv_cart.setNestedScrollingEnabled(false);
+
         extractStoreCartItem();
-        Log.d("CartList", String.valueOf(cart_list));
 //        cart_list = new ArrayList<>();
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Binondo", 3, "45", "3.5"));
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Abad Santos", 5, "30", "1.5"));
@@ -101,9 +115,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 //            cart_list.add(cartModel);
 //        }
 
-        rv_cart.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-        rv_cart.setHasFixedSize(true);
-        rv_cart.setNestedScrollingEnabled(false);
+
 
         btn_remove = root.findViewById(R.id.btn_remove);
         cb_cart_item = root.findViewById(R.id.cb_cart_item);
@@ -172,6 +184,43 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         Log.d("Test","Test success");
     }
 
+    public void extractPopular(){
+        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectPop = response.getJSONObject(i);
+                        long r_id = jsonObjectPop.getLong("idStore");
+                        String r_image = jsonObjectPop.getString("storeImage");
+                        String r_name = jsonObjectPop.getString("storeName");
+                        String r_description = jsonObjectPop.getString("storeDescription");
+                        String r_location = jsonObjectPop.getString("storeLocation");
+                        String r_category = jsonObjectPop.getString("storeCategory");
+                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
+                        int r_popularity = jsonObjectPop.getInt("storePopularity");
+                        String r_open = jsonObjectPop.getString("storeStartTime");
+                        String r_close = jsonObjectPop.getString("storeEndTime");
+
+                        StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
+                                (float) r_rating, r_popularity, r_open, r_close);
+                        temp_store_list.add(store3);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(jsonArrayRequest3);
+    }
+
     public void extractStore(){
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -210,35 +259,37 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void extractStoreCartItem(){
-        CartFragment cartFragment = this;
         JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-
+                Log.d("CARTITEM", response.toString());
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectCart = response.getJSONObject(i);
-                        int c_productId = jsonObjectCart.getInt("temp_productId");
-                        int c_storeId = jsonObjectCart.getInt("temp_storeId");
-                        int c_usersId = jsonObjectCart.getInt("temp_usersId");
-                        String c_productName = jsonObjectCart.getString("temp_productName");
-                        double c_productPrice = jsonObjectCart.getDouble("temp_productPrice");
-                        int c_productQuantity = jsonObjectCart.getInt("temp_productQuantity");
-                        double c_totalProductPrice = jsonObjectCart.getDouble("temp_totalProductPrice");
-                        String c_storeName = jsonObjectCart.getString("storeName");
+                        if (jsonObjectCart.getInt("temp_usersId") == userID) {
+                            int c_productId = jsonObjectCart.getInt("temp_productId");
+                            int c_storeId = jsonObjectCart.getInt("temp_storeId");
+                            int c_usersId = jsonObjectCart.getInt("temp_usersId");
+                            String c_productName = jsonObjectCart.getString("temp_productName");
+                            double c_productPrice = jsonObjectCart.getDouble("temp_productPrice");
+                            int c_productQuantity = jsonObjectCart.getInt("temp_productQuantity");
+                            double c_totalProductPrice = jsonObjectCart.getDouble("temp_totalProductPrice");
+                            String c_storeName = jsonObjectCart.getString("storeName");
 
 //                        OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, (float) c_totalProductPrice, c_productQuantity, c_productName);
 //                        cart_item_list.add(orderItemModel);
 
-                            CartModel cartModel = new CartModel(c_storeName,c_productQuantity);
+                            CartModel cartModel = new CartModel(c_storeName, c_productQuantity);
                             cart_list.add(cartModel);
-
-                        Log.d("CartList", String.valueOf(cart_list));
+                            Log.d("CARTLIST", String.valueOf(cart_list.size()));
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    cartAdapter = new CartAdapter(getActivity(),cart_list,cartFragment);
+
+                    Log.d("CARTLIST", String.valueOf(cart_list.size()));
+                    cartAdapter = new CartAdapter(getActivity(),cart_list,CartFragment.this);
                     rv_cart.setAdapter(cartAdapter);
                 }
             }

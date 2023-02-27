@@ -39,6 +39,7 @@ import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
@@ -68,7 +69,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
+    //School IP
+    private static String JSON_URL;
+    private IPModel ipModel;
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -129,6 +132,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        ipModel = new IPModel();
+        JSON_URL = ipModel.getURL();
 
         Intent intent = getActivity().getIntent();
         if(intent.getStringExtra("name") != null) {
@@ -230,6 +236,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 Bundle bundle = new Bundle();
                 CartFragment fragment = new CartFragment();
                 bundle.putSerializable("tempOrderList", (Serializable) order_temp_list);
+                bundle.putInt("userID", userId);
                 fragment.setArguments(bundle);
                 Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -596,9 +603,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 //Check if CartList is empty
                 if(order_temp_list.isEmpty()){
                     temp_count = product_count;
-                    order_item_temp_list.add(new OrderItemModel(6,food_for_you_list.get(position).getIdProduct(),
-                            food_for_you_list.get(position).getStore_idStore(), food_for_you_list.get(position).getProductPrice()*temp_count,
-                            temp_count,10 , food_for_you_list.get(position).getProductName()));
+                    order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+                            food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
+                            food_for_you_list.get(position).getProductName()));
                     product_count = 0;
                     for (int j = 0 ; j < order_item_temp_list.size() ; j++){
                         tempPrice += order_item_temp_list.get(j).getItemPrice();
@@ -622,18 +629,18 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                                     tempItemQuantity = 0;
                                 } else{
                                     temp_count = product_count;
-                                    order_temp_list.get(i).getOrderItem_list().add(new OrderItemModel(6, food_for_you_list.get(position).getIdProduct(),
-                                            food_for_you_list.get(position).getStore_idStore(),food_for_you_list.get(position).getProductPrice() * temp_count,
-                                            temp_count, 10, food_for_you_list.get(position).getProductName()));
+                                    order_temp_list.get(i).getOrderItem_list().add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+                                            food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
+                                            food_for_you_list.get(position).getProductName()));
                                     product_count = 0;
                                 }
                             }
                         } else {
                             order_item_temp_list = new ArrayList<>();
                             temp_count = product_count;
-                            order_item_temp_list.add(new OrderItemModel(6, food_for_you_list.get(position).getIdProduct(),
-                                    food_for_you_list.get(position).getStore_idStore(),food_for_you_list.get(position).getProductPrice() * temp_count,
-                                    temp_count, 10, food_for_you_list.get(position).getProductName()));
+                            order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+                                    food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
+                                    food_for_you_list.get(position).getProductName()));
                                     product_count = 1;
                             for (int j = 0; j < order_item_temp_list.size(); j++) {
                                 tempPrice += order_item_temp_list.get(j).getItemPrice();

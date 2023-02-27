@@ -91,6 +91,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         rv_cart = root.findViewById(R.id.rv_cart);
         requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractStoreCartItem();
+        Log.d("CartList", String.valueOf(cart_list));
 //        cart_list = new ArrayList<>();
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Binondo", 3, "45", "3.5"));
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Abad Santos", 5, "30", "1.5"));
@@ -171,43 +172,6 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         Log.d("Test","Test success");
     }
 
-    public void extractPopular(){
-        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for (int i=0; i < response.length(); i++){
-                    try {
-                        JSONObject jsonObjectPop = response.getJSONObject(i);
-                        long r_id = jsonObjectPop.getLong("idStore");
-                        String r_image = jsonObjectPop.getString("storeImage");
-                        String r_name = jsonObjectPop.getString("storeName");
-                        String r_description = jsonObjectPop.getString("storeDescription");
-                        String r_location = jsonObjectPop.getString("storeLocation");
-                        String r_category = jsonObjectPop.getString("storeCategory");
-                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
-                        int r_popularity = jsonObjectPop.getInt("storePopularity");
-                        String r_open = jsonObjectPop.getString("storeStartTime");
-                        String r_close = jsonObjectPop.getString("storeEndTime");
-
-                        StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
-                        temp_store_list.add(store3);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueue.add(jsonArrayRequest3);
-    }
-
     public void extractStore(){
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -250,6 +214,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectCart = response.getJSONObject(i);
@@ -265,8 +230,10 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 //                        OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, (float) c_totalProductPrice, c_productQuantity, c_productName);
 //                        cart_item_list.add(orderItemModel);
 
-                        CartModel cartModel = new CartModel(c_storeName,c_productQuantity);
-                        cart_list.add(cartModel);
+                            CartModel cartModel = new CartModel(c_storeName,c_productQuantity);
+                            cart_list.add(cartModel);
+
+                        Log.d("CartList", String.valueOf(cart_list));
 
                     } catch (JSONException e) {
                         e.printStackTrace();

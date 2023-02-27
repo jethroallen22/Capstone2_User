@@ -41,6 +41,7 @@ import com.example.myapplication.RealPathUtil;
 import com.example.myapplication.activities.Home;
 import com.example.myapplication.activities.Login;
 import com.example.myapplication.databinding.FragmentProfileBinding;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.UserModel;
 import com.example.myapplication.ui.home.HomeFragment;
@@ -62,7 +63,9 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel mViewModel;
     private FragmentProfileBinding binding;
 
-    private static String JSON_URL = "http://10.154.162.184/mosibus_php/user/";
+    //School IP
+    private static String JSON_URL;
+    private IPModel ipModel;
 
     ImageView iv_image_placeholder, iv_edit_name, iv_edit_email, iv_edit_password, iv_edit_contact , iv_save_name, iv_save_email, iv_save_password, iv_save_contact;
     CardView cv_edit_picture;
@@ -82,6 +85,9 @@ public class ProfileFragment extends Fragment {
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        ipModel = new IPModel();
+        JSON_URL = ipModel.getURL();
 
         userModelList = new ArrayList<>();
         Bundle bundle = getArguments();
@@ -215,30 +221,21 @@ public class ProfileFragment extends Fragment {
                     final String password2 = password;
 
                     RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-                    String url ="update_profile.php";
 
                     StringRequest stringRequest = new StringRequest(Request.Method.POST,JSON_URL+ "update_prof.php",
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
                                     try {
-//
-//                                            Bundle bundle = new Bundle();
-//                                            UserModel userModel = new UserModel(id, base64Image, name2, email2, contact2, password2);
-//                                            bundle.putParcelable("user", userModel);
-//                                            HomeFragment fragment = new HomeFragment();
-//                                            fragment.setArguments(bundle);
-//                                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-
-                                            Intent intent = new Intent(getContext(), Home.class);
-                                            intent.putExtra("name",name2);
-                                            intent.putExtra("id",id);
-                                            intent.putExtra("image", base64Image);
-                                            intent.putExtra("email", email2);
-                                            intent.putExtra("contact", contact2);
-                                            intent.putExtra("password", password2);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            startActivity(intent);
+//                                            Intent intent = new Intent(getContext(), Home.class);
+//                                            intent.putExtra("name",name2);
+//                                            intent.putExtra("id",id);
+//                                            intent.putExtra("image", base64Image);
+//                                            intent.putExtra("email", email2);
+//                                            intent.putExtra("contact", contact2);
+//                                            intent.putExtra("password", password2);
+//                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                            startActivity(intent);
 //                                        }
                                     }
                                     catch (Throwable e) {

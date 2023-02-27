@@ -29,6 +29,7 @@ import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.CartModel;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.ui.home.HomeFragment;
@@ -58,7 +59,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     private int i;
     private float total_price;
     OrderFragment orderFragment = this;
-    String JSON_URL = "http://192.168.68.109/mosibus_php/user/paymongo/";
+    //School IP
+    private static String JSON_URL;
+    private IPModel ipModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +70,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
         binding = FragmentOrderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        ipModel = new IPModel();
+        JSON_URL = ipModel.getURL();
 
         tv_store_name = root.findViewById(R.id.tv_store_name);
         tv_total_price = root.findViewById(R.id.tv_total_price);

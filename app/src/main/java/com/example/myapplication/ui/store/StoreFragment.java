@@ -79,7 +79,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_category;
     public String stor_description;
 
-    private static String JSON_URL="http://192.168.254.106/mosibus_php/user/";
+    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -399,6 +399,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         params.put("temp_productName", food_for_you_list.get(position).getProductName());
                         params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
                         params.put("temp_productQuantity", String.valueOf(product_count));
+                        params.put("temp_totalProductPrice", String.valueOf(product_count*food_for_you_list.get(position).getProductPrice()));
                         return params;
                     }
 
@@ -410,8 +411,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 float tempPrice = 0;
                 Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
                 order_item_temp_list.add(new OrderItemModel(6,food_for_you_list.get(position).getIdProduct(),
-                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,10 ,
-                        food_for_you_list.get(position).getProductName()));
+                        food_for_you_list.get(position).getStore_idStore(),food_for_you_list.get(position).getProductPrice()*product_count,
+                        product_count,10 , food_for_you_list.get(position).getProductName()));
                 Log.d("ADD TO CART: ", "AFTER ORDER_ITEM");
                 for (int i = 0 ; i < order_item_temp_list.size() ; i++){
                     tempPrice += order_item_temp_list.get(i).getItemPrice();

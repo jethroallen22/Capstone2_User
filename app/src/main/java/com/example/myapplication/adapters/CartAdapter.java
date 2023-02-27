@@ -1,7 +1,6 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +23,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private final RecyclerViewInterface recyclerViewInterface;
     Context context;
-    List<OrderModel> list;
+    List<CartModel> list;
 
-    public CartAdapter(Context context, List<OrderModel> list, RecyclerViewInterface recyclerViewInterface) {
+    public CartAdapter(Context context, List<CartModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
         this.recyclerViewInterface = recyclerViewInterface;
@@ -66,11 +65,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 ////            holder.tv_order_info.setText(text);
 ////            holder.tv_order_item_info.setText("Qty: " + list.get(position).getOrderItem_list().size());
 //        }
-        Glide.with(context)
-                .load(list.get(position).getStore_image())
-                .into(holder.iv_cart_item_img);
-        holder.tv_cart_store_name.setText(list.get(position).getStore_name());
-        holder.tv_cart_item_info.setText(list.get(position).getOrderItem_list().size() + " items");
+//        Glide.with(context)
+//                .load(list.get(position).getStore_image())
+//                .into(holder.iv_cart_item_img);
+        holder.tv_cart_store_name.setText(list.get(position).getRestoName());
+       // holder.tv_cart_item_info.setText(list.get(position).getOrderItem_list().size() + " items");
 
 
     }
@@ -86,6 +85,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         CheckBox cb_cart_item;
         TextView tv_cart_store_name;
         TextView tv_cart_item_info;
+
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);

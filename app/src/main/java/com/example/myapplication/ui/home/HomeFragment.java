@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    private static String JSON_URL="http://192.168.254.106/mosibus_php/user/";
+    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -597,8 +597,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 if(order_temp_list.isEmpty()){
                     temp_count = product_count;
                     order_item_temp_list.add(new OrderItemModel(6,food_for_you_list.get(position).getIdProduct(),
-                            food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,10 ,
-                            food_for_you_list.get(position).getProductName()));
+                            food_for_you_list.get(position).getStore_idStore(), food_for_you_list.get(position).getProductPrice()*temp_count,
+                            temp_count,10 , food_for_you_list.get(position).getProductName()));
                     product_count = 0;
                     for (int j = 0 ; j < order_item_temp_list.size() ; j++){
                         tempPrice += order_item_temp_list.get(j).getItemPrice();
@@ -623,8 +623,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                                 } else{
                                     temp_count = product_count;
                                     order_temp_list.get(i).getOrderItem_list().add(new OrderItemModel(6, food_for_you_list.get(position).getIdProduct(),
-                                            food_for_you_list.get(position).getProductPrice() * temp_count, temp_count, 10,
-                                            food_for_you_list.get(position).getProductName()));
+                                            food_for_you_list.get(position).getStore_idStore(),food_for_you_list.get(position).getProductPrice() * temp_count,
+                                            temp_count, 10, food_for_you_list.get(position).getProductName()));
                                     product_count = 0;
                                 }
                             }
@@ -632,8 +632,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                             order_item_temp_list = new ArrayList<>();
                             temp_count = product_count;
                             order_item_temp_list.add(new OrderItemModel(6, food_for_you_list.get(position).getIdProduct(),
-                                    food_for_you_list.get(position).getProductPrice() * temp_count, temp_count, 10,
-                                    food_for_you_list.get(position).getProductName()));
+                                    food_for_you_list.get(position).getStore_idStore(),food_for_you_list.get(position).getProductPrice() * temp_count,
+                                    temp_count, 10, food_for_you_list.get(position).getProductName()));
                                     product_count = 1;
                             for (int j = 0; j < order_item_temp_list.size(); j++) {
                                 tempPrice += order_item_temp_list.get(j).getItemPrice();

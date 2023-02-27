@@ -5,17 +5,37 @@ import java.util.List;
 
 public class CartModel  {
 
-    List<OrderModel> order_list;
+    String restoName;
+    String restoImage;
+    int orderQuantity;
 
-    public CartModel(List<OrderModel> order_list) {
-        this.order_list = order_list;
+    public CartModel(String restoName, int orderQuantity) {
+        this.restoName = restoName;
+       // this.restoImage = restoImage;
+        this.orderQuantity = orderQuantity;
     }
 
-    public List<OrderModel> getOrder_list() {
-        return order_list;
+    public String getRestoName() {
+        return restoName;
     }
 
-    public void setOrder_list(List<OrderModel> order_list) {
-        this.order_list = order_list;
+    public void setRestoName(String restoName) {
+        this.restoName = restoName;
+    }
+
+    public String getRestoImage() {
+        return restoImage;
+    }
+
+    public void setRestoImage(String restoImage) {
+        this.restoImage = restoImage;
+    }
+
+    public int getOrderQuantity() {
+        return orderQuantity;
+    }
+
+    public void setOrderQuantity(int orderQuantity) {
+        this.orderQuantity = orderQuantity;
     }
 }

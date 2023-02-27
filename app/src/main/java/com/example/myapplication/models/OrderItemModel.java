@@ -8,17 +8,27 @@ import androidx.annotation.NonNull;
 public class OrderItemModel implements Parcelable {
     int idItem;
     int product_idProduct;
+    int store_id;
     float itemPrice;
     int itemQuantity;
     int order_idOrder;
     String productName;
 
-    public OrderItemModel(int idItem, int product_idProduct, float itemPrice, int itemQuantity, int order_idOrder, String productName) {
+    public OrderItemModel(int idItem, int product_idProduct, int store_id, float itemPrice, int itemQuantity, int order_idOrder, String productName) {
         this.idItem = idItem;
         this.product_idProduct = product_idProduct;
+        this.store_id = store_id;
         this.itemPrice = itemPrice;
         this.itemQuantity = itemQuantity;
         this.order_idOrder = order_idOrder;
+        this.productName = productName;
+    }
+
+    public OrderItemModel(int product_idProduct, int store_id, float itemPrice, int itemQuantity, String productName) {
+        this.product_idProduct = product_idProduct;
+        this.store_id = store_id;
+        this.itemPrice = itemPrice;
+        this.itemQuantity = itemQuantity;
         this.productName = productName;
     }
 
@@ -51,6 +61,14 @@ public class OrderItemModel implements Parcelable {
 
     public void setProduct_idProduct(int product_idProduct) {
         this.product_idProduct = product_idProduct;
+    }
+
+    public int getStore_id(){
+        return store_id;
+    }
+
+    public void setStore_id(int store_id){
+        this.store_id = store_id;
     }
 
     public float getItemPrice() {

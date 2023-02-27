@@ -42,7 +42,6 @@ import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeFoodForYouModel;
-import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
@@ -80,9 +79,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_category;
     public String stor_description;
 
-    //School IP
-    private static String JSON_URL;
-    private IPModel ipModel;
+    private static String JSON_URL="http://10.112.133.235/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -120,9 +117,6 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
         binding = FragmentStoreBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        ipModel = new IPModel();
-        JSON_URL = ipModel.getURL();
 
         store_image = root.findViewById(R.id.iv_store_image);
         store_name = root.findViewById(R.id.tv_store_name_main);

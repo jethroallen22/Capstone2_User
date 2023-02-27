@@ -39,7 +39,6 @@ import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.HomeCategoryModel;
-import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
@@ -69,9 +68,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private FragmentHomeBinding binding;
     private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
-    //School IP
-    private static String JSON_URL;
-    private IPModel ipModel;
+    private static String JSON_URL="http://192.168.254.106/mosibus_php/user/";
 
 
     List<OrderItemModel> order_item_temp_list;
@@ -132,9 +129,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        ipModel = new IPModel();
-        JSON_URL = ipModel.getURL();
 
         Intent intent = getActivity().getIntent();
         if(intent.getStringExtra("name") != null) {

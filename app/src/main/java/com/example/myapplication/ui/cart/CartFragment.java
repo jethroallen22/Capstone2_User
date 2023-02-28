@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.cart;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,28 +25,26 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.CartAdapter;
-import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
+import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.StoreModel;
-import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.order.OrderFragment;
-import com.example.myapplication.ui.store.StoreFragment;
+import com.example.myapplication.ui.search.SearchFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.LongStream;
+import java.util.Map;
 
 
 public class CartFragment extends Fragment implements RecyclerViewInterface {
@@ -54,16 +54,16 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     //Cart List Recycler View
     RecyclerView rv_cart;
-    List<CartModel> cart_list;
+    //List<OrderItemModel> cart_list;
     CartAdapter cartAdapter;
 
     Button btn_remove;
     CheckBox cb_cart_item;
     CheckBox checkBox;
 
-    List<OrderModel> temp_order_list;
+    List<OrderModel> order_list;
     List<StoreModel> temp_store_list;
-    List<OrderItemModel> cart_item_list;
+    List<OrderItemModel> order_item_list;
 
     HomeStorePopularAdapter temp_store_adapter;
     RequestQueue requestQueue;
@@ -98,14 +98,14 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 //        Log.d("CART FRAG: ", String.valueOf(temp_order_list.size()));
 
         rv_cart = root.findViewById(R.id.rv_cart);
-        cart_list = new ArrayList<>();
+        order_list = new ArrayList<>();
+        order_item_list = new ArrayList<>();
+//        rv_cart.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+//        rv_cart.setHasFixedSize(true);
+//        rv_cart.setNestedScrollingEnabled(false);
         requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
-
-        rv_cart.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-        rv_cart.setHasFixedSize(true);
-        rv_cart.setNestedScrollingEnabled(false);
-
         extractStoreCartItem();
+
 //        cart_list = new ArrayList<>();
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Binondo", 3, "45", "3.5"));
 //        cart_list.add(new CartModel(R.drawable.burger_mcdo,"McDonalds - Abad Santos", 5, "30", "1.5"));
@@ -259,14 +259,19 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void extractStoreCartItem(){
+
         JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Log.d("CARTITEM", response.toString());
+                float tempPrice = 0;
+                int product_count =0;
+                int temp_count = 0;
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectCart = response.getJSONObject(i);
-                        if (jsonObjectCart.getInt("temp_usersId") == userID) {
+
+
+                            Log.d("CARTITEM", response.toString());
                             int c_productId = jsonObjectCart.getInt("temp_productId");
                             int c_storeId = jsonObjectCart.getInt("temp_storeId");
                             int c_usersId = jsonObjectCart.getInt("temp_usersId");
@@ -275,31 +280,83 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                             int c_productQuantity = jsonObjectCart.getInt("temp_productQuantity");
                             double c_totalProductPrice = jsonObjectCart.getDouble("temp_totalProductPrice");
                             String c_storeName = jsonObjectCart.getString("storeName");
+                            String c_storeImage = jsonObjectCart.getString("storeImage");
 
-//                        OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, (float) c_totalProductPrice, c_productQuantity, c_productName);
-//                        cart_item_list.add(orderItemModel);
-
-                            CartModel cartModel = new CartModel(c_storeName, c_productQuantity);
-                            cart_list.add(cartModel);
-                            Log.d("CARTLIST", String.valueOf(cart_list.size()));
+//                            OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, (float) c_totalProductPrice, c_productQuantity, c_productName);
+//                            cart_list.add(orderItemModel);
+//                            Log.d("CART", String.valueOf(cart_list.size()));
+                        Log.d("BEFORE", String.valueOf(userID));
+                        Log.d("BEFOREDB", String.valueOf(c_usersId));
+                        if (c_usersId == userID) {
+                            if(order_list.isEmpty()){
+                                order_item_list.add(new OrderItemModel(c_productId, c_storeId, (float) (c_productPrice * c_productQuantity), c_productQuantity,
+                                        c_productName));
+                                for (int j = 0 ; j < order_item_list.size() ; j++){
+                                    tempPrice += order_item_list.get(j).getItemPrice();
+                                }
+                                order_list.add(new OrderModel(tempPrice,"pending",c_storeId,
+                                        c_storeImage,c_storeName,
+                                        c_usersId, order_item_list));
+                            }else {
+                                for (int h = 0; h < order_list.size(); h++) {
+                                    //Check if Order already exist in CartList
+                                    if (order_list.get(h).getStore_idstore() == c_storeId) {
+                                        // Check if order item already exist
+                                        for (int k = 0 ; k < order_list.get(h).getOrderItem_list().size() ; k++){
+                                            if(c_productName.compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName()) == 0){
+//                                                temp_count = c_productQuantity;
+                                                int tempItemQuantity = 0;
+                                                tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
+                                                tempItemQuantity += c_productQuantity;
+                                                order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
+                                                tempItemQuantity = 0;
+                                            } else{
+//                                                temp_count = product_count;
+                                                order_list.get(h).getOrderItem_list().add(new OrderItemModel(c_productId, c_storeId,
+                                                        (float) (c_productPrice * c_productQuantity), c_productQuantity,
+                                                        c_productName));
+//                                                product_count = 0;
+                                            }
+                                        }
+                                    } else {
+                                        order_item_list = new ArrayList<>();
+                                        order_item_list.add(new OrderItemModel(c_productId, c_storeId,
+                                                (float) (c_productPrice * c_productQuantity), c_productQuantity,
+                                                c_productName));
+                                        for (int j = 0 ; j < order_item_list.size() ; j++){
+                                            tempPrice += order_item_list.get(j).getItemPrice();
+                                        }
+                                        order_list.add(new OrderModel(tempPrice,"pending", c_storeId,
+                                                c_storeImage,c_storeName,
+                                                c_usersId, order_item_list));
+                                    }
+                                }
+                            }
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-                    Log.d("CARTLIST", String.valueOf(cart_list.size()));
-                    cartAdapter = new CartAdapter(getActivity(),cart_list,CartFragment.this);
+                    cartAdapter = new CartAdapter(getActivity(),order_list, CartFragment.this);
                     rv_cart.setAdapter(cartAdapter);
+                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                    rv_cart.setLayoutManager(layoutManager);
+                }
+                for (int p = 0 ; p < order_list.size() ; p++){
+                    Log.d("StoreName", order_list.get(p).getStore_name());
                 }
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
             }
+
+
         });
         requestQueueCart.add(jsonArrayRequest1);
+        Log.d("OUTSIDE LIST", String.valueOf(order_list.size()));
 
     }
 }

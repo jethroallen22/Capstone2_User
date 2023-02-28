@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.CartModel;
@@ -23,9 +22,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private final RecyclerViewInterface recyclerViewInterface;
     Context context;
-    List<CartModel> list;
+    List<OrderModel> list;
 
-    public CartAdapter(Context context, List<CartModel> list, RecyclerViewInterface recyclerViewInterface) {
+    public CartAdapter(Context context, List<OrderModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
         this.recyclerViewInterface = recyclerViewInterface;
@@ -68,8 +67,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 //        Glide.with(context)
 //                .load(list.get(position).getStore_image())
 //                .into(holder.iv_cart_item_img);
-        holder.tv_cart_store_name.setText(list.get(position).getRestoName());
-        holder.tv_cart_item_info.setText(list.get(position).getOrderQuantity());
+
+        holder.iv_cart_item_img.setImageBitmap(list.get(position).getBitmapImage());
+        holder.tv_cart_store_name.setText(list.get(position).getStore_name() + " " + list.get(position).getOrderItem_list().size());
+        holder.tv_cart_item_info.setText(list.get(position).getOrderItem_list().size() + " item/s");
 
 
     }

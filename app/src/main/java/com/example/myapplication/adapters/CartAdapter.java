@@ -69,7 +69,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 //                .load(list.get(position).getStore_image())
 //                .into(holder.iv_cart_item_img);
         holder.tv_cart_store_name.setText(list.get(position).getRestoName());
-       // holder.tv_cart_item_info.setText(list.get(position).getOrderItem_list().size() + " items");
+        holder.tv_cart_item_info.setText(list.get(position).getOrderQuantity());
 
 
     }

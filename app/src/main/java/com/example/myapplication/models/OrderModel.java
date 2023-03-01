@@ -1,7 +1,10 @@
 package com.example.myapplication.models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -27,6 +30,17 @@ public class OrderModel implements Parcelable {
         this.users_id = users_id;
         this.orderItem_list = orderItem_list;
     }
+
+    public OrderModel(float orderItemTotalPrice, String orderStatus, int store_idstore, String store_image, String store_name, int users_id, List<OrderItemModel> orderItem_list) {
+        this.orderItemTotalPrice = orderItemTotalPrice;
+        this.orderStatus = orderStatus;
+        this.store_idstore = store_idstore;
+        this.store_image = store_image;
+        this.store_name = store_name;
+        this.users_id = users_id;
+        this.orderItem_list = orderItem_list;
+    }
+
 
     //    public OrderModel(long order_id, String name, String address, String time, String distance, List<OrderItemModel> orderItem_list, int item_count, float total) {
 //        this.order_id = order_id;
@@ -136,6 +150,12 @@ public class OrderModel implements Parcelable {
     public void setStore_name(String store_name) {
         this.store_name = store_name;
     }
+
+    public Bitmap getBitmapImage(){
+        byte[] byteArray = Base64.decode(store_image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
+        return bitmap;
+    };
 
     @Override
     public int describeContents() {

@@ -265,7 +265,6 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         });
         requestQueueCart.add(jsonArrayRequest1);
         Log.d("OUTSIDE LIST", String.valueOf(cart_list.size()));
-
     }
 
 

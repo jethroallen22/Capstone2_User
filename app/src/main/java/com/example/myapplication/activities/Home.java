@@ -89,6 +89,7 @@ public class Home extends AppCompatActivity {
         userList = new ArrayList();
         requestQueue1 = Singleton.getsInstance(this).getRequestQueue();
         profile_user();
+        Log.d("USERSIZE", String.valueOf(userList.size()));
         setSupportActionBar(binding.appBarHome.toolbar);
 
         DrawerLayout drawer = binding.drawerLayout;

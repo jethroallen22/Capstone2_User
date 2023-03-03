@@ -621,6 +621,33 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         tv_counter.setText(Integer.toString(product_count));
         btn_add_to_cart.setEnabled(false);
 
+        //Add count to order
+        cl_product_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (product_count >= 0 ){
+                    cl_product_minus.setClickable(true);
+                    btn_add_to_cart.setEnabled(true);
+                    product_count +=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+
+        //Subtract count to order
+        cl_product_minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(product_count == 0){
+                    cl_product_minus.setClickable(false);
+                    btn_add_to_cart.setEnabled(false);
+                }else{
+                    product_count -=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             int temp_count = 0;
             float tempPrice = 0;
@@ -628,58 +655,58 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             public void onClick(View v) {
 
 
-                Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
-                //Check if CartList is empty
-                if(order_temp_list.isEmpty()){
-                    temp_count = product_count;
-                    order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
-                            food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
-                            food_for_you_list.get(position).getProductName()));
-                    product_count = 0;
-                    for (int j = 0 ; j < order_item_temp_list.size() ; j++){
-                        tempPrice += order_item_temp_list.get(j).getItemPrice();
-                    }
-                    order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
-                            food_for_you_list.get(position).getProductRestoImage(),food_for_you_list.get(position).getProductRestoName(),
-                            userId, order_item_temp_list));
-                }else {
-                    for (int i = 0; i < order_temp_list.size(); i++) {
-                        //Check if Order already exist in CartList
-                        if (order_temp_list.get(i).getStore_name().compareTo(food_for_you_list.get(position).getProductRestoName()) == 0) {
-                            // Check if order item already exist
-                            for (int k = 0 ; k < order_temp_list.get(i).getOrderItem_list().size() ; k++){
-                                if(food_for_you_list.get(position).getProductName().compareTo(order_temp_list.get(i).getOrderItem_list().get(k).getProductName()) == 0){
-                                    temp_count = product_count;
-                                    int tempItemQuantity = 0;
-                                    tempItemQuantity = order_temp_list.get(i).getOrderItem_list().get(k).getItemQuantity();
-                                    tempItemQuantity += temp_count;
-                                    product_count = 0;
-                                    order_temp_list.get(i).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
-                                    tempItemQuantity = 0;
-                                } else{
-                                    temp_count = product_count;
-                                    order_temp_list.get(i).getOrderItem_list().add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
-                                            food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
-                                            food_for_you_list.get(position).getProductName()));
-                                    product_count = 0;
-                                }
-                            }
-                        } else {
-                            order_item_temp_list = new ArrayList<>();
-                            temp_count = product_count;
-                            order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
-                                    food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
-                                    food_for_you_list.get(position).getProductName()));
-                                    product_count = 1;
-                            for (int j = 0; j < order_item_temp_list.size(); j++) {
-                                tempPrice += order_item_temp_list.get(j).getItemPrice();
-                            }
-                            order_temp_list.add(new OrderModel(6, tempPrice, "preparing", food_for_you_list.get(position).getStore_idStore(),
-                                    food_for_you_list.get(position).getProductRestoImage(), food_for_you_list.get(position).getProductRestoName(),
-                                    userId, order_item_temp_list));
-                        }
-                    }
-                }
+//                Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
+//                //Check if CartList is empty
+//                if(order_temp_list.isEmpty()){
+//                    temp_count = product_count;
+//                    order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+//                            food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
+//                            food_for_you_list.get(position).getProductName()));
+//                    product_count = 0;
+//                    for (int j = 0 ; j < order_item_temp_list.size() ; j++){
+//                        tempPrice += order_item_temp_list.get(j).getItemPrice();
+//                    }
+//                    order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
+//                            food_for_you_list.get(position).getProductRestoImage(),food_for_you_list.get(position).getProductRestoName(),
+//                            userId, order_item_temp_list));
+//                }else {
+//                    for (int i = 0; i < order_temp_list.size(); i++) {
+//                        //Check if Order already exist in CartList
+//                        if (order_temp_list.get(i).getStore_name().compareTo(food_for_you_list.get(position).getProductRestoName()) == 0) {
+//                            // Check if order item already exist
+//                            for (int k = 0 ; k < order_temp_list.get(i).getOrderItem_list().size() ; k++){
+//                                if(food_for_you_list.get(position).getProductName().compareTo(order_temp_list.get(i).getOrderItem_list().get(k).getProductName()) == 0){
+//                                    temp_count = product_count;
+//                                    int tempItemQuantity = 0;
+//                                    tempItemQuantity = order_temp_list.get(i).getOrderItem_list().get(k).getItemQuantity();
+//                                    tempItemQuantity += temp_count;
+//                                    product_count = 0;
+//                                    order_temp_list.get(i).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
+//                                    tempItemQuantity = 0;
+//                                } else{
+//                                    temp_count = product_count;
+//                                    order_temp_list.get(i).getOrderItem_list().add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+//                                            food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
+//                                            food_for_you_list.get(position).getProductName()));
+//                                    product_count = 0;
+//                                }
+//                            }
+//                        } else {
+//                            order_item_temp_list = new ArrayList<>();
+//                            temp_count = product_count;
+//                            order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+//                                    food_for_you_list.get(position).getProductPrice()*temp_count, temp_count,
+//                                    food_for_you_list.get(position).getProductName()));
+//                                    product_count = 1;
+//                            for (int j = 0; j < order_item_temp_list.size(); j++) {
+//                                tempPrice += order_item_temp_list.get(j).getItemPrice();
+//                            }
+//                            order_temp_list.add(new OrderModel(6, tempPrice, "preparing", food_for_you_list.get(position).getStore_idStore(),
+//                                    food_for_you_list.get(position).getProductRestoImage(), food_for_you_list.get(position).getProductRestoName(),
+//                                    userId, order_item_temp_list));
+//                        }
+//                    }
+//                }
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String result) {
@@ -713,45 +740,22 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         params.put("temp_usersId", String.valueOf(userId));
                         params.put("temp_productName", food_for_you_list.get(position).getProductName());
                         params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
-                        params.put("temp_productQuantity", String.valueOf(temp_count));
-                        params.put("temp_totalProductPrice", String.valueOf(tempPrice));
+                        params.put("temp_productQuantity", String.valueOf(product_count));
+                        params.put("temp_totalProductPrice", String.valueOf(product_count * food_for_you_list.get(position).getProductPrice()));
+                        product_count = 0;
                         return params;
                     }
 
                 };
 
+
                 RequestQueue requestQueueTempCart = Volley.newRequestQueue(getActivity().getApplicationContext());
                 requestQueueTempCart.add(stringRequest);
                 bottomSheetDialog.dismiss();
+
             }
         });
 
-        //Add count to order
-        cl_product_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (product_count >= 0 ){
-                    cl_product_minus.setClickable(true);
-                    btn_add_to_cart.setEnabled(true);
-                    product_count +=1;
-                    tv_counter.setText(Integer.toString(product_count));
-                }
-            }
-        });
-
-        //Subtract count to order
-        cl_product_minus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(product_count == 0){
-                    cl_product_minus.setClickable(false);
-                    btn_add_to_cart.setEnabled(false);
-                }else{
-                    product_count -=1;
-                    tv_counter.setText(Integer.toString(product_count));
-                }
-            }
-        });
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
     }

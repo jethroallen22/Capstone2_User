@@ -68,7 +68,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     HomeStorePopularAdapter temp_store_adapter;
     RequestQueue requestQueue;
-    RequestQueue requestQueueCart;
+    RequestQueue requestQueueCart, requestQueueStore;
 
     int userID = 0;
 
@@ -185,81 +185,44 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         Log.d("Test","Test success");
     }
 
-    public void extractPopular(){
-        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for (int i=0; i < response.length(); i++){
-                    try {
-                        JSONObject jsonObjectPop = response.getJSONObject(i);
-                        long r_id = jsonObjectPop.getLong("idStore");
-                        String r_image = jsonObjectPop.getString("storeImage");
-                        String r_name = jsonObjectPop.getString("storeName");
-                        String r_description = jsonObjectPop.getString("storeDescription");
-                        String r_location = jsonObjectPop.getString("storeLocation");
-                        String r_category = jsonObjectPop.getString("storeCategory");
-                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
-                        int r_popularity = jsonObjectPop.getInt("storePopularity");
-                        String r_open = jsonObjectPop.getString("storeStartTime");
-                        String r_close = jsonObjectPop.getString("storeEndTime");
-
-                        StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
-                        temp_store_list.add(store3);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueue.add(jsonArrayRequest3);
-    }
-
-    public void extractStore(){
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for (int i=0; i < response.length(); i++){
-                    try {
-                        JSONObject jsonObjectPop = response.getJSONObject(i);
-                        long r_id = jsonObjectPop.getLong("idStore");
-                        String r_image = jsonObjectPop.getString("storeImage");
-                        String r_name = jsonObjectPop.getString("storeName");
-                        String r_description = jsonObjectPop.getString("storeDescription");
-                        String r_location = jsonObjectPop.getString("storeLocation");
-                        String r_category = jsonObjectPop.getString("storeCategory");
-                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
-                        int r_popularity = jsonObjectPop.getInt("storePopularity");
-                        String r_open = jsonObjectPop.getString("storeStartTime");
-                        String r_close = jsonObjectPop.getString("storeEndTime");
-
-                        StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
-                        temp_store_list.add(store3);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
-    }
-
     public void extractStoreCartItem(){
+
+        List<StoreModel> tempStoreList;
+        tempStoreList = new ArrayList<>();
+        JsonArrayRequest jsonArrayRequest4 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectPop = response.getJSONObject(i);
+                        int r_id = jsonObjectPop.getInt("idStore");
+                        String r_image = jsonObjectPop.getString("storeImage");
+                        String r_name = jsonObjectPop.getString("storeName");
+                        String r_description = jsonObjectPop.getString("storeDescription");
+                        String r_location = jsonObjectPop.getString("storeLocation");
+                        String r_category = jsonObjectPop.getString("storeCategory");
+                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
+                        int r_popularity = jsonObjectPop.getInt("storePopularity");
+                        String r_open = jsonObjectPop.getString("storeStartTime");
+                        String r_close = jsonObjectPop.getString("storeEndTime");
+
+                        StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
+                                (float) r_rating, r_popularity, r_open, r_close);
+                        tempStoreList.add(store3);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueStore.add(jsonArrayRequest4);
 
         JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -267,6 +230,13 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                 float tempPrice = 0;
                 int product_count =0;
                 int temp_count = 0;
+
+                List<OrderItemModel> tempOrderItemList;
+                List<OrderModel> tempOrderList;
+
+                tempOrderItemList = new ArrayList<>();
+                tempOrderList = new ArrayList<>();
+
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectCart = response.getJSONObject(i);
@@ -286,46 +256,61 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                             OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, (float) (c_productPrice * c_productQuantity), c_productQuantity,
                                     c_productName);
 
-                            Log.d("BEFORE", String.valueOf(userID));
-                            Log.d("BEFOREDB", String.valueOf(c_usersId));
-                            if(order_list.isEmpty()){
-                                Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
-                                order_item_list = new ArrayList<>();
-                                order_item_list.add(orderItemModel);
-                                order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
-                                        c_storeImage,c_storeName,
-                                        c_usersId, order_item_list));
-                            }else{
-                                for (int h = 0; h < order_list.size(); h++) {
-                                    Log.d("Inside for", String.valueOf(order_list.size()));
-                                    //Check if Order already exist in CartList
-                                    if (order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 0) {
-                                        Log.d("STOREMATCH", c_productName + " MATCH " + c_storeName);
-                                        // Check if order item already exist
-                                        for (int k = 0 ; k < order_list.get(h).getOrderItem_list().size() ; k++){
-                                            if(c_productName.toLowerCase().trim().compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName().toLowerCase().trim()) == 0){
-//                                                temp_count = c_productQuantity;
-                                                int tempItemQuantity = 0;
-                                                tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
-                                                tempItemQuantity += c_productQuantity;
-                                                order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
-                                                tempItemQuantity = 0;
-                                            } else{
-                                                order_list.get(h).getOrderItem_list().add(orderItemModel);
-                                            }
-                                        }
+//                            Log.d("BEFORE", String.valueOf(userID));
+//                            Log.d("BEFOREDB", String.valueOf(c_usersId));
+//                            if(order_list.isEmpty()){
+//                                Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
+//                                order_item_list = new ArrayList<>();
+//                                order_item_list.add(orderItemModel);
+//                                order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
+//                                        c_storeImage,c_storeName,
+//                                        c_usersId, order_item_list));
+//                            }  else{
+//                                for (int h = 0; h < order_list.size(); h++) {
+//                                    Log.d("Inside for", String.valueOf(order_list.size()));
+//                                    //Check if Order already exist in CartList
+//                                    if (order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 0) {
+//                                        Log.d("STOREMATCH", c_productName + " MATCH " + c_storeName);
+//                                        // Check if order item already exist
+//                                        for (int k = 0 ; k < order_list.get(h).getOrderItem_list().size() ; k++){
+//                                            if(c_productName.toLowerCase().trim().compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName().toLowerCase().trim()) == 0){
+////                                                temp_count = c_productQuantity;
+//                                                int tempItemQuantity = 0;
+//                                                tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
+//                                                tempItemQuantity += c_productQuantity;
+//                                                order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
+//                                                tempItemQuantity = 0;
+//                                            } else{
+//                                                order_list.get(h).getOrderItem_list().add(orderItemModel);
+//                                            }
+//                                            break;
+//                                        }
+//                                    } else{
+//                                        Log.d("STOREMATCH !0", c_productName + " NOT MATCH " + c_storeName);
+//                                        order_item_list = new ArrayList<>();
+//                                        order_item_list.add(orderItemModel);
+//                                        order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
+//                                                c_storeImage,c_storeName,
+//                                                c_usersId, order_item_list));
+//                                        Log.d("Added OL", String.valueOf(i));
+//                                        break;
+//                                    }
+//                                }
+//                           }
+                            //Store Sort for Cart Item
+                            if (tempOrderItemList.isEmpty()){
+                                tempOrderItemList.add(orderItemModel);
+                            } else{
+                                for(int l = 0; l < tempOrderItemList.size(); l++){
+                                    if(orderItemModel.getProduct_idProduct() == tempOrderItemList.get(l).getProduct_idProduct()){
+                                        temp_count = tempOrderItemList.get(l).getItemQuantity();
+                                        temp_count += orderItemModel.getItemQuantity();
+                                        tempOrderItemList.get(l).setItemQuantity(temp_count);
                                     } else{
-                                        Log.d("STOREMATCH !0", c_productName + " NOT MATCH " + c_storeName);
-                                        order_item_list = new ArrayList<>();
-                                        order_item_list.add(orderItemModel);
-                                        order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
-                                                c_storeImage,c_storeName,
-                                                c_usersId, order_item_list));
-                                        Log.d("Added OL", String.valueOf(i));
-                                        break;
+                                        tempOrderItemList.add(orderItemModel);
                                     }
                                 }
-                            }
+                            } //
                         }
                         Log.d("MINE OL SIZE", String.valueOf(order_list.size()));
                     } catch (JSONException e) {
@@ -333,6 +318,21 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                     }
 
                 }
+
+                for (int m = 0; m < tempOrderItemList.size(); m++){
+                    if(tempOrderList.isEmpty()){
+                        for (int n = 0; n < tempStoreList.size(); n++){
+                            List<OrderItemModel> tempToil;
+                            tempToil = new ArrayList<>();
+                            tempToil.add(tempOrderItemList.get(m));
+                            if(tempStoreList.get(n).getStore_id() == tempOrderItemList.get(m).getStore_id()){
+                                tempOrderList.add(new OrderModel(0.0F, "pending", tempStoreList.get(n).getStore_id(),tempStoreList.get(n).getStore_image(),
+                                                                tempStoreList.get(n).getStore_name(), userID, tempToil));
+                            }
+                        }
+                    }
+                }
+
                 Log.d("CARTSIZE", String.valueOf(order_list.size()));
                 for (int i = 0 ; i < order_list.size() ; i++){
                     for (int j = 0 ; j < order_list.get(i).getOrderItem_list().size() ; j++)

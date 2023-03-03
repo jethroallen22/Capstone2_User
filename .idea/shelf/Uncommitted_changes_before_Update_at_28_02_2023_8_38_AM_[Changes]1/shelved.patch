@@ -1,0 +1,540 @@
+Index: app/src/main/java/com/example/myapplication/activities/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.activities;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.app.ActivityCompat;\r\n\r\nimport android.Manifest;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.location.LocationManager;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Toast;\r\n\r\nimport com.android.volley.Request;\r\nimport com.android.volley.RequestQueue;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.toolbox.StringRequest;\r\nimport com.android.volley.toolbox.Volley;\r\nimport com.example.myapplication.R;\r\n\r\npublic class MainActivity extends AppCompatActivity implements LocationListener {\r\n\r\n    final static String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};\r\n    final static int PERMISSIONS_ALL = 1;\r\n\r\n    LocationManager locationManager;\r\n    double curLong;\r\n    double curLat;\r\n\r\n\r\n    private final String weatherURL = \"https://api.openweathermap.org/data/2.5/weather\";\r\n    private final String appId = \"d7484fc39538bf509fe729a4bbb0a90f\";\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n        getSupportActionBar().hide();\r\n\r\n        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);\r\n        if(Build.VERSION.SDK_INT >= 23){\r\n            requestPermissions(PERMISSIONS, PERMISSIONS_ALL);\r\n        }\r\n\r\n\r\n\r\n    }\r\n\r\n    @Override\r\n    protected void onStart(){\r\n        super.onStart();\r\n    }\r\n\r\n    @Override\r\n    protected void onResume(){\r\n        super.onResume();\r\n    }\r\n\r\n    @Override\r\n    protected void onPause() {\r\n        super.onPause();\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n        super.onStop();\r\n    }\r\n\r\n    @Override\r\n    protected void onDestroy() {\r\n        super.onDestroy();\r\n    }\r\n\r\n    @Override\r\n    public void onLocationChanged(@NonNull Location location) {\r\n        curLat = location.getLatitude();\r\n        curLong = location.getLongitude();\r\n        requestWeather();\r\n        Log.d(\"my_log\", \"Location: \"+location.getLatitude()+\" , \"+location.getLongitude());\r\n        Toast.makeText(this, \"Location: \"+location.getLatitude()+\" , \"+location.getLongitude(), Toast.LENGTH_SHORT).show();\r\n    }\r\n    @Override\r\n    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {\r\n        super.onRequestPermissionsResult(requestCode, permissions, grantResults);\r\n        if (grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){\r\n\r\n            final Handler handler = new Handler();\r\n            handler.postDelayed(new Runnable() {\r\n                @Override\r\n                public void run() {\r\n                    Intent intent = new Intent(getApplicationContext(), Login.class);\r\n                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);\r\n                    MainActivity.this.startActivity(intent);\r\n                }\r\n            }, 2000);\r\n\r\n            Handler handler2 = new Handler();\r\n            handler2.postDelayed(new Runnable() {\r\n                @Override\r\n                public void run() {\r\n                    requestLocation();\r\n                    handler2.postDelayed(this,5000);\r\n\r\n                }\r\n            },1000);\r\n\r\n        }\r\n    }\r\n\r\n    public void requestLocation(){\r\n        if (locationManager == null){\r\n            locationManager = (LocationManager) getSystemService(LOCALE_SERVICE);\r\n        }\r\n        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){\r\n            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){\r\n                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,1000, this);\r\n            }\r\n        }\r\n    }\r\n\r\n    public void requestWeather(){\r\n        String tempWeatherURL = weatherURL + \"?lat=\" + curLat + \"&lon=\" + curLong + \"&appid=\" + appId;\r\n\r\n        StringRequest stringRequest = new StringRequest(Request.Method.GET, tempWeatherURL, new Response.Listener<String>() {\r\n            @Override\r\n            public void onResponse(String response) {\r\n                Log.d(\"Weather\", response);\r\n            }\r\n        }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Toast.makeText(getApplicationContext(), error.toString().trim(), Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());\r\n        requestQueue.add(stringRequest);\r\n    }\r\n\r\n    //private void setContentView(int activity_main) {\r\n    //}\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/activities/MainActivity.java b/app/src/main/java/com/example/myapplication/activities/MainActivity.java
+--- a/app/src/main/java/com/example/myapplication/activities/MainActivity.java	
++++ b/app/src/main/java/com/example/myapplication/activities/MainActivity.java	
+@@ -25,6 +25,9 @@
+ import com.android.volley.toolbox.Volley;
+ import com.example.myapplication.R;
+ 
++
++import com.google.firebase.messaging.FirebaseMessaging;
++
+ public class MainActivity extends AppCompatActivity implements LocationListener {
+ 
+     final static String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+@@ -49,7 +52,8 @@
+             requestPermissions(PERMISSIONS, PERMISSIONS_ALL);
+         }
+ 
+-
++        FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
++        firebaseMessaging.subscribeToTopic("new_user_forums");
+ 
+     }
+ 
+Index: app/src/main/java/com/example/myapplication/activities/Login.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.activities;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.android.volley.AuthFailureError;\r\nimport com.android.volley.Request;\r\nimport com.android.volley.RequestQueue;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.toolbox.StringRequest;\r\nimport com.android.volley.toolbox.Volley;\r\nimport com.example.myapplication.R;\r\nimport com.example.myapplication.models.IPModel;\r\nimport com.example.myapplication.ui.home.HomeFragment;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\n\r\npublic class Login extends AppCompatActivity {\r\n    private EditText login_email_text_input, login_password_text_input;\r\n    private Button login_btn;\r\n    private TextView tv_register_btn;\r\n\r\n    //School IP\r\n    private static String JSON_URL;\r\n    private IPModel ipModel;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n        getSupportActionBar().hide();\r\n\r\n        ipModel = new IPModel();\r\n        JSON_URL = ipModel.getURL();\r\n        init();\r\n\r\n        tv_register_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(getApplicationContext(), Register.class);\r\n                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);\r\n                Login.this.startActivity(intent);\r\n            }\r\n        });\r\n\r\n        login_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                //input checker\r\n                String mEmail = login_email_text_input.getText().toString().trim();\r\n                String mPass = login_password_text_input.getText().toString().trim();\r\n\r\n                if (mEmail.isEmpty() || mPass.isEmpty()){\r\n                    if (mEmail.isEmpty())\r\n                        login_email_text_input.setError(\"Please insert Email!\");\r\n                    if (mPass.isEmpty())\r\n                        login_password_text_input.setError(\"Please insert Password!\");\r\n                } else {\r\n                    LogIn(mEmail, mPass);\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    public void init(){\r\n        login_email_text_input = findViewById(R.id.login_email_text_input);\r\n        login_password_text_input = findViewById(R.id.login_password_text_input);\r\n\r\n        login_btn = findViewById(R.id.login_btn);\r\n        tv_register_btn = findViewById(R.id.tv_register_btn);\r\n    }\r\n\r\n    //Login\r\n    private void LogIn(String login_email_text_input, String login_password_text_input){\r\n\r\n        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+\"login.php\", new Response.Listener<String>() {\r\n            @Override\r\n            public void onResponse(String response) {\r\n                try {\r\n                    JSONObject jsonObject = new JSONObject(response);\r\n                    String success = jsonObject.getString(\"success\");\r\n\r\n\r\n                    JSONArray jsonArray = jsonObject.getJSONArray(\"login\");\r\n                    int id = 0;\r\n                    String name = \"\";\r\n                    String image = \"\";\r\n\r\n                    if (success.equals(\"1\")){\r\n                        for (int i = 0; i < jsonArray.length(); i++){\r\n\r\n                            JSONObject object = jsonArray.getJSONObject(i);\r\n\r\n                            name = object.getString(\"name\").trim();\r\n                            String email = object.getString(\"email\").trim();\r\n                            id = object.getInt(\"id\");\r\n                            image = object.getString(\"image\");\r\n\r\n                            Toast.makeText(Login.this, \"Success Login. \\nYour Name : \"\r\n                                    + name + \"\\nYour Email : \"\r\n                                    + email + id, Toast.LENGTH_SHORT).show();\r\n\r\n                            Log.d(\"HELLO\", name + email + id);\r\n\r\n                        }\r\n                        Intent intent = new Intent(getApplicationContext(), Home.class);\r\n                        intent.putExtra(\"name\",name);\r\n                        intent.putExtra(\"id\",id);\r\n                        intent.putExtra(\"image\",image);\r\n                        Log.d(\"NAME LOGIN: \" , name);\r\n                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);\r\n                        startActivity(intent);\r\n                    }\r\n\r\n                } catch (JSONException e) {\r\n                    /*\r\n                    e.printStackTrace();\r\n                    Toast.makeText(Login.this, \"Error! \"+ e.toString(),Toast.LENGTH_SHORT).show();*/\r\n                    Log.d(\"Catch\", String.valueOf(e));\r\n                    Toast.makeText(Login.this, \"Invalid Email and/or Password\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }\r\n        }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Toast.makeText(Login.this, \"Error! \"+ error.toString(),Toast.LENGTH_SHORT).show();\r\n            }\r\n        })\r\n        {\r\n            protected Map<String, String> getParams() throws AuthFailureError {\r\n                Map<String, String> params = new HashMap<>();\r\n                params.put(\"email\", login_email_text_input);\r\n                params.put(\"password\", login_password_text_input);\r\n                return params;\r\n            }\r\n        };\r\n\r\n        RequestQueue requestQueue = Volley.newRequestQueue(this);\r\n        requestQueue.add(stringRequest);\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/activities/Login.java b/app/src/main/java/com/example/myapplication/activities/Login.java
+--- a/app/src/main/java/com/example/myapplication/activities/Login.java	
++++ b/app/src/main/java/com/example/myapplication/activities/Login.java	
+@@ -21,7 +21,6 @@
+ import com.android.volley.toolbox.StringRequest;
+ import com.android.volley.toolbox.Volley;
+ import com.example.myapplication.R;
+-import com.example.myapplication.models.IPModel;
+ import com.example.myapplication.ui.home.HomeFragment;
+ 
+ import org.json.JSONArray;
+@@ -36,9 +35,7 @@
+     private Button login_btn;
+     private TextView tv_register_btn;
+ 
+-    //School IP
+-    private static String JSON_URL;
+-    private IPModel ipModel;
++    private static String JSON_URL = "http://10.112.133.235/mosibus_php/user/";
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -46,8 +43,6 @@
+         setContentView(R.layout.activity_login);
+         getSupportActionBar().hide();
+ 
+-        ipModel = new IPModel();
+-        JSON_URL = ipModel.getURL();
+         init();
+ 
+         tv_register_btn.setOnClickListener(new View.OnClickListener() {
+@@ -118,6 +113,18 @@
+ 
+                             Log.d("HELLO", name + email + id);
+ 
++//                            final FragmentManager fragmentManager = getSupportFragmentManager();
++//                            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
++//                            final HomeFragment homeFragment = new HomeFragment();
++
++//                            Log.d("before bundling: ", String.valueOf(id));
++//                            Bundle bundle = new Bundle();
++//                            bundle.putInt("id", id);
++//                            bundle.putString("name",name);
++//                            homeFragment.setArguments(bundle);
++//
++//                            fragmentTransaction.add(R.id.nav_host_fragment_content_home, homeFragment).commit();
++
+                         }
+                         Intent intent = new Intent(getApplicationContext(), Home.class);
+                         intent.putExtra("name",name);
+@@ -128,6 +135,12 @@
+                         startActivity(intent);
+                     }
+ 
++
++
++
++
++
++
+                 } catch (JSONException e) {
+                     /*
+                     e.printStackTrace();
+Index: app/src/main/java/com/example/myapplication/ui/notifications/NotificationsFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.ui.notifications;\r\n\r\nimport androidx.lifecycle.ViewModelProvider;\r\n\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport com.example.myapplication.R;\r\nimport com.example.myapplication.adapters.NotificationAdapter;\r\nimport com.example.myapplication.databinding.FragmentNotificationsBinding;\r\nimport com.example.myapplication.models.NotificationModel;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n\r\npublic class NotificationsFragment extends Fragment {\r\n\r\n    private NotificationsViewModel mViewModel;\r\n    private FragmentNotificationsBinding binding;\r\n\r\n    //Notification List Recycler View\r\n    RecyclerView rv_notification;\r\n    List<NotificationModel> notification_list;\r\n    NotificationAdapter notificationAdapter;\r\n\r\n    public View onCreateView(@NonNull LayoutInflater inflater,\r\n                             ViewGroup container, Bundle savedInstanceState) {\r\n        NotificationsViewModel notificationsViewModel =\r\n                new ViewModelProvider(this).get(NotificationsViewModel.class);\r\n\r\n        binding = FragmentNotificationsBinding.inflate(inflater, container, false);\r\n        View root = binding.getRoot();\r\n\r\n        rv_notification = root.findViewById(R.id.rv_notification);\r\n        notification_list = new ArrayList<>();\r\n        notification_list.add(new NotificationModel(R.drawable.burger_mcdo,\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a sem risus. Suspendisse potenti. Fusce vel commodo est. Phasellus congue odio a lacus blandit elementum.\"));\r\n        notification_list.add(new NotificationModel(R.drawable.chicken_joy,\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a sem risus. Suspendisse potenti. Fusce vel commodo est. Phasellus congue odio a lacus blandit elementum.\"));\r\n        notification_list.add(new NotificationModel(R.drawable.whopper_king,\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a sem risus. Suspendisse potenti. Fusce vel commodo est. Phasellus congue odio a lacus blandit elementum.\"));\r\n        notificationAdapter = new NotificationAdapter(getActivity(),notification_list);\r\n        rv_notification.setAdapter(notificationAdapter);\r\n        rv_notification.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));\r\n        rv_notification.setHasFixedSize(true);\r\n        rv_notification.setNestedScrollingEnabled(false);\r\n\r\n        return root;\r\n    }\r\n\r\n    @Override\r\n    public void onDestroyView() {\r\n        super.onDestroyView();\r\n        binding = null;\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/ui/notifications/NotificationsFragment.java b/app/src/main/java/com/example/myapplication/ui/notifications/NotificationsFragment.java
+--- a/app/src/main/java/com/example/myapplication/ui/notifications/NotificationsFragment.java	
++++ b/app/src/main/java/com/example/myapplication/ui/notifications/NotificationsFragment.java	
+@@ -22,6 +22,10 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import androidx.annotation.NonNull;
++import com.google.firebase.messaging.FirebaseMessagingService;
++import com.google.firebase.messaging.RemoteMessage;
++
+ 
+ public class NotificationsFragment extends Fragment {
+ 
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n}\r\n\r\nandroid {\r\n    namespace 'com.example.myapplication'\r\n    compileSdk 33\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.myapplication\"\r\n        minSdk 29\r\n        targetSdk 33\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n    buildFeatures {\r\n        viewBinding true\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.5.1'\r\n    implementation 'com.google.android.material:material:1.7.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\r\n    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'\r\n    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'\r\n    implementation 'androidx.navigation:navigation-fragment:2.5.3'\r\n    implementation 'androidx.navigation:navigation-ui:2.5.3'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    implementation 'androidx.recyclerview:recyclerview:1.2.1'\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\r\n    implementation \"androidx.constraintlayout:constraintlayout:2.1.4\"\r\n    implementation \"androidx.constraintlayout:constraintlayout-compose:1.0.1\"\r\n    implementation 'com.android.volley:volley:1.2.1'\r\n    implementation 'com.squareup.retrofit2:retrofit:2.9.0'\r\n    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'\r\n    implementation 'com.makeramen:roundedimageview:2.3.0'\r\n    //implementation 'androidx.fragment::fragment:1.5.4'\r\n\r\n    implementation 'com.google.android.gms:play-services-location:21.0.1'\r\n    implementation \"androidx.work:work-runtime:2.7.1\"\r\n    implementation 'androidx.concurrent:concurrent-listenablefuture-callback:1.0.0-beta01'\r\n    implementation 'com.github.bumptech.glide:glide:4.14.2'\r\n    // Skip this if you don't want to use integration libraries or configure Glide.\r\n    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'\r\n    // Material Design\r\n    implementation 'com.google.android.material:material:1.8.0-alpha02'\r\n    implementation 'com.makeramen:roundedimageview:2.3.0'\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	
++++ b/app/build.gradle	
+@@ -1,5 +1,6 @@
+ plugins {
+     id 'com.android.application'
++    id 'com.google.gms.google-services'
+ }
+ 
+ android {
+@@ -29,12 +30,17 @@
+     buildFeatures {
+         viewBinding true
+     }
++
++    lintOptions {
++        abortOnError false
++    }
++
+ }
+ 
+ dependencies {
+ 
+-    implementation 'androidx.appcompat:appcompat:1.5.1'
+-    implementation 'com.google.android.material:material:1.7.0'
++    implementation 'androidx.appcompat:appcompat:1.6.1'
++    implementation 'com.google.android.material:material:1.8.0'
+     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+@@ -43,8 +49,8 @@
+     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+     testImplementation 'junit:junit:4.13.2'
+-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
++    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
++    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+     implementation 'com.android.volley:volley:1.2.1'
+@@ -54,14 +60,18 @@
+     //implementation 'androidx.fragment::fragment:1.5.4'
+ 
+     implementation 'com.google.android.gms:play-services-location:21.0.1'
+-    implementation "androidx.work:work-runtime:2.7.1"
++    implementation 'androidx.work:work-runtime:2.8.0'
+     implementation 'androidx.concurrent:concurrent-listenablefuture-callback:1.0.0-beta01'
+     implementation 'com.github.bumptech.glide:glide:4.14.2'
+     // Skip this if you don't want to use integration libraries or configure Glide.
+     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+     // Material Design
+-    implementation 'com.google.android.material:material:1.8.0-alpha02'
++    implementation 'com.google.android.material:material:1.9.0-alpha01'
+     implementation 'com.makeramen:roundedimageview:2.3.0'
+ 
++    implementation platform('com.google.firebase:firebase-bom:31.2.2')
++    implementation 'com.google.firebase:firebase-analytics'
++    implementation 'com.google.firebase:firebase-messaging'
++
+ 
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/myapplication/activities/PushNotificationService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/activities/PushNotificationService.java b/app/src/main/java/com/example/myapplication/activities/PushNotificationService.java
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/java/com/example/myapplication/activities/PushNotificationService.java	
+@@ -0,0 +1,32 @@
++package com.example.myapplication.activities;
++
++import android.app.Service;
++
++import android.app.Notification;
++import android.app.NotificationChannel;
++import android.app.NotificationManager;
++
++import androidx.annotation.NonNull;
++
++import com.example.myapplication.R;
++import com.google.firebase.messaging.FirebaseMessagingService;
++import com.google.firebase.messaging.RemoteMessage;
++
++public class PushNotificationService extends FirebaseMessagingService {
++
++    @Override
++    public void onMessageReceived(@NonNull RemoteMessage remoteMessage){
++        super.onMessageReceived(remoteMessage);
++        String title = remoteMessage.getNotification().getTitle();
++        String body = remoteMessage.getNotification().getBody();
++        final String CHANNEL_ID = "HEADS_UP_NOTIFICATIONS";
++        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "MyNotification", NotificationManager.IMPORTANCE_HIGH);
++        getSystemService(NotificationManager.class).createNotificationChannel(channel);
++        Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
++                .setContentTitle(title)
++                .setContentText(body)
++                .setSmallIcon(R.drawable.logo)
++                .setAutoCancel(true);
++
++    }
++}
+Index: app/google-services.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/google-services.json b/app/google-services.json
+new file mode 100644
+--- /dev/null	
++++ b/app/google-services.json	
+@@ -0,0 +1,84 @@
++{
++  "project_info": {
++    "project_number": "983131977820",
++    "project_id": "mosibus-37e4e",
++    "storage_bucket": "mosibus-37e4e.appspot.com"
++  },
++  "client": [
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:983131977820:android:3a54029d5a8cfca97d0e99",
++        "android_client_info": {
++          "package_name": "com.example.myapplication"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "983131977820-d7vu30r0rs0mkvpmm8p533edjp8b11m6.apps.googleusercontent.com",
++          "client_type": 1,
++          "android_info": {
++            "package_name": "com.example.myapplication",
++            "certificate_hash": "97a15176e623308ee67a333c654a3ab607713ca7"
++          }
++        },
++        {
++          "client_id": "983131977820-l21sbptoiv47i6k3dbhv8u6cr6chcaok.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyBItnv5P_J-bvLy1rM7sP4ayPeYxU-H9vU"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "983131977820-l21sbptoiv47i6k3dbhv8u6cr6chcaok.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:983131977820:android:6d87d837a4bd4d407d0e99",
++        "android_client_info": {
++          "package_name": "com.example.myapplication.ui.notifications"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "983131977820-9fk3qu3eb3q591l3kafqclod95d8jsd5.apps.googleusercontent.com",
++          "client_type": 1,
++          "android_info": {
++            "package_name": "com.example.myapplication.ui.notifications",
++            "certificate_hash": "97a15176e623308ee67a333c654a3ab607713ca7"
++          }
++        },
++        {
++          "client_id": "983131977820-l21sbptoiv47i6k3dbhv8u6cr6chcaok.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyBItnv5P_J-bvLy1rM7sP4ayPeYxU-H9vU"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "983131977820-l21sbptoiv47i6k3dbhv8u6cr6chcaok.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    }
++  ],
++  "configuration_version": "1"
++}
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"CompilerConfiguration\">\r\n    <bytecodeTargetLevel target=\"11\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	
++++ b/.idea/compiler.xml	
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="CompilerConfiguration">
+-    <bytecodeTargetLevel target="11" />
++    <bytecodeTargetLevel target="19" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"GRADLE\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"gradleJvm\" value=\"Embedded JDK\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	
++++ b/.idea/gradle.xml	
+@@ -7,7 +7,7 @@
+         <option name="testRunner" value="GRADLE" />
+         <option name="distributionType" value="DEFAULT_WRAPPED" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+-        <option name="gradleJvm" value="Embedded JDK" />
++        <option name="gradleJvm" value="Android Studio default JDK" />
+         <option name="modules">
+           <set>
+             <option value="$PROJECT_DIR$" />
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nplugins {\r\n    id 'com.android.application' version '7.3.1' apply false\r\n    id 'com.android.library' version '7.3.1' apply false\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	
++++ b/build.gradle	
+@@ -1,5 +1,12 @@
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
++buildscript {
++    dependencies {
++        classpath 'com.google.gms:google-services:4.3.15'
++    }
++}
++
+ plugins {
+-    id 'com.android.application' version '7.3.1' apply false
+-    id 'com.android.library' version '7.3.1' apply false
+-}
+\ No newline at end of file
++    id 'com.android.application' version '7.4.1' apply false
++    id 'com.android.library' version '7.4.1' apply false
++}
++
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"11\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	
++++ b/.idea/misc.xml	
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="11" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Thu Sep 29 14:41:55 SGT 2022\r\ndistributionBase=GRADLE_USER_HOME\r\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-7.4-bin.zip\r\ndistributionPath=wrapper/dists\r\nzipStorePath=wrapper/dists\r\nzipStoreBase=GRADLE_USER_HOME\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+--- a/gradle/wrapper/gradle-wrapper.properties	
++++ b/gradle/wrapper/gradle-wrapper.properties	
+@@ -1,6 +1,6 @@
+-#Thu Sep 29 14:41:55 SGT 2022
++#Wed Feb 22 08:14:52 CST 2023
+ distributionBase=GRADLE_USER_HOME
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.4-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.0.1-bin.zip
+ distributionPath=wrapper/dists
+ zipStorePath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+Index: app/src/main/java/com/example/myapplication/activities/Home.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.activities;\r\n\r\nimport static android.app.PendingIntent.getActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.BitmapFactory;\r\nimport android.media.Image;\r\nimport android.os.Bundle;\r\nimport android.util.Base64;\r\nimport android.util.Log;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.Menu;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\n\r\nimport com.android.volley.Request;\r\nimport com.android.volley.RequestQueue;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.toolbox.JsonArrayRequest;\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.myapplication.R;\r\nimport com.example.myapplication.interfaces.Singleton;\r\nimport com.example.myapplication.models.IPModel;\r\nimport com.example.myapplication.models.ProductModel;\r\nimport com.example.myapplication.models.UserModel;\r\nimport com.example.myapplication.ui.home.HomeFragment;\r\nimport com.example.myapplication.ui.notifications.NotificationsFragment;\r\nimport com.example.myapplication.ui.profile.ProfileFragment;\r\nimport com.example.myapplication.ui.store.StoreFragment;\r\nimport com.google.android.material.snackbar.Snackbar;\r\nimport com.google.android.material.navigation.NavigationView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\nimport androidx.navigation.NavController;\r\nimport androidx.navigation.Navigation;\r\nimport androidx.navigation.ui.AppBarConfiguration;\r\nimport androidx.navigation.ui.NavigationUI;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.myapplication.databinding.ActivityHomeBinding;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.io.Serializable;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class Home extends AppCompatActivity {\r\n\r\n    private AppBarConfiguration mAppBarConfiguration;\r\n    private ActivityHomeBinding binding;\r\n    public static String name = \"\";\r\n    public static int id;\r\n    FragmentManager fragmentManager = getSupportFragmentManager();\r\n    final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();\r\n    ImageView iv_user_image;\r\n    TextView tv_view_profile;\r\n    TextView tv_user_name;\r\n    private RequestQueue requestQueue1;\r\n    List<UserModel> userList;\r\n    UserModel userModel;\r\n    String image;\r\n\r\n    //School IP\r\n    private static String JSON_URL;\r\n    private IPModel ipModel;\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n\r\n        binding = ActivityHomeBinding.inflate(getLayoutInflater());\r\n        setContentView(binding.getRoot());\r\n\r\n        ipModel = new IPModel();\r\n        JSON_URL = ipModel.getURL();\r\n\r\n        Intent intent = getIntent();\r\n        if(intent.getStringExtra(\"name\") != null) {\r\n            name = intent.getStringExtra(\"name\");\r\n            id = intent.getIntExtra(\"id\",0);\r\n            image = intent.getStringExtra(\"image\");\r\n            Log.d(\"HOME FRAG name\", name + id + image);\r\n        } else {\r\n            Log.d(\"HOME FRAG name\", \"FAIL\");\r\n        }\r\n        userList = new ArrayList();\r\n        requestQueue1 = Singleton.getsInstance(this).getRequestQueue();\r\n        profile_user();\r\n        setSupportActionBar(binding.appBarHome.toolbar);\r\n\r\n        DrawerLayout drawer = binding.drawerLayout;\r\n        NavigationView navigationView = binding.navView;\r\n        // Passing each menu ID as a set of Ids because each\r\n        // menu should be considered as top level destinations.\r\n        mAppBarConfiguration = new AppBarConfiguration.Builder(\r\n                R.id.nav_home)\r\n                .setOpenableLayout(drawer)\r\n                .build();\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);\r\n        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);\r\n        NavigationUI.setupWithNavController(navigationView, navController);\r\n\r\n        //LOGOUT!!!\r\n        navigationView.getMenu().getItem(9).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {\r\n            @Override\r\n            public boolean onMenuItemClick(@NonNull MenuItem item) {\r\n                NotificationsFragment fragment = new NotificationsFragment();\r\n                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();\r\n                return false;\r\n            }\r\n        });\r\n\r\n\r\n\r\n        Log.d(\"USERSIZE\", String.valueOf(userList.size()));\r\n        iv_user_image = navigationView.getHeaderView(0).findViewById(R.id.iv_user_image);\r\n        tv_user_name = navigationView.getHeaderView(0).findViewById(R.id.tv_user_name);\r\n        tv_view_profile = navigationView.getHeaderView(0).findViewById(R.id.tv_view_profile);\r\n\r\n        byte[] byteArray = Base64.decode(image, Base64.DEFAULT);\r\n        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);\r\n        iv_user_image.setImageBitmap(bitmap);\r\n        tv_user_name.setText(name);\r\n        tv_view_profile.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                //Bundle bundle = new Bundle()\r\n                Bundle bundle = new Bundle();\r\n                bundle.putInt(\"id\",id);\r\n                bundle.putSerializable(\"user\", (Serializable) userList);\r\n                Log.d(\"USERTEST: \", String.valueOf(userList.size()));\r\n\r\n                ProfileFragment fragment = new ProfileFragment();\r\n                fragment.setArguments(bundle);\r\n\r\n                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();\r\n                Log.d(\"CLICK\", \"CLICK\");\r\n            }\r\n        });\r\n\r\n\r\n    }\r\n\r\n    public void profile_user(){\r\n\r\n        JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL + \"profile.php\", null, new Response.Listener<JSONArray>() {\r\n            @Override\r\n            public void onResponse(JSONArray response) {\r\n                Log.d(\"Response Product: \", String.valueOf(response.length()));\r\n                for (int i=0; i < response.length(); i++){\r\n                    try {\r\n                        Log.d(\"Try P: \", \"Im in\");\r\n                        JSONObject jsonObjectRec1 = response.getJSONObject(i);\r\n\r\n                        //USER DB\r\n                        int id = jsonObjectRec1.getInt(\"id\");\r\n                        String name = jsonObjectRec1.getString(\"name\");\r\n                        String image = jsonObjectRec1.getString(\"image\");\r\n                        String email = jsonObjectRec1.getString(\"email\");\r\n                        String contact = jsonObjectRec1.getString(\"contact\");\r\n                        String password = jsonObjectRec1.getString(\"password\");\r\n\r\n                        userModel = new UserModel(id, image, name, email, contact, password);\r\n                        userList.add(userModel);\r\n                        Log.d(\"USERTEST: \", String.valueOf(userList.size()));\r\n\r\n                    } catch (JSONException e) {\r\n                        e.printStackTrace();\r\n                    }\r\n                }\r\n            }\r\n        }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Log.d(\"OnError P: \", String.valueOf(error));\r\n            }\r\n        });\r\n        requestQueue1.add(jsonArrayRequestRec1);\r\n    }\r\n\r\n\r\n\r\n    @Override\r\n    public boolean onCreateOptionsMenu(Menu menu) {\r\n        // Inflate the menu; this adds items to the action bar if it is present.\r\n        getMenuInflater().inflate(R.menu.home, menu);\r\n        menu.add(\"Test\");\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public boolean onSupportNavigateUp() {\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);\r\n        return NavigationUI.navigateUp(navController, mAppBarConfiguration)\r\n                || super.onSupportNavigateUp();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/activities/Home.java b/app/src/main/java/com/example/myapplication/activities/Home.java
+--- a/app/src/main/java/com/example/myapplication/activities/Home.java	
++++ b/app/src/main/java/com/example/myapplication/activities/Home.java	
+@@ -23,7 +23,6 @@
+ import com.bumptech.glide.Glide;
+ import com.example.myapplication.R;
+ import com.example.myapplication.interfaces.Singleton;
+-import com.example.myapplication.models.IPModel;
+ import com.example.myapplication.models.ProductModel;
+ import com.example.myapplication.models.UserModel;
+ import com.example.myapplication.ui.home.HomeFragment;
+@@ -64,15 +63,12 @@
+     ImageView iv_user_image;
+     TextView tv_view_profile;
+     TextView tv_user_name;
++    private static String JSON_URL = "http://10.154.162.184/mosibus_php/user/";
+     private RequestQueue requestQueue1;
+     List<UserModel> userList;
+     UserModel userModel;
+     String image;
+ 
+-    //School IP
+-    private static String JSON_URL;
+-    private IPModel ipModel;
+-
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -81,9 +77,6 @@
+         binding = ActivityHomeBinding.inflate(getLayoutInflater());
+         setContentView(binding.getRoot());
+ 
+-        ipModel = new IPModel();
+-        JSON_URL = ipModel.getURL();
+-
+         Intent intent = getIntent();
+         if(intent.getStringExtra("name") != null) {
+             name = intent.getStringExtra("name");
+Index: app/src/main/java/com/example/myapplication/activities/Register.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.activities;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.android.volley.AuthFailureError;\r\nimport com.android.volley.Request;\r\nimport com.android.volley.RequestQueue;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.toolbox.JsonArrayRequest;\r\nimport com.android.volley.toolbox.StringRequest;\r\nimport com.android.volley.toolbox.Volley;\r\nimport com.example.myapplication.R;\r\nimport com.example.myapplication.adapters.HomeStoreRecAdapter;\r\nimport com.example.myapplication.models.IPModel;\r\nimport com.example.myapplication.models.StoreModel;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\n\r\npublic class Register extends AppCompatActivity {\r\n    private EditText register_name_text_input, register_email_text_input,\r\n            register_number_text_input, register_password_text_input,\r\n            register_confpassword_text_input;\r\n    private Button signup_btn;\r\n    private TextView tv_login_btn;\r\n\r\n    //School IP\r\n    private static String JSON_URL;\r\n    private IPModel ipModel;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_register);\r\n        getSupportActionBar().hide();\r\n\r\n        ipModel = new IPModel();\r\n        JSON_URL = ipModel.getURL();\r\n        init();\r\n\r\n        register_name_text_input = findViewById(R.id.name_text_input);\r\n        register_email_text_input = findViewById(R.id.email_text_input);\r\n        register_number_text_input = findViewById(R.id.contact_text_input);\r\n        register_password_text_input = findViewById(R.id.password_text_input);\r\n        register_confpassword_text_input = findViewById(R.id.confpassword_text_input);\r\n\r\n        tv_login_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(getApplicationContext(), Login.class);\r\n                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);\r\n                Register.this.startActivity(intent);\r\n            }\r\n        });\r\n\r\n        signup_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                String rname = register_name_text_input.getText().toString().trim();\r\n                String remail = register_email_text_input.getText().toString().trim();\r\n                String rnumber = register_number_text_input.getText().toString().trim();\r\n                String rpassword = register_password_text_input.getText().toString().trim();\r\n                String rconfpassword = register_confpassword_text_input.getText().toString().trim();\r\n\r\n                if (!rpassword.equals(rconfpassword)){\r\n                    register_password_text_input.setError(\"Passwords do not match\");\r\n                    register_confpassword_text_input.setError(\"Passwords do not match\");\r\n                } else if (!rname.equals(\"\")&&!remail.equals(\"\")&&!rnumber.equals(\"\")&&!rpassword.equals(\"\")){\r\n                    SignUp(rname, remail, rnumber, rpassword);\r\n\r\n                }\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    public void init(){\r\n        signup_btn = (Button) findViewById(R.id.signup_btn);\r\n        tv_login_btn = (TextView) findViewById(R.id.tv_login_btn);\r\n    }\r\n\r\n    private void SignUp(String register_name_text_input,  String register_email_text_input,\r\n                        String register_number_text_input, String register_password_text_input){\r\n\r\n        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+\"register.php\", new Response.Listener<String>() {\r\n            @Override\r\n            public void onResponse(String result) {\r\n                Log.d(\"1 \", result );\r\n                try {\r\n                    JSONObject jsonObject = new JSONObject(result);\r\n                    String success = jsonObject.getString(\"success\");\r\n\r\n                    if (success.equals(\"1\")){\r\n                Intent intent = new Intent(getApplicationContext(), Home.class);\r\n                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);\r\n                Register.this.startActivity(intent);\r\n                  } else {\r\n                        Toast.makeText(Register.this, \"Email/Contact has been used \",Toast.LENGTH_SHORT).show();\r\n                    }\r\n                } catch (JSONException e) {\r\n                Log.d(\"REGISTER:\", \"catch\" );\r\n                    Toast.makeText(Register.this, \"Catch \",Toast.LENGTH_SHORT).show();\r\n                }\r\n\r\n            }\r\n        }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Toast.makeText(Register.this, \"Error! \"+ error.toString(),Toast.LENGTH_SHORT).show();\r\n            }\r\n        })\r\n        {\r\n            protected Map<String, String> getParams() throws AuthFailureError {\r\n                Map<String, String> params = new HashMap<>();\r\n                params.put(\"name\", register_name_text_input);\r\n                params.put(\"email\", register_email_text_input);\r\n                params.put(\"contact\", register_number_text_input);\r\n                params.put(\"password\", register_password_text_input);\r\n                return params;\r\n            }\r\n        };\r\n\r\n        RequestQueue requestQueue = Volley.newRequestQueue(this);\r\n        requestQueue.add(stringRequest);\r\n    }\r\n\r\n    private void Check(String register_email_text_input, String register_number_text_input, String inputEmail, String inputNumber){\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/activities/Register.java b/app/src/main/java/com/example/myapplication/activities/Register.java
+--- a/app/src/main/java/com/example/myapplication/activities/Register.java	
++++ b/app/src/main/java/com/example/myapplication/activities/Register.java	
+@@ -21,7 +21,6 @@
+ import com.android.volley.toolbox.Volley;
+ import com.example.myapplication.R;
+ import com.example.myapplication.adapters.HomeStoreRecAdapter;
+-import com.example.myapplication.models.IPModel;
+ import com.example.myapplication.models.StoreModel;
+ 
+ import org.json.JSONArray;
+@@ -38,18 +37,13 @@
+     private Button signup_btn;
+     private TextView tv_login_btn;
+ 
+-    //School IP
+-    private static String JSON_URL;
+-    private IPModel ipModel;
++    private static String JSON_URL = "http://10.112.133.235/mosibus_php/user/";
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_register);
+         getSupportActionBar().hide();
+-
+-        ipModel = new IPModel();
+-        JSON_URL = ipModel.getURL();
+         init();
+ 
+         register_name_text_input = findViewById(R.id.name_text_input);
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>\r\n    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_BACKGROUND_LOCATION\"/>\r\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>\r\n\r\n\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@drawable/logo\"\r\n        android:label=\"@string/app_name\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.MyApplication\"\r\n        android:usesCleartextTraffic=\"true\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".activities.Store\"\r\n            android:exported=\"true\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".activities.Home\"\r\n            android:exported=\"false\"\r\n            android:label=\"@string/title_activity_home\"\r\n            android:theme=\"@style/Theme.MyApplication.NoActionBar\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".activities.Register\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".activities.Login\"\r\n            android:exported=\"false\"\r\n            android:label=\"Login\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".activities.MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	
++++ b/app/src/main/AndroidManifest.xml	
+@@ -65,6 +65,14 @@
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
++
++        <service android:name=".PushNotificationService" android:exported="false">
++            <intent-filter>
++                <action android:name="com.google.firebase.MESSAGING_EVENT"></action>
++            </intent-filter>
++        </service>
+     </application>
+ 
++
++
+ </manifest>
+\ No newline at end of file

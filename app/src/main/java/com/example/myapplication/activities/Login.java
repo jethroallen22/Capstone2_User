@@ -21,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.models.IPModel;
 import com.example.myapplication.ui.home.HomeFragment;
 
 import org.json.JSONArray;
@@ -36,9 +35,7 @@ public class Login extends AppCompatActivity {
     private Button login_btn;
     private TextView tv_register_btn;
 
-    //School IP
-    private static String JSON_URL;
-    private IPModel ipModel;
+    private static String JSON_URL = "http://10.207.111.129/mosibus_php/user/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +43,6 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
 
-        ipModel = new IPModel();
-        JSON_URL = ipModel.getURL();
         init();
 
         tv_register_btn.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +113,18 @@ public class Login extends AppCompatActivity {
 
                             Log.d("HELLO", name + email + id);
 
+//                            final FragmentManager fragmentManager = getSupportFragmentManager();
+//                            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                            final HomeFragment homeFragment = new HomeFragment();
+
+//                            Log.d("before bundling: ", String.valueOf(id));
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("id", id);
+//                            bundle.putString("name",name);
+//                            homeFragment.setArguments(bundle);
+//
+//                            fragmentTransaction.add(R.id.nav_host_fragment_content_home, homeFragment).commit();
+
                         }
                         Intent intent = new Intent(getApplicationContext(), Home.class);
                         intent.putExtra("name",name);
@@ -127,6 +134,12 @@ public class Login extends AppCompatActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
+
+
+
+
+
+
 
                 } catch (JSONException e) {
                     /*

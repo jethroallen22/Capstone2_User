@@ -22,6 +22,10 @@ import com.example.myapplication.models.NotificationModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
 
 public class NotificationsFragment extends Fragment {
 

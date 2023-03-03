@@ -40,9 +40,7 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
 
     @Override
     public void onBindViewHolder(@NonNull HomeStorePopularAdapter.ViewHolder holder, int position) {
-        Glide.with(context)
-                .load(list.get(position).getStore_image())
-                .into(holder.iv_store_image);
+        holder.iv_store_image.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_store_name.setText(list.get(position).getStore_name());
         holder.tv_store_category.setText(list.get(position).getStore_category());
 

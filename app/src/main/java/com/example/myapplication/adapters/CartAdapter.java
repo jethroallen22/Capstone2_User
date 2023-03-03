@@ -72,6 +72,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.iv_cart_item_img.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_cart_store_name.setText(list.get(position).getStore_name() + " " + list.get(position).getOrderItem_list().size());
         holder.tv_cart_item_info.setText(list.get(position).getOrderItem_list().size() + " item/s");
+        Log.d("QtyAdapt", String.valueOf(list.get(position).getOrderItem_list().get(0).getProductName()));
 
         Log.d("CARTADAPT", list.get(position).getStore_name());
 

@@ -307,13 +307,21 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 //                                                temp_count = c_productQuantity;
                                                 int tempItemQuantity = 0;
                                                 tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
+                                                Log.d("TempQty", String.valueOf(tempItemQuantity));
                                                 tempItemQuantity += c_productQuantity;
+                                                Log.d("TempQty", String.valueOf(tempItemQuantity));
                                                 order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
                                                 tempItemQuantity = 0;
+                                                Log.d("QtyIf", String.valueOf(order_list.size()));
+                                                break;
                                             } else{
                                                 order_list.get(h).getOrderItem_list().add(orderItemModel);
+                                                Log.d("QtyElse", String.valueOf(order_list.size()));
+                                                break;
                                             }
+
                                         }
+                                        break;
                                     } else{
                                         Log.d("STOREMATCH !0", c_productName + " NOT MATCH " + c_storeName);
                                         order_item_list = new ArrayList<>();

@@ -1,6 +1,16 @@
 package com.example.myapplication.ui.home;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -16,6 +26,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -67,7 +80,7 @@ import java.util.Map;
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueueRec1,requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
+    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
 
     //School IP
     private static String JSON_URL;
@@ -107,7 +120,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //For Product Bottomsheet
     LinearLayout linearLayout;
-    TextView product_name,product_resto,product_price,product_description,tv_counter;
+    TextView product_name, product_resto, product_price, product_description, tv_counter;
     RoundedImageView product_image;
     ConstraintLayout cl_product_add;
     ConstraintLayout cl_product_minus;
@@ -124,6 +137,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     String userName = "";
     HomeFragment homeFragment = this;
 
+    NotificationManager manager;
+
+    @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -137,14 +153,13 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         JSON_URL = ipModel.getURL();
 
         Intent intent = getActivity().getIntent();
-        if(intent.getStringExtra("name") != null) {
+        if (intent.getStringExtra("name") != null) {
             userName = intent.getStringExtra("name");
-            userId = intent.getIntExtra("id",0);
+            userId = intent.getIntExtra("id", 0);
             Log.d("HOME FRAG name", userName + userId);
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
-
 
 
         order_item_temp_list = new ArrayList<>();
@@ -153,21 +168,21 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         tempStoreList = new ArrayList<>();
         //HOME CATEGORY
         home_categ_list = new ArrayList<>();
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Western"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Fast Food"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Burgers"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Breakfast"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Lunch"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Dinner"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Chinese"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Japanese"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Chiken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo,"Asian"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Western"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Fast Food"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Burgers"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Breakfast"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Lunch"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Dinner"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Chinese"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Japanese"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Chiken"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Asian"));
 
         rv_category = root.findViewById(R.id.rv_category);
-        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(),home_categ_list,HomeFragment.this);
+        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(), home_categ_list, HomeFragment.this);
         rv_category.setAdapter(homeCategoryAdapter);
-        rv_category.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
+        rv_category.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_category.setHasFixedSize(true);
         rv_category.setNestedScrollingEnabled(false);
         requestQueueCateg = Singleton.getsInstance(getActivity()).getRequestQueue();
@@ -175,7 +190,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         //STORE REC 1
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
         rv_home_store_rec.setHasFixedSize(true);
-        rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+        rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv_home_store_rec.setNestedScrollingEnabled(false);
         home_store_rec_list = new ArrayList<>();
         requestQueueRec1 = Singleton.getsInstance(getActivity()).getRequestQueue();
@@ -183,7 +198,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
-        rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
+        rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_home_pop_store.setHasFixedSize(true);
         rv_home_pop_store.setNestedScrollingEnabled(false);
         requestQueuePopu = Singleton.getsInstance(getActivity()).getRequestQueue();
@@ -191,7 +206,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
-        rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
+        rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
@@ -200,7 +215,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         //STORE REC 2
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
         rv_home_store_rec2.setHasFixedSize(true);
-        rv_home_store_rec2.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+        rv_home_store_rec2.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv_home_store_rec2.setNestedScrollingEnabled(false);
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
         requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
@@ -214,13 +229,13 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Bundle bundle = new Bundle();
-                bundle.putString("search",query);
+                bundle.putString("search", query);
                 bundle.putSerializable("SearchList", (Serializable) searchModelList);
                 bundle.putSerializable("ProductList", (Serializable) food_for_you_list);
                 bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
                 SearchFragment fragment = new SearchFragment();
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 return false;
             }
 
@@ -239,9 +254,23 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 bundle.putInt("userID", userId);
                 fragment.setArguments(bundle);
                 Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         });
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
+        builder.setContentTitle("My Title");
+        builder.setContentText("Hello from Easy tuto, this is a simple notification");
+        builder.setSmallIcon(R.drawable.logo);
+        builder.setAutoCancel(true);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
+        managerCompat.notify(1, builder.build());
+
+        NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
+        manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
+        manager.createNotificationChannel(channel);
 
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);

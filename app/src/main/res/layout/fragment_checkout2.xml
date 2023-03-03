@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.checkout.CheckoutFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mosibusOffWhite"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/mosibusPrimary"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_gcash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/robotobold"
+                android:gravity="center_horizontal"
+                android:text="GCASH"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="588dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="-60dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/bg_white_rounded"
+            android:backgroundTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_gcash">
+
+            <TextView
+                android:id="@+id/sent_auth"
+                android:layout_width="304dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/robotoregular"
+                android:text="We sent an authentication code to your number"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.128" />
+
+            <TextView
+                android:id="@+id/enter_auth_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/robotobold"
+                android:gravity="center_horizontal"
+                android:text="Enter Authentication Code"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sent_auth"
+                app:layout_constraintVertical_bias="0.172" />
+
+            <EditText
+                android:id="@+id/input_code"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="88dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_code2"
+                app:layout_constraintHorizontal_bias="0.020"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/enter_auth_code"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_code2"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="88dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_code3"
+                app:layout_constraintHorizontal_bias="0.020"
+                app:layout_constraintStart_toEndOf="@+id/input_code"
+                app:layout_constraintTop_toBottomOf="@+id/enter_auth_code"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_code3"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="88dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_code4"
+                app:layout_constraintHorizontal_bias="0.037"
+                app:layout_constraintStart_toEndOf="@+id/input_code2"
+                app:layout_constraintTop_toBottomOf="@+id/enter_auth_code"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_code4"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="88dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_code5"
+                app:layout_constraintHorizontal_bias="0.054"
+                app:layout_constraintStart_toEndOf="@+id/input_code3"
+                app:layout_constraintTop_toBottomOf="@+id/enter_auth_code"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_code5"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="88dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_code6"
+                app:layout_constraintHorizontal_bias="0.078"
+                app:layout_constraintStart_toEndOf="@+id/input_code4"
+                app:layout_constraintTop_toBottomOf="@+id/enter_auth_code"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_code6"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="88dp"
+                android:layout_marginRight="25dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.151"
+                app:layout_constraintStart_toEndOf="@+id/input_code5"
+                app:layout_constraintTop_toBottomOf="@+id/enter_auth_code"
+                tools:ignore="LabelFor" />
+
+            <Button
+                android:id="@+id/submit_btn"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
+                android:backgroundTint="@color/mosibusPrimary"
+                android:foregroundGravity="center"
+                android:gravity="center|center_horizontal"
+                android:text="Submit Code"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.481"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.731" />
+
+            <TextView
+                android:id="@+id/send_new_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="100dp"
+                android:clickable="true"
+                android:fontFamily="@font/robotomedium"
+                android:text="Need new code? Resend now"
+                android:textColor="@color/mosibusPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+
+</FrameLayout>

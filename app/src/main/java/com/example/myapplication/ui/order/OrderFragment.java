@@ -32,9 +32,12 @@ import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.ui.cart.CartFragment;
+import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,10 +111,18 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
             public void onClick(View v) {
 
                 //Log.d("Order", String.valueOf(order));
-                PayM(String.valueOf(total_price));
-                webPay.setInitialScale(100);
-                webPay.loadUrl(JSON_URL+"index.php");
+                //PayM(String.valueOf(total_price));
+                //webPay.setInitialScale(100);
+                //webPay.loadUrl(JSON_URL+"index.php");
+
+                Bundle bundle3 = new Bundle();
+                CheckoutFragment fragment3 = new CheckoutFragment();
+                bundle3.putSerializable("tempOrderList", (Serializable) total_price);
+                fragment3.setArguments(bundle3);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment3).commit();
+                Log.d("END" , "END");
             }
+
         });
 
         return root;

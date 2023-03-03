@@ -21,7 +21,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
-import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.StoreModel;
 
 import org.json.JSONArray;
@@ -38,18 +37,13 @@ public class Register extends AppCompatActivity {
     private Button signup_btn;
     private TextView tv_login_btn;
 
-    //School IP
-    private static String JSON_URL;
-    private IPModel ipModel;
+    private static String JSON_URL = "http://10.207.111.129/mosibus_php/user/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         getSupportActionBar().hide();
-
-        ipModel = new IPModel();
-        JSON_URL = ipModel.getURL();
         init();
 
         register_name_text_input = findViewById(R.id.name_text_input);

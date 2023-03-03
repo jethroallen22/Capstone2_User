@@ -25,6 +25,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 
+
+import com.google.firebase.messaging.FirebaseMessaging;
+
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     final static String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
@@ -49,7 +52,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             requestPermissions(PERMISSIONS, PERMISSIONS_ALL);
         }
 
-
+        FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
+        firebaseMessaging.subscribeToTopic("new_user_forums");
 
     }
 

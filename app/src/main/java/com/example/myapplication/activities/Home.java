@@ -23,7 +23,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.UserModel;
 import com.example.myapplication.ui.home.HomeFragment;
@@ -64,14 +63,11 @@ public class Home extends AppCompatActivity {
     ImageView iv_user_image;
     TextView tv_view_profile;
     TextView tv_user_name;
+    private static String JSON_URL = "http://10.207.111.129/mosibus_php/user/";
     private RequestQueue requestQueue1;
     List<UserModel> userList;
     UserModel userModel;
     String image;
-
-    //School IP
-    private static String JSON_URL;
-    private IPModel ipModel;
 
 
     @Override
@@ -80,9 +76,6 @@ public class Home extends AppCompatActivity {
 
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        ipModel = new IPModel();
-        JSON_URL = ipModel.getURL();
 
         Intent intent = getIntent();
         if(intent.getStringExtra("name") != null) {

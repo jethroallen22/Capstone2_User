@@ -56,7 +56,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.096" />
+                app:layout_constraintVertical_bias="0.098" />
 
             <TextView
                 android:id="@+id/amount_due"
@@ -64,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
                 android:layout_marginBottom="16dp"
+
                 android:fontFamily="@font/robotoregular"
                 android:text="Amount Due:"
                 android:textSize="18sp"
@@ -87,62 +88,108 @@
                 app:layout_constraintVertical_bias="0.165" />
 
             <TextView
-                android:id="@+id/input_mobile_number"
+                android:id="@+id/enter_mpin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/robotoregular"
-                android:text="Input your Mobile Number"
+                android:text="Enter your 4 digit MPIN"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.497"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/login_to_pay"
-                app:layout_constraintVertical_bias="0.121" />
+                app:layout_constraintVertical_bias="0.119" />
 
             <EditText
-                android:id="@+id/input_number"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:ems="10"
-                android:hint="+63"
-                android:inputType="numberPassword"
-                android:minHeight="48dp"
-                android:textColorHint="#A5A5A5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.493"
+                android:id="@+id/input_mpin"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="52dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_mpin2"
+                app:layout_constraintHorizontal_bias="0.203"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_mobile_number" />
+                app:layout_constraintTop_toBottomOf="@+id/enter_mpin"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_mpin2"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="52dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_mpin3"
+                app:layout_constraintHorizontal_bias="0.104"
+                app:layout_constraintStart_toEndOf="@+id/input_mpin"
+                app:layout_constraintTop_toBottomOf="@+id/enter_mpin"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_mpin3"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="52dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/input_mpin4"
+                app:layout_constraintHorizontal_bias="0.21"
+                app:layout_constraintStart_toEndOf="@+id/input_mpin2"
+                app:layout_constraintTop_toBottomOf="@+id/enter_mpin"
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/input_mpin4"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="52dp"
+                android:layout_marginRight="40dp"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importanceForAutofill="no"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.351"
+                app:layout_constraintStart_toEndOf="@+id/input_mpin3"
+                app:layout_constraintTop_toBottomOf="@+id/enter_mpin"
+                tools:ignore="LabelFor" />
 
             <Button
-                android:id="@+id/next_btn"
+                android:id="@+id/next_btn2"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="52dp"
                 android:backgroundTint="@color/mosibusPrimary"
+                android:gravity="center"
                 android:text="Next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.493"
+                app:layout_constraintHorizontal_bias="0.506"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.733" />
+                app:layout_constraintVertical_bias="0.737" />
 
-            <TextView
-                android:id="@+id/create_account_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="100dp"
-                android:clickable="true"
-                android:fontFamily="@font/robotomedium"
-                android:text="Create an account"
-                android:textColor="@color/mosibusPrimary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:ignore="TouchTargetSizeCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

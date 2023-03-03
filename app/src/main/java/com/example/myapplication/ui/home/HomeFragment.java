@@ -316,7 +316,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectRec1 = response.getJSONObject(i);
-                        long r_id = jsonObjectRec1.getLong("idStore");
+                        int r_id = jsonObjectRec1.getInt("idStore");
                         String r_image = jsonObjectRec1.getString("storeImage");
                         String r_name = jsonObjectRec1.getString("storeName");
                         String r_description = jsonObjectRec1.getString("storeDescription");
@@ -362,7 +362,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
-                        long r_id = jsonObject.getLong("idStore");
+                        int r_id = jsonObject.getInt("idStore");
                         String r_image = jsonObject.getString("storeImage");
                         String r_name = jsonObject.getString("storeName");
                         String r_description = jsonObject.getString("storeDescription");
@@ -404,7 +404,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectPop = response.getJSONObject(i);
-                        long r_id = jsonObjectPop.getLong("idStore");
+                        int r_id = jsonObjectPop.getInt("idStore");
                         String r_image = jsonObjectPop.getString("storeImage");
                         String r_name = jsonObjectPop.getString("storeName");
                         String r_description = jsonObjectPop.getString("storeDescription");

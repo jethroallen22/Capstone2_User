@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.activities.Store;
 
 public class StoreModel implements Parcelable {
-    long store_id;
+    int store_id;
     String store_image;
     String store_name;
     String store_description;
@@ -22,7 +22,7 @@ public class StoreModel implements Parcelable {
     String store_open;
     String store_closing;
 
-    public StoreModel(long store_id, String store_image, String store_name, String store_description,
+    public StoreModel(int store_id, String store_image, String store_name, String store_description,
                       String store_location, String store_category, Float store_rating, int store_popularity,String store_open,
                       String store_closing) {
         this.store_id = store_id;
@@ -38,7 +38,7 @@ public class StoreModel implements Parcelable {
     }
 
     public StoreModel(Parcel in) {
-        store_id = in.readLong();
+        store_id = in.readInt();
         store_image = in.readString();
         store_name = in.readString();
         store_description = in.readString();
@@ -62,11 +62,11 @@ public class StoreModel implements Parcelable {
         }
     };
 
-    public long getStore_id() {
+    public int getStore_id() {
         return store_id;
     }
 
-    public void setStore_id(long store_id) {
+    public void setStore_id(int store_id) {
         this.store_id = store_id;
     }
 

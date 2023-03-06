@@ -2,6 +2,7 @@ package com.example.myapplication.ui.order;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -25,6 +27,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.Home;
+import com.example.myapplication.activities.Login;
+import com.example.myapplication.activities.Register;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
@@ -36,6 +41,10 @@ import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.store.StoreFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -110,6 +119,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         tv_total_price.setText(String.valueOf(total_price));
 
         btn_place_order.setOnClickListener(new View.OnClickListener() {
+            int orderId = 0;
             @Override
             public void onClick(View v) {
 
@@ -118,12 +128,86 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 //webPay.setInitialScale(100);
                 //webPay.loadUrl(JSON_URL+"index.php");
 
+
+
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
+
+                        @Override
+                        public void onResponse(String result) {
+                            Log.d("1 ", result);
+                            try {
+                                JSONArray jsonArray = new JSONArray(result);
+                                JSONObject object = jsonArray.getJSONObject(0);
+                                orderId = object.getInt("idOrder");
+
+                                Log.d("orderrr", String.valueOf(orderId));
+                            } catch (JSONException e) {
+                                Log.d("order:", "catch");
+                                // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("orderItemTotalPrice", String.valueOf(total_price));
+                            params.put("orderStatus", orderModel.getOrderStatus());
+                            params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
+                            params.put("users_id", String.valueOf(orderModel.getUsers_id()));
+                            return params;
+                        }
+                    };
+
+                    RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                    requestQueue.add(stringRequest);
+
+
+                    //for(int j = 0; j < orderModel.getOrderItem_list().size(); i++) {
+                RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
+                StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
+
+                        @Override
+                        public void onResponse(String result) {
+                            Log.d("hello", result);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                        protected Map<String, String> getParams(){
+                            Map<String, String> params2 = new HashMap<>();
+                            params2.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getProduct_idProduct()));
+                            params2.put("idStore", String.valueOf(orderModel.getStore_idstore()));
+                            params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
+                            params2.put("idOrder", String.valueOf(orderId));
+                            params2.put("productName", String.valueOf(orderModel.getOrderItem_list().get(0).getProductName()));
+                            params2.put("itemPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+                            params2.put("itemQuantity", String.valueOf(orderModel.getOrderItem_list().get(0).getItemQuantity()));
+                            params2.put("totalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+                            return params2;
+                        }
+                    };
+                    requestQueue2.add(stringRequest2);
+                //}
+
+
+
+                //Bundle
                 Bundle bundle3 = new Bundle();
                 CheckoutFragment fragment3 = new CheckoutFragment();
                 bundle3.putSerializable("tempOrderList", (Serializable) total_price);
                 fragment3.setArguments(bundle3);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment3).commit();
                 Log.d("END" , "END");
+
+
             }
 
         });

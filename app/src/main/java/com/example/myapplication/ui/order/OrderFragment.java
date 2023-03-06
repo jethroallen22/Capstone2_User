@@ -104,8 +104,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
 
-        for (i = 0; i < order_item_list.size(); i++)
-            total_price += order_item_list.get(i).getItemPrice();
+        for (i = 0; i < orderModel.getOrderItem_list().size(); i++)
+            total_price += orderModel.getOrderItem_list().get(i).getItemPrice();
         Log.d("TotalPrice", String.valueOf(total_price));
         tv_total_price.setText(String.valueOf(total_price));
 

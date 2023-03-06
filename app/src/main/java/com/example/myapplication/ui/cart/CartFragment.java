@@ -180,6 +180,10 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TAG", "Success");
         Bundle bundle = new Bundle();
         //bundle.putString("StoreName", cart_list.get(position).getStore_name());
+        for(int i = 0 ; i < order_list.get(position).getOrderItem_list().size() ; i++){
+            Log.d("onItemClick", order_list.get(position).getOrderItem_list().get(i).getProductName());
+            Log.d("onItemClick", String.valueOf(order_list.get(position).getOrderItem_list().get(i).getItemQuantity()));
+        }
         bundle.putParcelable("order", order_list.get(position));
 
         OrderFragment fragment = new OrderFragment();
@@ -246,8 +250,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                         int temp_not = 0;
                         JSONObject jsonObjectCart = response.getJSONObject(i);
                         if (jsonObjectCart.getInt("temp_usersId") == userID) {
-                            Log.d("PRODNAME", jsonObjectCart.getString("temp_productName"));
-                            Log.d("CARTITEM", response.toString());
+                            Log.d("PRODQTY", jsonObjectCart.getString("temp_productName") + " Qty: " + jsonObjectCart.getInt("temp_productQuantity"));
+//                            Log.d("CARTITEM", response.toString());
                             int c_productId = jsonObjectCart.getInt("temp_productId");
                             int c_storeId = jsonObjectCart.getInt("temp_storeId");
                             int c_usersId = jsonObjectCart.getInt("temp_usersId");
@@ -282,7 +286,9 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 //                                                temp_count = c_productQuantity;
                                                 int tempItemQuantity = 0;
                                                 tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
+                                                Log.d("tempItemQuantityBefore", String.valueOf(tempItemQuantity));
                                                 tempItemQuantity += c_productQuantity;
+                                                Log.d("tempItemQuantityAfter", String.valueOf(tempItemQuantity));
                                                 order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
                                                 tempItemQuantity = 0;
                                                 break;
@@ -302,6 +308,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                                                     c_storeImage, c_storeName,
                                                     c_usersId, order_item_list));
                                             Log.d("Added OL", String.valueOf(i));
+                                            break;
                                         }
                                     }
                                 }

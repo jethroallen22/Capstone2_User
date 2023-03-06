@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.ui.home.HomeFragment;
 
 import org.json.JSONArray;
@@ -35,13 +36,18 @@ public class Login extends AppCompatActivity {
     private Button login_btn;
     private TextView tv_register_btn;
 
-    private static String JSON_URL = "http://10.207.111.129/mosibus_php/user/";
+    //School IP
+    private static String JSON_URL;
+    private IPModel ipModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
+
+        ipModel = new IPModel();
+        JSON_URL = ipModel.getURL();
 
         init();
 

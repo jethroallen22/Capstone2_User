@@ -49,6 +49,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     //
     RecyclerView rv_order_items;
     List<OrderItemModel> order_item_list;
+    OrderModel orderModel;
     OrderItemsAdapter orderItemsAdapter;
 
     private OrderViewModel mViewModel;
@@ -82,20 +83,22 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         btn_place_order = root.findViewById(R.id.btn_place_order);
         webPay = root.findViewById(R.id.webPay);
         Bundle bundle = this.getArguments();
-        order_item_list = new ArrayList<>();
-        order_item_list = (List<OrderItemModel>) getArguments().getSerializable("order_item_list");
 
-//        if (bundle != null){
-//            store_name = bundle.getString("StoreName");
-//            tv_store_name.setText(store_name);
-//            Log.d("StoreName",store_name);
-//        }
+        order_item_list = new ArrayList<>();
+        //order_item_list = (List<OrderItemModel>) getArguments().getSerializable("order_item_list");
+
+        if (bundle != null){
+            orderModel = bundle.getParcelable("order");
+            store_name = orderModel.getStore_name();
+            tv_store_name.setText(store_name);
+            Log.d("StoreName",store_name);
+        }
 
         rv_order_items = root.findViewById(R.id.rv_order_items);
 //        order_item_list = new ArrayList<>();
 //        order_item_list.add(new OrderItemModel("Burger Mcdo", 3, 135F));
 //        order_item_list.add(new OrderItemModel("Chicken Ala King", 2, 215F));
-        orderItemsAdapter = new OrderItemsAdapter(getActivity(),order_item_list,this);
+        orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),this);
         rv_order_items.setAdapter(orderItemsAdapter);
         rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_order_items.setHasFixedSize(true);

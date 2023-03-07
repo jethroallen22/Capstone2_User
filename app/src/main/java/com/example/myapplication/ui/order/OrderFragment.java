@@ -41,6 +41,7 @@ import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.store.StoreFragment;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -119,7 +120,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         tv_total_price.setText(String.valueOf(total_price));
 
         btn_place_order.setOnClickListener(new View.OnClickListener() {
-            int orderId = 0;
+            //int orderId = 0;
             @Override
             public void onClick(View v) {
 
@@ -138,9 +139,16 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                             try {
                                 JSONArray jsonArray = new JSONArray(result);
                                 JSONObject object = jsonArray.getJSONObject(0);
-                                orderId = object.getInt("idOrder");
+                                int orderId = object.getInt("idOrder");
+                                orderModel.setIdOrder(orderId);
+
+                                for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
+                                    orderModel.getOrderItem_list().get(k).setOrder_idOrder(orderId);
+                                    Log.d("hatdog2", String.valueOf(orderModel.getIdOrder()));
+                                }
 
                                 Log.d("orderrr", String.valueOf(orderId));
+
                             } catch (JSONException e) {
                                 Log.d("order:", "catch");
                                 // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
@@ -152,6 +160,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         public void onErrorResponse(VolleyError error) {
                             //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
                         }
+
+
                     }) {
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String, String> params = new HashMap<>();
@@ -161,19 +171,20 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                             params.put("users_id", String.valueOf(orderModel.getUsers_id()));
                             return params;
                         }
+
                     };
 
                     RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
                     requestQueue.add(stringRequest);
 
 
-                    //for(int j = 0; j < orderModel.getOrderItem_list().size(); i++) {
+
                 RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
-                StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
+                    StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
 
                         @Override
                         public void onResponse(String result) {
-                            Log.d("hello", result);
+
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -181,21 +192,30 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                             //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
                         }
                     }) {
-                        protected Map<String, String> getParams(){
+                        protected Map<String, String> getParams() {
                             Map<String, String> params2 = new HashMap<>();
-                            params2.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getProduct_idProduct()));
-                            params2.put("idStore", String.valueOf(orderModel.getStore_idstore()));
+//                            params2.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(j).getProduct_idProduct()));
+//                            params2.put("idStore", String.valueOf(orderModel.getStore_idstore()));
+//                            params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
+//                            params2.put("idOrder", String.valueOf(orderId));
+//                            params2.put("productName", String.valueOf(orderModel.getOrderItem_list().get(j).getProductName()));
+//                            params2.put("itemPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+//                            params2.put("itemQuantity", String.valueOf(orderModel.getOrderItem_list().get(j).getItemQuantity()));
+//                            params2.put("totalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+
+                            Gson gson = new Gson();
+                            String jsonArray = gson.toJson(orderModel.getOrderItem_list());
+
+
+                            params2.put("data",jsonArray);
                             params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
-                            params2.put("idOrder", String.valueOf(orderId));
-                            params2.put("productName", String.valueOf(orderModel.getOrderItem_list().get(0).getProductName()));
-                            params2.put("itemPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-                            params2.put("itemQuantity", String.valueOf(orderModel.getOrderItem_list().get(0).getItemQuantity()));
-                            params2.put("totalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+
+                            Log.d("hatdog", String.valueOf(params2));
                             return params2;
                         }
                     };
                     requestQueue2.add(stringRequest2);
-                //}
+
 
 
 

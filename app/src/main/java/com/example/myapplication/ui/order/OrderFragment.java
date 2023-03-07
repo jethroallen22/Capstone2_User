@@ -75,6 +75,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     //School IP
     private static String JSON_URL;
     private IPModel ipModel;
+    int orderID;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -127,32 +128,28 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 //PayM(String.valueOf(total_price));
                 //webPay.setInitialScale(100);
                 //webPay.loadUrl(JSON_URL+"index.php");
-
-
-
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
-
-                        @Override
-                        public void onResponse(String result) {
-                            Log.d("1 ", result);
-                            try {
-                                JSONArray jsonArray = new JSONArray(result);
-                                JSONObject object = jsonArray.getJSONObject(0);
-                                orderId = object.getInt("idOrder");
-
-                                Log.d("orderrr", String.valueOf(orderId));
-                            } catch (JSONException e) {
-                                Log.d("order:", "catch");
-                                // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
-                            }
-
+                RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("1 ", result);
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            JSONObject object = jsonArray.getJSONObject(0);
+                            orderId = object.getInt("idOrder");
+                            Log.d("orderrr", String.valueOf(orderId));
+                        } catch (JSONException e) {
+                            Log.d("order:", "catch");
+                            // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
                         }
+                        orderID = orderId;
+                    }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
                         }
-                    }) {
+                    }){
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String, String> params = new HashMap<>();
                             params.put("orderItemTotalPrice", String.valueOf(total_price));
@@ -161,40 +158,39 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                             params.put("users_id", String.valueOf(orderModel.getUsers_id()));
                             return params;
                         }
+
                     };
-
-                    RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
                     requestQueue.add(stringRequest);
-
 
                     //for(int j = 0; j < orderModel.getOrderItem_list().size(); i++) {
                 RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
                 StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
 
-                        @Override
-                        public void onResponse(String result) {
-                            Log.d("hello", result);
-                        }
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("hello", result);
+                    }
                     }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
-                        }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                    }
                     }) {
-                        protected Map<String, String> getParams(){
-                            Map<String, String> params2 = new HashMap<>();
-                            params2.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getProduct_idProduct()));
-                            params2.put("idStore", String.valueOf(orderModel.getStore_idstore()));
-                            params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
-                            params2.put("idOrder", String.valueOf(orderId));
-                            params2.put("productName", String.valueOf(orderModel.getOrderItem_list().get(0).getProductName()));
-                            params2.put("itemPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-                            params2.put("itemQuantity", String.valueOf(orderModel.getOrderItem_list().get(0).getItemQuantity()));
-                            params2.put("totalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-                            return params2;
-                        }
-                    };
-                    requestQueue2.add(stringRequest2);
+                    protected Map<String, String> getParams(){
+                        Map<String, String> params2 = new HashMap<>();
+                        params2.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getProduct_idProduct()));
+                        params2.put("idStore", String.valueOf(orderModel.getStore_idstore()));
+                        params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
+                        params2.put("idOrder", String.valueOf(orderId));
+                        Log.d("OrderID", String.valueOf(orderID));
+                        params2.put("productName", String.valueOf(orderModel.getOrderItem_list().get(0).getProductName()));
+                        params2.put("itemPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+                        params2.put("itemQuantity", String.valueOf(orderModel.getOrderItem_list().get(0).getItemQuantity()));
+                        params2.put("totalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+                        return params2;
+                    }
+                };
+                requestQueue2.add(stringRequest2);
                 //}
 
 

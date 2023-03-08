@@ -15,14 +15,18 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.databinding.FragmentCheckout3Binding;
 import com.example.myapplication.databinding.FragmentCheckoutBinding;
+import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.interfaces.VolleyCallback;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.google.gson.Gson;
 
@@ -30,7 +34,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Checkout3Fragment extends Fragment implements com.example.myapplication.interfaces.VolleyCallback {
@@ -40,6 +46,9 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
     private static String JSON_URL;
     private IPModel ipModel;
     int counter = 0;
+
+    RequestQueue requestQueueOrder;
+    List<OrderModel> orderModelList;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -51,12 +60,50 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
         Bundle bundle = this.getArguments();
         if (bundle != null)
             orderModel = bundle.getParcelable("order");
+        orderModelList = new ArrayList<>();
+        requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
 
         binding.nextBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getDataFromServer(Checkout3Fragment.this);
                 Log.d("Counter", String.valueOf(counter));
+
+
+                JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderget.php", null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("respobject", String.valueOf(response));
+                        for (int i=0; i < response.length(); i++){
+                            try {
+                                JSONObject jsonObjectOrder = response.getJSONObject(i);
+                                if (orderModel.getStore_idstore() == jsonObjectOrder.getInt("store_idStore")
+                                && orderModel.getUsers_id() == jsonObjectOrder.getInt("users_id")){
+                                    for (int j = 0 ; j < orderModel.getOrderItem_list().size() ; j++){
+                                        orderModel.getOrderItem_list().get(j).setIdOrder(jsonObjectOrder.getInt("idOrder"));
+                                    }
+
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+                requestQueueOrder.add(jsonArrayRequest3);
+                Log.d("afterget", String.valueOf(orderModelList.size()));
+
+
+
+
+
+
+
                 for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
                     orderModel.getOrderItem_list().get(k).setIdOrder(orderModel.getIdOrder());
                     Log.d("hatdog2", String.valueOf(orderModel.getOrderItem_list().get(k).getIdOrder()));
@@ -101,6 +148,7 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
 
         return root;
     }
+
 
     @Override
     public void onSuccessResponse(int result) {

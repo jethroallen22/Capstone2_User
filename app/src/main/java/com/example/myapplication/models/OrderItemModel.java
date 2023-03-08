@@ -9,27 +9,33 @@ public class OrderItemModel implements Parcelable {
     int idItem;
     int product_idProduct;
     int store_id;
+    int userId;
     float itemPrice;
     int itemQuantity;
     int order_idOrder;
+    float totalPrice;
     String productName;
 
-    public OrderItemModel(int idItem, int product_idProduct, int store_id, float itemPrice, int itemQuantity, int order_idOrder, String productName) {
+    public OrderItemModel(int idItem, int product_idProduct, int store_id, int userId, float itemPrice, int itemQuantity, int order_idOrder, String productName, Float totalPrice) {
         this.idItem = idItem;
         this.product_idProduct = product_idProduct;
         this.store_id = store_id;
+        this.userId = userId;
         this.itemPrice = itemPrice;
         this.itemQuantity = itemQuantity;
         this.order_idOrder = order_idOrder;
         this.productName = productName;
+        this.totalPrice = totalPrice;
     }
 
-    public OrderItemModel(int product_idProduct, int store_id, float itemPrice, int itemQuantity, String productName) {
+    public OrderItemModel(int product_idProduct, int store_id, int userId, float itemPrice, int itemQuantity, String productName, Float totalPrice) {
         this.product_idProduct = product_idProduct;
         this.store_id = store_id;
+        this.userId = userId;
         this.itemPrice = itemPrice;
         this.itemQuantity = itemQuantity;
         this.productName = productName;
+        this.totalPrice = totalPrice;
     }
 
 //    public OrderItemModel(String product_name, int quantity, float total_price) {
@@ -95,8 +101,24 @@ public class OrderItemModel implements Parcelable {
         this.order_idOrder = order_idOrder;
     }
 
+    public float getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(float totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     protected OrderItemModel(Parcel in) {
-//        product_name = in.readString();
+        productName = in.readString();
 //        quantity = in.readInt();
 //        total_price = in.readFloat();
         idItem = in.readInt();
@@ -104,6 +126,10 @@ public class OrderItemModel implements Parcelable {
         itemPrice = in.readFloat();
         itemQuantity = in.readInt();
         order_idOrder = in.readInt();
+        totalPrice = in.readFloat();
+        userId = in.readInt();
+        store_id = in.readInt();
+
     }
 
     public static final Creator<OrderItemModel> CREATOR = new Creator<OrderItemModel>() {
@@ -132,8 +158,11 @@ public class OrderItemModel implements Parcelable {
 //        dest.writeFloat(total_price);
         dest.writeInt(idItem);
         dest.writeInt(product_idProduct);
+        dest.writeInt(userId);
+        dest.writeInt(store_id);
         dest.writeFloat(itemPrice);
         dest.writeInt(itemQuantity);
         dest.writeInt(order_idOrder);
+        dest.writeFloat(totalPrice);
     }
 }

@@ -415,9 +415,9 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 //else
                 float tempPrice = 0;
                 Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
-                order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
-                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,
-                        food_for_you_list.get(position).getProductName()));
+//                order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+//                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,
+//                        food_for_you_list.get(position).getProductName()));
                 Log.d("ADD TO CART: ", "AFTER ORDER_ITEM");
                 for (int i = 0 ; i < order_item_temp_list.size() ; i++){
                     tempPrice += order_item_temp_list.get(i).getItemPrice();

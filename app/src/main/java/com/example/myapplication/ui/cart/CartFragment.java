@@ -262,8 +262,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                             String c_storeName = jsonObjectCart.getString("storeName");
                             String c_storeImage = jsonObjectCart.getString("storeImage");
 
-                            OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, (float) (c_productPrice * c_productQuantity), c_productQuantity,
-                                    c_productName);
+                            OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, userID, (float) c_productPrice, c_productQuantity,
+                                    c_productName, (float) (c_productPrice * c_productQuantity));
 
                             Log.d("BEFORE", String.valueOf(userID));
                             Log.d("BEFOREDB", String.valueOf(c_usersId));

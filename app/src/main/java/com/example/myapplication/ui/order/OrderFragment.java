@@ -119,6 +119,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TotalPrice", String.valueOf(total_price));
         tv_total_price.setText(String.valueOf(total_price));
 
+
+
         btn_place_order.setOnClickListener(new View.OnClickListener() {
             //int orderId = 0;
             @Override
@@ -144,8 +146,10 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
                                 for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
                                     orderModel.getOrderItem_list().get(k).setOrder_idOrder(orderId);
-                                    Log.d("hatdog2", String.valueOf(orderModel.getIdOrder()));
+                                    Log.d("hatdog2", String.valueOf(orderModel.getOrderItem_list().get(k).getOrder_idOrder()));
+                                    Log.d("hatdog2.1", String.valueOf(orderModel.getIdOrder()));
                                 }
+                                Log.d("hatdog3", String.valueOf(orderModel.getOrderItem_list().size()));
 
                                 Log.d("orderrr", String.valueOf(orderId));
 
@@ -179,7 +183,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
 
 
-                RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
+                    RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
                     StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
 
                         @Override
@@ -190,6 +194,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                            Log.d("Error", String.valueOf(error));
                         }
                     }) {
                         protected Map<String, String> getParams() {
@@ -205,19 +210,14 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
                             Gson gson = new Gson();
                             String jsonArray = gson.toJson(orderModel.getOrderItem_list());
-
-
                             params2.put("data",jsonArray);
-                            params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
+                            //params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
 
                             Log.d("hatdog", String.valueOf(params2));
                             return params2;
                         }
                     };
                     requestQueue2.add(stringRequest2);
-
-
-
 
                 //Bundle
                 Bundle bundle3 = new Bundle();

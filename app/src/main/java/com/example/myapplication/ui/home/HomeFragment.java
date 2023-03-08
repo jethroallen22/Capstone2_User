@@ -261,7 +261,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
         builder.setContentTitle("My Title");
-        builder.setContentText("Hello from Easy tuto, this is a simple notification");
+        builder.setContentText("Hello mga putotoy");
         builder.setSmallIcon(R.drawable.logo);
         builder.setAutoCancel(true);
 

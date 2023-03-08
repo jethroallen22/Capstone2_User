@@ -125,107 +125,20 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
             //int orderId = 0;
             @Override
             public void onClick(View v) {
-
-                //Log.d("Order", String.valueOf(order));
-                //PayM(String.valueOf(total_price));
-                //webPay.setInitialScale(100);
-                //webPay.loadUrl(JSON_URL+"index.php");
-
-
-
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
-
-                        @Override
-                        public void onResponse(String result) {
-                            Log.d("1 ", result);
-                            try {
-                                JSONArray jsonArray = new JSONArray(result);
-                                JSONObject object = jsonArray.getJSONObject(0);
-                                int orderId = object.getInt("idOrder");
-                                orderModel.setIdOrder(orderId);
-
-                                for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
-                                    orderModel.getOrderItem_list().get(k).setOrder_idOrder(orderId);
-                                    Log.d("hatdog2", String.valueOf(orderModel.getOrderItem_list().get(k).getOrder_idOrder()));
-                                    Log.d("hatdog2.1", String.valueOf(orderModel.getIdOrder()));
-                                }
-                                Log.d("hatdog3", String.valueOf(orderModel.getOrderItem_list().size()));
-
-                                Log.d("orderrr", String.valueOf(orderId));
-
-                            } catch (JSONException e) {
-                                Log.d("order:", "catch");
-                                // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
-                        }
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("order", orderModel);
+                CheckoutFragment fragment = new CheckoutFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 
 
-                    }) {
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<>();
-                            params.put("orderItemTotalPrice", String.valueOf(total_price));
-                            params.put("orderStatus", orderModel.getOrderStatus());
-                            params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
-                            params.put("users_id", String.valueOf(orderModel.getUsers_id()));
-                            return params;
-                        }
-
-                    };
-
-                    RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-                    requestQueue.add(stringRequest);
-
-
-
-                    RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
-                    StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
-
-                        @Override
-                        public void onResponse(String result) {
-
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
-                            Log.d("Error", String.valueOf(error));
-                        }
-                    }) {
-                        protected Map<String, String> getParams() {
-                            Map<String, String> params2 = new HashMap<>();
-//                            params2.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(j).getProduct_idProduct()));
-//                            params2.put("idStore", String.valueOf(orderModel.getStore_idstore()));
-//                            params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
-//                            params2.put("idOrder", String.valueOf(orderId));
-//                            params2.put("productName", String.valueOf(orderModel.getOrderItem_list().get(j).getProductName()));
-//                            params2.put("itemPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-//                            params2.put("itemQuantity", String.valueOf(orderModel.getOrderItem_list().get(j).getItemQuantity()));
-//                            params2.put("totalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-
-                            Gson gson = new Gson();
-                            String jsonArray = gson.toJson(orderModel.getOrderItem_list());
-                            params2.put("data",jsonArray);
-                            //params2.put("idUser", String.valueOf(orderModel.getUsers_id()));
-
-                            Log.d("hatdog", String.valueOf(params2));
-                            return params2;
-                        }
-                    };
-                    requestQueue2.add(stringRequest2);
-
-                //Bundle
-                Bundle bundle3 = new Bundle();
-                CheckoutFragment fragment3 = new CheckoutFragment();
-                bundle3.putSerializable("tempOrderList", (Serializable) total_price);
-                fragment3.setArguments(bundle3);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment3).commit();
-                Log.d("END" , "END");
+//                //Bundle
+//                Bundle bundle3 = new Bundle();
+//                CheckoutFragment fragment3 = new CheckoutFragment();
+//                bundle3.putSerializable("tempOrderList", (Serializable) total_price);
+//                fragment3.setArguments(bundle3);
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment3).commit();
+//                Log.d("END" , "END");
 
 
             }

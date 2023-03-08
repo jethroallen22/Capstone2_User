@@ -101,10 +101,13 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         rv_cart = root.findViewById(R.id.rv_cart);
         order_list = new ArrayList<>();
         order_item_list = new ArrayList<>();
+        temp_store_list = new ArrayList<>();
+
 //        rv_cart.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
 //        rv_cart.setHasFixedSize(true);
 //        rv_cart.setNestedScrollingEnabled(false);
         requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueStore = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractStoreCartItem();
 
 //        cart_list = new ArrayList<>();
@@ -177,10 +180,14 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         Log.d("TAG", "Success");
         Bundle bundle = new Bundle();
         //bundle.putString("StoreName", cart_list.get(position).getStore_name());
+        for(int i = 0 ; i < order_list.get(position).getOrderItem_list().size() ; i++){
+            Log.d("onItemClick", order_list.get(position).getOrderItem_list().get(i).getProductName());
+            Log.d("onItemClick", String.valueOf(order_list.get(position).getOrderItem_list().get(i).getItemQuantity()));
+        }
+        bundle.putParcelable("order", order_list.get(position));
 
         OrderFragment fragment = new OrderFragment();
         fragment.setArguments(bundle);
-        //bundle.putSerializable("order_item_list", (Serializable) cart_list.get(position).getOrderItem_list());
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
         Log.d("Test","Test success");
     }
@@ -208,7 +215,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
                         StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
                                 (float) r_rating, r_popularity, r_open, r_close);
-                        tempStoreList.add(store3);
+                        temp_store_list.add(store3);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -234,15 +241,17 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                 List<OrderItemModel> tempOrderItemList;
                 List<OrderModel> tempOrderList;
 
-                tempOrderItemList = new ArrayList<>();
-                tempOrderList = new ArrayList<>();
+//                tempOrderItemList = new ArrayList<>();
+//                tempOrderList = new ArrayList<>();
+
 
                 for (int i=0; i < response.length(); i++){
                     try {
+                        int temp_not = 0;
                         JSONObject jsonObjectCart = response.getJSONObject(i);
                         if (jsonObjectCart.getInt("temp_usersId") == userID) {
-                            Log.d("PRODNAME", jsonObjectCart.getString("temp_productName"));
-                            Log.d("CARTITEM", response.toString());
+                            Log.d("PRODQTY", jsonObjectCart.getString("temp_productName") + " Qty: " + jsonObjectCart.getInt("temp_productQuantity"));
+//                            Log.d("CARTITEM", response.toString());
                             int c_productId = jsonObjectCart.getInt("temp_productId");
                             int c_storeId = jsonObjectCart.getInt("temp_storeId");
                             int c_usersId = jsonObjectCart.getInt("temp_usersId");
@@ -253,64 +262,57 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                             String c_storeName = jsonObjectCart.getString("storeName");
                             String c_storeImage = jsonObjectCart.getString("storeImage");
 
-                            OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, (float) (c_productPrice * c_productQuantity), c_productQuantity,
-                                    c_productName);
+                            OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, userID, c_productName, (float) c_productPrice, c_productQuantity,
+                                    (float) (c_productPrice * c_productQuantity));
 
-//                            Log.d("BEFORE", String.valueOf(userID));
-//                            Log.d("BEFOREDB", String.valueOf(c_usersId));
-//                            if(order_list.isEmpty()){
-//                                Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
-//                                order_item_list = new ArrayList<>();
-//                                order_item_list.add(orderItemModel);
-//                                order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
-//                                        c_storeImage,c_storeName,
-//                                        c_usersId, order_item_list));
-//                            }  else{
-//                                for (int h = 0; h < order_list.size(); h++) {
-//                                    Log.d("Inside for", String.valueOf(order_list.size()));
-//                                    //Check if Order already exist in CartList
-//                                    if (order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 0) {
-//                                        Log.d("STOREMATCH", c_productName + " MATCH " + c_storeName);
-//                                        // Check if order item already exist
-//                                        for (int k = 0 ; k < order_list.get(h).getOrderItem_list().size() ; k++){
-//                                            if(c_productName.toLowerCase().trim().compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName().toLowerCase().trim()) == 0){
-////                                                temp_count = c_productQuantity;
-//                                                int tempItemQuantity = 0;
-//                                                tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
-//                                                tempItemQuantity += c_productQuantity;
-//                                                order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
-//                                                tempItemQuantity = 0;
-//                                            } else{
-//                                                order_list.get(h).getOrderItem_list().add(orderItemModel);
-//                                            }
-//                                            break;
-//                                        }
-//                                    } else{
-//                                        Log.d("STOREMATCH !0", c_productName + " NOT MATCH " + c_storeName);
-//                                        order_item_list = new ArrayList<>();
-//                                        order_item_list.add(orderItemModel);
-//                                        order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
-//                                                c_storeImage,c_storeName,
-//                                                c_usersId, order_item_list));
-//                                        Log.d("Added OL", String.valueOf(i));
-//                                        break;
-//                                    }
-//                                }
-//                           }
-                            //Store Sort for Cart Item
-                            if (tempOrderItemList.isEmpty()){
-                                tempOrderItemList.add(orderItemModel);
-                            } else{
-                                for(int l = 0; l < tempOrderItemList.size(); l++){
-                                    if(orderItemModel.getProduct_idProduct() == tempOrderItemList.get(l).getProduct_idProduct()){
-                                        temp_count = tempOrderItemList.get(l).getItemQuantity();
-                                        temp_count += orderItemModel.getItemQuantity();
-                                        tempOrderItemList.get(l).setItemQuantity(temp_count);
+                            Log.d("BEFORE", String.valueOf(userID));
+                            Log.d("BEFOREDB", String.valueOf(c_usersId));
+                            if(order_list.isEmpty()){
+                                Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
+                                order_item_list = new ArrayList<>();
+                                order_item_list.add(orderItemModel);
+                                order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
+                                        c_storeImage,c_storeName,
+                                        c_usersId, order_item_list));
+                            }else{
+                                for (int h = 0; h < order_list.size(); h++) {
+                                    Log.d("Inside for", String.valueOf(order_list.size()));
+                                    //Check if Order already exist in CartList
+                                    if (order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 0) {
+                                        Log.d("STOREMATCH", c_productName + " MATCH " + c_storeName);
+                                        // Check if order item already exist
+                                        for (int k = 0 ; k < order_list.get(h).getOrderItem_list().size() ; k++){
+                                            if(c_productName.toLowerCase().trim().compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName().toLowerCase().trim()) == 0){
+//                                                temp_count = c_productQuantity;
+                                                int tempItemQuantity = 0;
+                                                tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
+                                                Log.d("tempItemQuantityBefore", String.valueOf(tempItemQuantity));
+                                                tempItemQuantity += c_productQuantity;
+                                                Log.d("tempItemQuantityAfter", String.valueOf(tempItemQuantity));
+                                                order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
+                                                tempItemQuantity = 0;
+                                                break;
+                                            } else{
+                                                order_list.get(h).getOrderItem_list().add(orderItemModel);
+                                                break;
+                                            }
+                                        }
                                     } else{
-                                        tempOrderItemList.add(orderItemModel);
+                                        Log.d("STOREMATCH !0", c_productName + " NOT MATCH " + c_storeName);
+                                        temp_not++;
+                                        Log.d("Temp_not", String.valueOf(temp_not));
+                                        if(temp_not == order_list.size()) {
+                                            order_item_list = new ArrayList<>();
+                                            order_item_list.add(orderItemModel);
+                                            order_list.add(new OrderModel((float) c_totalProductPrice, "pending", c_storeId,
+                                                    c_storeImage, c_storeName,
+                                                    c_usersId, order_item_list));
+                                            Log.d("Added OL", String.valueOf(i));
+                                            break;
+                                        }
                                     }
                                 }
-                            } //
+                            }
                         }
                         Log.d("MINE OL SIZE", String.valueOf(order_list.size()));
                     } catch (JSONException e) {
@@ -318,26 +320,11 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                     }
 
                 }
-
-                for (int m = 0; m < tempOrderItemList.size(); m++){
-                    if(tempOrderList.isEmpty()){
-                        for (int n = 0; n < tempStoreList.size(); n++){
-                            List<OrderItemModel> tempToil;
-                            tempToil = new ArrayList<>();
-                            tempToil.add(tempOrderItemList.get(m));
-                            if(tempStoreList.get(n).getStore_id() == tempOrderItemList.get(m).getStore_id()){
-                                tempOrderList.add(new OrderModel(0.0F, "pending", tempStoreList.get(n).getStore_id(),tempStoreList.get(n).getStore_image(),
-                                                                tempStoreList.get(n).getStore_name(), userID, tempToil));
-                            }
-                        }
-                    }
-                }
-
                 Log.d("CARTSIZE", String.valueOf(order_list.size()));
-                for (int i = 0 ; i < order_list.size() ; i++){
-                    for (int j = 0 ; j < order_list.get(i).getOrderItem_list().size() ; j++)
-                        Log.d("CARTSIZE", String.valueOf(order_list.get(i).getOrderItem_list().get(j).getProductName()));
-                }
+//                for (int i = 0 ; i < order_list.size() ; i++){
+//                    for (int j = 0 ; j < order_list.get(i).getOrderItem_list().size() ; j++)
+//                        Log.d("CARTSIZE", String.valueOf(order_list.get(i).getOrderItem_list().get(j).getProductName()));
+//                }
                 cartAdapter = new CartAdapter(getActivity(),order_list, CartFragment.this);
                 rv_cart.setAdapter(cartAdapter);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());

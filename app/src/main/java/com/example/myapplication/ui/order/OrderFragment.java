@@ -2,6 +2,7 @@ package com.example.myapplication.ui.order;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -25,6 +27,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.Home;
+import com.example.myapplication.activities.Login;
+import com.example.myapplication.activities.Register;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
@@ -36,6 +41,11 @@ import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.store.StoreFragment;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -49,6 +59,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     //
     RecyclerView rv_order_items;
     List<OrderItemModel> order_item_list;
+    OrderModel orderModel;
     OrderItemsAdapter orderItemsAdapter;
 
     private OrderViewModel mViewModel;
@@ -82,45 +93,54 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         btn_place_order = root.findViewById(R.id.btn_place_order);
         webPay = root.findViewById(R.id.webPay);
         Bundle bundle = this.getArguments();
-        order_item_list = new ArrayList<>();
-        order_item_list = (List<OrderItemModel>) getArguments().getSerializable("order_item_list");
 
-//        if (bundle != null){
-//            store_name = bundle.getString("StoreName");
-//            tv_store_name.setText(store_name);
-//            Log.d("StoreName",store_name);
-//        }
+        order_item_list = new ArrayList<>();
+        //order_item_list = (List<OrderItemModel>) getArguments().getSerializable("order_item_list");
+
+        if (bundle != null){
+            orderModel = bundle.getParcelable("order");
+            store_name = orderModel.getStore_name();
+            tv_store_name.setText(store_name);
+            Log.d("StoreName",store_name);
+        }
 
         rv_order_items = root.findViewById(R.id.rv_order_items);
 //        order_item_list = new ArrayList<>();
 //        order_item_list.add(new OrderItemModel("Burger Mcdo", 3, 135F));
 //        order_item_list.add(new OrderItemModel("Chicken Ala King", 2, 215F));
-        orderItemsAdapter = new OrderItemsAdapter(getActivity(),order_item_list,this);
+        orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),this);
         rv_order_items.setAdapter(orderItemsAdapter);
         rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
 
-        for (i = 0; i < order_item_list.size(); i++)
-            total_price += order_item_list.get(i).getItemPrice();
+        for (i = 0; i < orderModel.getOrderItem_list().size(); i++)
+            total_price += orderModel.getOrderItem_list().get(i).getItemPrice();
         Log.d("TotalPrice", String.valueOf(total_price));
         tv_total_price.setText(String.valueOf(total_price));
 
+
+
         btn_place_order.setOnClickListener(new View.OnClickListener() {
+            //int orderId = 0;
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("order", orderModel);
+                CheckoutFragment fragment = new CheckoutFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 
-                //Log.d("Order", String.valueOf(order));
-                //PayM(String.valueOf(total_price));
-                //webPay.setInitialScale(100);
-                //webPay.loadUrl(JSON_URL+"index.php");
 
-                Bundle bundle3 = new Bundle();
-                CheckoutFragment fragment3 = new CheckoutFragment();
-                bundle3.putSerializable("tempOrderList", (Serializable) total_price);
-                fragment3.setArguments(bundle3);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment3).commit();
-                Log.d("END" , "END");
+//                //Bundle
+//                Bundle bundle3 = new Bundle();
+//                CheckoutFragment fragment3 = new CheckoutFragment();
+//                bundle3.putSerializable("tempOrderList", (Serializable) total_price);
+//                fragment3.setArguments(bundle3);
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment3).commit();
+//                Log.d("END" , "END");
+
+
             }
 
         });

@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.checkout;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.Home;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.databinding.FragmentCheckout3Binding;
 import com.example.myapplication.databinding.FragmentCheckoutBinding;
@@ -50,6 +52,10 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
     RequestQueue requestQueueOrder;
     List<OrderModel> orderModelList;
 
+    private Home mActivity;
+
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -66,81 +72,77 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
         binding.nextBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDataFromServer(Checkout3Fragment.this);
-                Log.d("Counter", String.valueOf(counter));
-
-
-                JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderget.php", null, new Response.Listener<JSONArray>() {
+                RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d("respobject", String.valueOf(response));
-                        for (int i=0; i < response.length(); i++){
-                            try {
-                                JSONObject jsonObjectOrder = response.getJSONObject(i);
-                                if (orderModel.getStore_idstore() == jsonObjectOrder.getInt("store_idStore")
-                                && orderModel.getUsers_id() == jsonObjectOrder.getInt("users_id")){
-                                    for (int j = 0 ; j < orderModel.getOrderItem_list().size() ; j++){
-                                        orderModel.getOrderItem_list().get(j).setIdOrder(jsonObjectOrder.getInt("idOrder"));
-                                    }
+                    public void onResponse(String result) {
+                        Log.d("1 ", result);
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            JSONObject object = jsonArray.getJSONObject(0);
+                            //callback.onSuccessResponse(object.getInt("idOrder"));
+                            int orderId = object.getInt("idOrder");
+                            Log.d("objectIDOrder", String.valueOf(object.getInt("idOrder")));
+                            orderModel.setIdOrder(orderId);
+
+                            for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
+                                orderModel.getOrderItem_list().get(k).setIdOrder(orderId);
+                                Log.d("hatdog2", String.valueOf(orderModel.getOrderItem_list().get(k).getIdOrder()));
+                                Log.d("hatdog2.1", String.valueOf(orderModel.getIdOrder()));
+                            }
+                            Log.d("hatdog3", String.valueOf(orderModel.getOrderItem_list().size()));
+
+                            RequestQueue requestQueue2 = Volley.newRequestQueue(mActivity);
+                            StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
+
+                                @Override
+                                public void onResponse(String result) {
+                                    Log.d("onResponse", result);
 
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                                    Log.d("Catch", String.valueOf(error));
+                                }
+                            }) {
+                                protected Map<String, String> getParams() {
+                                    Map<String, String> params2 = new HashMap<>();
+                                    Gson gson = new Gson();
+                                    String jsonArray = gson.toJson(orderModel.getOrderItem_list());
+                                    params2.put("data", jsonArray);
+                                    Log.d("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getIdProduct()));
+                                    Log.d("hatdog", String.valueOf(params2));
+                                    return params2;
+                                }
+                            };
+                            requestQueue2.add(stringRequest2);
+
+                        } catch (JSONException e) {
+                            Log.d("order:", "catch");
+                            // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
                         }
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
                     }
-                });
-                requestQueueOrder.add(jsonArrayRequest3);
-                Log.d("afterget", String.valueOf(orderModelList.size()));
+                }) {
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("orderItemTotalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+                        params.put("orderStatus", orderModel.getOrderStatus());
+                        params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
+                        params.put("users_id", String.valueOf(orderModel.getUsers_id()));
+                        return params;
+                    }
 
+                };
+                requestQueue.add(stringRequest);
 
-
-
-
-
-
-                for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
-                    orderModel.getOrderItem_list().get(k).setIdOrder(orderModel.getIdOrder());
-                    Log.d("hatdog2", String.valueOf(orderModel.getOrderItem_list().get(k).getIdOrder()));
-                    Log.d("hatdog2.1", String.valueOf(orderModel.getIdOrder()));
-                    Log.d("CounterOnSuccessResponse", String.valueOf(Checkout3Fragment.this.counter));
-                    Checkout3Fragment.this.counter++;
-                }
-
-                if (counter == orderModel.getOrderItem_list().size()) {
-                    RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
-                    StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
-
-                        @Override
-                        public void onResponse(String result) {
-                            Log.d("onResponse", result);
-
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
-                            Log.d("Catch", String.valueOf(error));
-                        }
-                    }) {
-                        protected Map<String, String> getParams() {
-                            Map<String, String> params2 = new HashMap<>();
-                            Gson gson = new Gson();
-                            String jsonArray = gson.toJson(orderModel.getOrderItem_list());
-                            params2.put("data",jsonArray);
-                            Log.d("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getIdProduct()));
-
-                            Log.d("hatdog", String.valueOf(params2));
-                            return params2;
-                        }
-                    };
-                    requestQueue2.add(stringRequest2);
-                }
                 HomeFragment fragment = new HomeFragment();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
             }
@@ -149,6 +151,11 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
         return root;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (Home) getActivity();
+    }
 
     @Override
     public void onSuccessResponse(int result) {
@@ -160,52 +167,52 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
 
     private void getDataFromServer(final VolleyCallback callback) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String result) {
-                Log.d("1 ", result);
-                try {
-                    JSONArray jsonArray = new JSONArray(result);
-                    JSONObject object = jsonArray.getJSONObject(0);
-                    callback.onSuccessResponse(object.getInt("idOrder"));
-                    int orderId = object.getInt("idOrder");
-                    orderModel.setIdOrder(orderId);
-
-//                            for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
-//                                orderModel.getOrderItem_list().get(k).setIdOrder(orderId);
-//                                Log.d("hatdog2", String.valueOf(orderModel.getOrderItem_list().get(k).getIdOrder()));
-//                                Log.d("hatdog2.1", String.valueOf(orderModel.getIdOrder()));
-//                            }
-                    Log.d("hatdog3", String.valueOf(orderModel.getOrderItem_list().size()));
-
-                    Log.d("orderrr", String.valueOf(orderId));
-
-                } catch (JSONException e) {
-                    Log.d("order:", "catch");
-                    // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
-            }
-
-
-        }) {
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("orderItemTotalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-                params.put("orderStatus", orderModel.getOrderStatus());
-                params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
-                params.put("users_id", String.valueOf(orderModel.getUsers_id()));
-                return params;
-            }
-
-        };
-        requestQueue.add(stringRequest);
+//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String result) {
+//                Log.d("1 ", result);
+//                try {
+//                    JSONArray jsonArray = new JSONArray(result);
+//                    JSONObject object = jsonArray.getJSONObject(0);
+//                    callback.onSuccessResponse(object.getInt("idOrder"));
+//                    int orderId = object.getInt("idOrder");
+//                    orderModel.setIdOrder(orderId);
+//
+////                            for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
+////                                orderModel.getOrderItem_list().get(k).setIdOrder(orderId);
+////                                Log.d("hatdog2", String.valueOf(orderModel.getOrderItem_list().get(k).getIdOrder()));
+////                                Log.d("hatdog2.1", String.valueOf(orderModel.getIdOrder()));
+////                            }
+//                    Log.d("hatdog3", String.valueOf(orderModel.getOrderItem_list().size()));
+//
+//                    Log.d("orderrr", String.valueOf(orderId));
+//
+//                } catch (JSONException e) {
+//                    Log.d("order:", "catch");
+//                    // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
+//                }
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+//            }
+//
+//
+//        }) {
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("orderItemTotalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+//                params.put("orderStatus", orderModel.getOrderStatus());
+//                params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
+//                params.put("users_id", String.valueOf(orderModel.getUsers_id()));
+//                return params;
+//            }
+//
+//        };
+//        requestQueue.add(stringRequest);
 
 
     }

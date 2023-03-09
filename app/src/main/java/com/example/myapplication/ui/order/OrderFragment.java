@@ -58,21 +58,14 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     //
     RecyclerView rv_order_items;
-    List<OrderItemModel> order_item_list;
     OrderModel orderModel;
     OrderItemsAdapter orderItemsAdapter;
-
-    private OrderViewModel mViewModel;
     private FragmentOrderBinding binding;
-
     TextView tv_store_name;
     TextView tv_total_price;
     Button btn_place_order;
     WebView webPay;
     private String store_name;
-    private int i;
-    private float total_price;
-    OrderFragment orderFragment = this;
     //School IP
     private static String JSON_URL;
     private IPModel ipModel;
@@ -94,9 +87,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         webPay = root.findViewById(R.id.webPay);
         Bundle bundle = this.getArguments();
 
-        order_item_list = new ArrayList<>();
-        //order_item_list = (List<OrderItemModel>) getArguments().getSerializable("order_item_list");
-
         if (bundle != null){
             orderModel = bundle.getParcelable("order");
             store_name = orderModel.getStore_name();
@@ -105,24 +95,14 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         }
 
         rv_order_items = root.findViewById(R.id.rv_order_items);
-//        order_item_list = new ArrayList<>();
-//        order_item_list.add(new OrderItemModel("Burger Mcdo", 3, 135F));
-//        order_item_list.add(new OrderItemModel("Chicken Ala King", 2, 215F));
         orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),this);
         rv_order_items.setAdapter(orderItemsAdapter);
         rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
-
-        for (i = 0; i < orderModel.getOrderItem_list().size(); i++)
-            total_price += orderModel.getOrderItem_list().get(i).getItemPrice();
-        Log.d("TotalPrice", String.valueOf(total_price));
-        tv_total_price.setText(String.valueOf(total_price));
-
-
+        tv_total_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
 
         btn_place_order.setOnClickListener(new View.OnClickListener() {
-            //int orderId = 0;
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -130,32 +110,17 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 CheckoutFragment fragment = new CheckoutFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-
-
-//                //Bundle
-//                Bundle bundle3 = new Bundle();
-//                CheckoutFragment fragment3 = new CheckoutFragment();
-//                bundle3.putSerializable("tempOrderList", (Serializable) total_price);
-//                fragment3.setArguments(bundle3);
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment3).commit();
-//                Log.d("END" , "END");
-
-
             }
-
         });
 
         return root;
     }
-
-
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
 
     @Override
     public void onItemClickForYou(int position) {

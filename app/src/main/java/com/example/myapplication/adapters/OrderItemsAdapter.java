@@ -40,32 +40,10 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull OrderItemsAdapter.ViewHolder holder, int position) {
-//        if(list.size() != 0) {
-//            int i, j = 0;
-//            float total_price = 0;
-//            Log.d("CART ADAPTER: ", String.valueOf(list.size()));
-//            Log.d("CART ADAPTER: ", String.valueOf(position));
-//
-//            for (i = 0; i < list.get(position).getOrder_list().size(); i++) {
-//                Log.d("INSIDE FOR LOOP", String.valueOf(i));
-//                for (j=0; j<list.get(position).getOrder_list().get(i).getOrderItem_list().size();j++){
-//                    total_price = list.get(position).getOrder_list().get(i).getOrderItem_list().get(j).getItemPrice();
-//                    holder.tv_order_item_name.setText(list.get(position).getOrder_list().get(i).getOrderItem_list().get(j).getProductName());
-//                    holder.tv_order_item_qty.setText("Qty:" + list.get(position).getOrder_list().get(i).getOrderItem_list().get(j).getItemQuantity() + "x");
-//                    holder.tv_order_total_price.setText("P " + total_price);
-//                }
-//                holder.iv_close_btn.setImageResource(R.drawable.ic_baseline_close_24);
-//
-//            }
-////            holder.tv_order_info.setText(text);
-////            holder.tv_order_item_info.setText("Qty: " + list.get(position).getOrderItem_list().size());
-//        }
         holder.tv_order_item_name.setText(list.get(position).getProductName());
         holder.tv_order_item_qty.setText("Qty:" + list.get(position).getItemQuantity() + "x");
         Log.d("QTY: " , String.valueOf(list.get(position).getItemQuantity()));
-        holder.tv_order_total_price.setText("P " + list.get(position).getItemPrice());
-
-
+        holder.tv_order_total_price.setText("P " + list.get(position).getTotalPrice());
     }
 
     @Override

@@ -129,6 +129,34 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
                     };
                     requestQueue2.add(stringRequest2);
 
+
+                    RequestQueue requestQueue3 = Volley.newRequestQueue(mActivity);
+                    StringRequest stringRequest3 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderhistorypost.php", new Response.Listener<String>() {
+
+                        @Override
+                        public void onResponse(String result) {
+                            Log.d("response", result);
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                            Log.d("Catch", String.valueOf(error));
+                        }
+                    }) {
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params2 = new HashMap<>();
+                            Gson gson = new Gson();
+                            String jsonArray = gson.toJson(orderModel.getOrderItem_list());
+                            params2.put("data", jsonArray);
+                            Log.d("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getIdProduct()));
+                            Log.d("hatdog", String.valueOf(params2));
+                            return params2;
+                        }
+                    };
+                    requestQueue3.add(stringRequest3);
+
                 } catch (JSONException e) {
                     Log.d("order:", "catch");
                     // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
@@ -156,7 +184,9 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
         HomeFragment fragment = new HomeFragment();
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 //
+
     }
+
 
     @Override
     public void onDestroyView() {

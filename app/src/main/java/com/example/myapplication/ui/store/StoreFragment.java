@@ -168,7 +168,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
         rv_products = root.findViewById(R.id.rv_products);
         products_list = new ArrayList<>();
-        productAdapter = new ProductAdapter(getActivity(), products_list);
+        productAdapter = new ProductAdapter(getActivity(), products_list, StoreFragment.this);
         rv_products.setAdapter(productAdapter);
         rv_products.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv_products.setHasFixedSize(true);
@@ -288,7 +288,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    productAdapter = new ProductAdapter(getActivity(),products_list);
+                    productAdapter = new ProductAdapter(getActivity(),products_list, StoreFragment.this);
                     rv_products.setAdapter(productAdapter);
                 }
             }

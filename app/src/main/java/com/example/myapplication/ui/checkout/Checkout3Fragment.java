@@ -88,7 +88,7 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
 
     private void getDataFromServer() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorder1.php", new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorderpost.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String result) {
                 Log.d("1 ", result);

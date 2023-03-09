@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.ProductModel;
 
@@ -22,10 +23,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     Context context;
     List<ProductModel> list;
+    private final RecyclerViewInterface recyclerViewInterface;
 
-    public ProductAdapter(Context context, List<ProductModel> list) {
+    public ProductAdapter(Context context, List<ProductModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
     @NonNull
@@ -36,14 +39,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ProductAdapter.ViewHolder holder, int position) {
-        Glide.with(context)
-                .load(list.get(position).getProductImage())
-                .into(holder.iv_product_image);
+        holder.iv_product_image.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_product_name.setText(list.get(position).getProductName());
         holder.tv_product_price.setText(String.valueOf(list.get(position).getProductPrice()));
-        //holder.tv_product_cal.setText(list.get(position).getProduct_calories() + "cal");
-
-
+        holder.tv_product_cal.setText(list.get(position).getProductTag());
     }
 
     @Override
@@ -64,6 +63,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tv_product_name = itemView.findViewById(R.id.tv_product_name);
             tv_product_price = itemView.findViewById(R.id.tv_product_price);
             tv_product_cal = itemView.findViewById(R.id.tv_product_cal);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if(pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClickCategory(pos);
+                        }
+                    }
+                }
+            });
 
         }
     }

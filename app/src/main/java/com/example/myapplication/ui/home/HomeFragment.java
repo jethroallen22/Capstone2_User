@@ -5,11 +5,14 @@ import static androidx.core.content.ContextCompat.getSystemService;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -18,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -25,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -60,6 +65,10 @@ import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.categories.CategoryFragment;
+import com.example.myapplication.ui.moods.MixMoodFragment;
+import com.example.myapplication.ui.moods.NewMoodFragment;
+import com.example.myapplication.ui.moods.OldMoodFragment;
+import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -139,6 +148,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     NotificationManager manager;
 
+    Dialog moodDialog;
+
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -160,6 +171,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
+
+        moodModal();
 
 
         order_item_temp_list = new ArrayList<>();
@@ -758,6 +771,68 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+    }
+
+    public void moodModal(){
+        moodDialog = new Dialog(this.getContext());
+        moodDialog.setContentView(R.layout.mood_modal);
+        moodDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        CardView moodOld, moodNew, moodMix, moodTrend;
+        ImageView btnClose;
+
+        moodOld  = moodDialog.findViewById(R.id.cv_mood_old);
+        moodNew = moodDialog.findViewById(R.id.cv_mood_new);
+        moodMix = moodDialog.findViewById(R.id.cv_mood_mix);
+        moodTrend = moodDialog.findViewById(R.id.cv_mood_trend);
+        btnClose = moodDialog.findViewById(R.id.close_modal);
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                moodDialog.dismiss();
+            }
+        });
+
+        moodOld.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OldMoodFragment fragment = new OldMoodFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                moodDialog.dismiss();
+            }
+        });
+
+        moodNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewMoodFragment fragment = new NewMoodFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                moodDialog.dismiss();
+            }
+        });
+
+        moodMix.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                MixMoodFragment fragment = new MixMoodFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                moodDialog.dismiss();
+            }
+        });
+
+        moodTrend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TrendMoodFragment fragment = new TrendMoodFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                moodDialog.dismiss();
+            }
+        });
+
+        moodDialog.show();
     }
 
 

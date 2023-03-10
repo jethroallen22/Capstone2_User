@@ -14,7 +14,7 @@ public class ProductModel implements Parcelable {
     int store_idStore;
     String productName;
     String productDescription;
-    Float productPrice;
+    float productPrice;
     String productImage;
     String productServingSize;
     String productTag;
@@ -65,11 +65,7 @@ public class ProductModel implements Parcelable {
         store_idStore = in.readInt();
         productName = in.readString();
         productDescription = in.readString();
-        if (in.readByte() == 0) {
-            productPrice = null;
-        } else {
-            productPrice = in.readFloat();
-        }
+        productPrice = in.readFloat();
         productImage = in.readString();
         productServingSize = in.readString();
         productTag = in.readString();
@@ -195,12 +191,7 @@ public class ProductModel implements Parcelable {
         parcel.writeInt(store_idStore);
         parcel.writeString(productName);
         parcel.writeString(productDescription);
-        if (productPrice == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeFloat(productPrice);
-        }
+        parcel.writeFloat(productPrice);
         parcel.writeString(productImage);
         parcel.writeString(productServingSize);
         parcel.writeString(productTag);

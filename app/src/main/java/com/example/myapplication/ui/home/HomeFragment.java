@@ -792,7 +792,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         moodOld.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putInt("userId", userId);
                 OldMoodFragment fragment = new OldMoodFragment();
+                fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 moodDialog.dismiss();
             }

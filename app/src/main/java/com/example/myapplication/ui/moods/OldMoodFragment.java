@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -64,6 +65,10 @@ public class OldMoodFragment extends Fragment implements RecyclerViewInterface {
         productModelList = new ArrayList<>();
         requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
         OldMoodFragment oldMoodFragment = this;
+        rvOld = root.findViewById(R.id.rv_old_mood);
+        rvOld.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        rvOld.setHasFixedSize(true);
+        rvOld.setNestedScrollingEnabled(false);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistoryget.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -71,21 +76,10 @@ public class OldMoodFragment extends Fragment implements RecyclerViewInterface {
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
-                        int r_id = jsonObjectRec1.getInt("idStore");
-                        String r_image = jsonObjectRec1.getString("storeImage");
-                        String r_name = jsonObjectRec1.getString("storeName");
-                        String r_description = jsonObjectRec1.getString("storeDescription");
-                        String r_location = jsonObjectRec1.getString("storeLocation");
-                        String r_category = jsonObjectRec1.getString("storeCategory");
-                        float r_rating = (float) jsonObjectRec1.getDouble("storeRating");
-                        int r_popularity = jsonObjectRec1.getInt("storePopularity");
-                        String r_open = jsonObjectRec1.getString("storeStartTime");
-                        String r_close = jsonObjectRec1.getString("storeEndTime");
+                        int idProduct = jsonObject.getInt("idProduct");
+                        int idUser = jsonObject.getInt("idUser");
 
-                        StoreModel rec = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
-                        ProductModel productModel = new SearchModel(r_image, r_name, r_category);
-                        productModelList.add(productModel);
+
                         //list.add(r_name);
 
 
@@ -109,6 +103,7 @@ public class OldMoodFragment extends Fragment implements RecyclerViewInterface {
         requestQueue.add(jsonArrayRequest);
 
 
+
         return root;
     }
 
@@ -118,4 +113,38 @@ public class OldMoodFragment extends Fragment implements RecyclerViewInterface {
         binding = null;
     }
 
+    @Override
+    public void onItemClickForYou(int position) {
+
+    }
+
+    @Override
+    public void onItemClickStorePopular(int position) {
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+    @Override
+    public void onItemClickStoreRec(int position) {
+
+    }
+
+    @Override
+    public void onItemClickStoreRec2(int position) {
+
+    }
+
+    @Override
+    public void onItemClickSearch(int position) {
+
+    }
+
+    @Override
+    public void onItemClickCategory(int pos) {
+
+    }
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,23 +31,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class TrendMoodFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentTrendMoodBinding binding;
-
-    List<ProductModel> productModelList;
-
+    List<ProductModel> productModelList, tempProductModelList;
     RecyclerView rvTrend;
-
     ProductAdapter productAdapter;
-
     RequestQueue requestQueue;
-
     private static String JSON_URL;
     private IPModel ipModel;
+    int userId = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,10 +54,20 @@ public class TrendMoodFragment extends Fragment implements RecyclerViewInterface
 
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
-
         productModelList = new ArrayList<>();
+        tempProductModelList = new ArrayList<>();
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            productModelList = new ArrayList<>();
+            productModelList = (List<ProductModel>) getArguments().getSerializable("productList");
+            userId = bundle.getInt("userId");
+            Collections.shuffle(productModelList);
+            Log.d("Size", String.valueOf(productModelList.size()));
+            for (int i = 0 ; i < productModelList.size() ; i++){
+                Log.d("ProdName", String.valueOf(productModelList.get(i).getIdProduct()));
+            }
+        }
         requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
-        TrendMoodFragment trendMoodFragment = this;
         rvTrend = root.findViewById(R.id.rv_trend_mood);
         rvTrend.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rvTrend.setHasFixedSize(true);
@@ -68,24 +76,22 @@ public class TrendMoodFragment extends Fragment implements RecyclerViewInterface
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistorygetpopu.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("ResponseJson", String.valueOf(response));
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
                         int idProduct = jsonObject.getInt("idProduct");
-
-
-                        //list.add(r_name);
-
-
+                        for (int j = 0 ; j < productModelList.size() ; j++){
+                            if(productModelList.get(j).getIdProduct() == idProduct)
+                                tempProductModelList.add(productModelList.get(j));
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    productAdapter = new ProductAdapter(getActivity(),productModelList, trendMoodFragment);
+                    productAdapter = new ProductAdapter(getActivity(),tempProductModelList, TrendMoodFragment.this);
                     rvTrend.setAdapter(productAdapter);
-
-
                 }
             }
         }, new Response.ErrorListener() {

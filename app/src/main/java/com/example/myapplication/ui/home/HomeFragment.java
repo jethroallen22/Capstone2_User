@@ -165,6 +165,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             userName = intent.getStringExtra("name");
             userId = intent.getIntExtra("id", 0);
             Log.d("HOME FRAG name", userName + userId);
+            Log.d("HOMEuserID", String.valueOf(userId));
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
@@ -805,7 +806,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         moodNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putInt("userId", userId);
                 NewMoodFragment fragment = new NewMoodFragment();
+                fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 moodDialog.dismiss();
             }
@@ -826,13 +831,21 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         moodTrend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putInt("userId", userId);
                 TrendMoodFragment fragment = new TrendMoodFragment();
+                fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 moodDialog.dismiss();
             }
         });
 
         moodDialog.show();
+    }
+
+    public void currentTemp(){
+
     }
 
 

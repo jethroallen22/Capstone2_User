@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 
 import java.lang.ref.ReferenceQueue;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -42,13 +44,11 @@ public class OldMoodFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentOldMoodBinding binding;
 
-    List<ProductModel> productModelList;
-
+    List<ProductModel> productModelList , tempProductModelList;
     RecyclerView rvOld;
-
     ProductAdapter productAdapter;
-
     RequestQueue requestQueue;
+    int userId = 0;
 
     private static String JSON_URL;
     private IPModel ipModel;
@@ -61,10 +61,20 @@ public class OldMoodFragment extends Fragment implements RecyclerViewInterface {
 
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
-
         productModelList = new ArrayList<>();
+        tempProductModelList = new ArrayList<>();
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            productModelList = new ArrayList<>();
+            productModelList = (List<ProductModel>) getArguments().getSerializable("productList");
+            userId = bundle.getInt("userId");
+            Collections.shuffle(productModelList);
+            Log.d("Size", String.valueOf(productModelList.size()));
+            for (int i = 0 ; i < productModelList.size() ; i++){
+                Log.d("ProdName", String.valueOf(productModelList.get(i).getIdProduct()));
+            }
+        }
         requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
-        OldMoodFragment oldMoodFragment = this;
         rvOld = root.findViewById(R.id.rv_old_mood);
         rvOld.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rvOld.setHasFixedSize(true);
@@ -73,25 +83,31 @@ public class OldMoodFragment extends Fragment implements RecyclerViewInterface {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistoryget.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("ResponseJson", String.valueOf(response));
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
                         int idProduct = jsonObject.getInt("idProduct");
                         int idUser = jsonObject.getInt("idUser");
+                        Log.d("UserIDBundle", String.valueOf(userId));
+                        Log.d("UserIDDB", String.valueOf(idUser));
 
-
-                        //list.add(r_name);
-
-
-
+                        if(idUser == userId){
+                            Log.d("UserID", "MATCH");
+                            Log.d("ListSize", String.valueOf(productModelList.size()));
+                            for(int j = 0 ; j < productModelList.size() ; j++){
+                                Log.d("IdProductBundle", String.valueOf(idProduct));
+                                Log.d("IdProductDB", String.valueOf(productModelList.get(j).getIdProduct()));
+                                if (productModelList.get(j).getIdProduct() == idProduct)
+                                    tempProductModelList.add(productModelList.get(j));
+                            }
+                            Log.d("tempList", String.valueOf(tempProductModelList.size()));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-                    productAdapter = new ProductAdapter(getActivity(),productModelList, oldMoodFragment);
+                    productAdapter = new ProductAdapter(getActivity(),tempProductModelList, OldMoodFragment.this);
                     rvOld.setAdapter(productAdapter);
-
-
                 }
             }
         }, new Response.ErrorListener() {

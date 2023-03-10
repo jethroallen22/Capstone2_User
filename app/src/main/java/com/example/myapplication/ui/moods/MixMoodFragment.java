@@ -51,9 +51,6 @@ public class MixMoodFragment extends Fragment implements RecyclerViewInterface {
         rvMix.setHasFixedSize(true);
         rvMix.setNestedScrollingEnabled(false);
 
-
-
-
         return root;
     }
 

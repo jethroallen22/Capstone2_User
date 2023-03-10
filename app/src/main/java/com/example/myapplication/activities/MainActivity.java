@@ -28,6 +28,9 @@ import com.example.myapplication.R;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     final static String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
         firebaseMessaging.subscribeToTopic("new_user_forums");
+
 
     }
 
@@ -135,7 +139,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, tempWeatherURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("Weather", response);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    Log.d("response", response);
+                    float temp = (float) jsonObject.getDouble("main.temp");
+
+                    Log.d("temp", String.valueOf(jsonObject.getDouble("main.temp")));
+
+                }catch (JSONException e){
+
+                }
             }
         }, new Response.ErrorListener() {
             @Override

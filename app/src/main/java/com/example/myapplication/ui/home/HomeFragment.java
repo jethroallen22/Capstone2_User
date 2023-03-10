@@ -154,9 +154,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -286,7 +283,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         manager.createNotificationChannel(channel);
 
         final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

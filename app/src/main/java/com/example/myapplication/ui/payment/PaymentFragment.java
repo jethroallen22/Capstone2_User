@@ -16,13 +16,10 @@ import com.example.myapplication.databinding.FragmentPaymentBinding;
 
 public class PaymentFragment extends Fragment {
 
-    private PaymentViewModel mViewModel;
     private FragmentPaymentBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        PaymentViewModel paymentViewModel =
-                new ViewModelProvider(this).get(PaymentViewModel.class);
 
         binding = FragmentPaymentBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

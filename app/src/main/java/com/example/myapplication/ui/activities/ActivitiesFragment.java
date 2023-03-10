@@ -1,11 +1,8 @@
 package com.example.myapplication.ui.activities;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,20 +13,14 @@ import android.view.ViewGroup;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.ActivityAdapter;
-import com.example.myapplication.adapters.HomeFoodForYouAdapter;
-import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentActivitiesBinding;
-import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.models.ActivityModel;
-import com.example.myapplication.models.HomeFoodForYouModel;
-import com.example.myapplication.ui.cart.CartViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ActivitiesFragment extends Fragment {
 
-    private ActivitiesViewModel mViewModel;
     private FragmentActivitiesBinding binding;
 
     //Activity List Recycler View
@@ -39,8 +30,6 @@ public class ActivitiesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ActivitiesViewModel activitiesViewModel =
-                new ViewModelProvider(this).get(ActivitiesViewModel.class);
 
         binding = FragmentActivitiesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

@@ -60,7 +60,6 @@ import java.util.Map;
 
 public class ProfileFragment extends Fragment {
 
-    private ProfileViewModel mViewModel;
     private FragmentProfileBinding binding;
 
     //School IP
@@ -80,8 +79,6 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel profileViewModel =
-                new ViewModelProvider(this).get(ProfileViewModel.class);
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

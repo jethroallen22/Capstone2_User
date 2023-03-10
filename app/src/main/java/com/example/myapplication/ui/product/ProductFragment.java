@@ -1,17 +1,11 @@
 package com.example.myapplication.ui.product;
 
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,23 +20,18 @@ import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.AddonAdapter;
 import com.example.myapplication.adapters.ChooseAdapter;
-import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.databinding.FragmentProductBinding;
 import com.example.myapplication.models.AddonModel;
 import com.example.myapplication.models.ChooseModel;
 import com.example.myapplication.models.ProductModel;
-import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
-import com.example.myapplication.ui.cart.CartViewModel;
 import com.example.myapplication.ui.store.StoreFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductFragment extends Fragment {
 
-    private ProductViewModel mViewModel;
     private FragmentProductBinding binding;
 
     //Choose Recycler View
@@ -64,8 +53,6 @@ public class ProductFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ProductViewModel cartViewModel =
-                new ViewModelProvider(this).get(ProductViewModel.class);
 
         binding = FragmentProductBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,15 +21,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.AddressAdapter;
-import com.example.myapplication.adapters.HomeFoodForYouAdapter;
-import com.example.myapplication.adapters.NotificationAdapter;
-import com.example.myapplication.databinding.FragmentActivitiesBinding;
 import com.example.myapplication.databinding.FragmentAddressesBinding;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.AddressModel;
-import com.example.myapplication.models.NotificationModel;
-import com.example.myapplication.models.ProductModel;
-import com.example.myapplication.ui.activities.ActivitiesViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddressesFragment extends Fragment {
-
-    private AddressesViewModel mViewModel;
     private FragmentAddressesBinding binding;
     private RequestQueue requestQueueAddress;
 
@@ -55,8 +46,6 @@ public class AddressesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        AddressesViewModel addressesViewModel =
-                new ViewModelProvider(this).get(AddressesViewModel.class);
 
         binding = FragmentAddressesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

@@ -42,7 +42,6 @@ import java.util.Locale;
  */
 public class SearchFragment extends Fragment implements RecyclerViewInterface{
 
-    private SearchViewModel mViewModel;
     private FragmentSearchBinding binding;
 
     //Search Query
@@ -58,8 +57,6 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SearchViewModel searchViewModel =
-                new ViewModelProvider(this).get(SearchViewModel.class);
 
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

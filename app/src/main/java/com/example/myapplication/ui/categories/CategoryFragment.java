@@ -32,8 +32,6 @@ import java.util.List;
 
 public class CategoryFragment extends Fragment implements RecyclerViewInterface{
 
-    private CategoryViewModel mViewModel;
-
     private FragmentCategoryBinding binding;
 
     List<StoreModel> categoryListModel;
@@ -56,7 +54,6 @@ public class CategoryFragment extends Fragment implements RecyclerViewInterface{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        CategoryViewModel categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
 
         binding = FragmentCategoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -95,7 +92,6 @@ public class CategoryFragment extends Fragment implements RecyclerViewInterface{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         // TODO: Use the ViewModel
     }
 

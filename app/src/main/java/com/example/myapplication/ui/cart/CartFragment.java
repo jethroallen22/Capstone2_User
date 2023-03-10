@@ -50,7 +50,6 @@ import java.util.Map;
 
 public class CartFragment extends Fragment implements RecyclerViewInterface {
 
-    private CartViewModel mViewModel;
     private FragmentCartBinding binding;
     //Cart List Recycler View
     RecyclerView rv_cart;
@@ -70,8 +69,6 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        CartViewModel cartViewModel =
-                new ViewModelProvider(this).get(CartViewModel.class);
 
         binding = FragmentCartBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

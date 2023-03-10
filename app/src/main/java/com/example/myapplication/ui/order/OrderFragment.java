@@ -72,8 +72,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        OrderViewModel orderViewModel =
-                new ViewModelProvider(this).get(OrderViewModel.class);
 
         binding = FragmentOrderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

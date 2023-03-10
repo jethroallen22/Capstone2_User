@@ -115,8 +115,6 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        StoreViewModel storeViewModel =
-                new ViewModelProvider(this).get(StoreViewModel.class);
 
         binding = FragmentStoreBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

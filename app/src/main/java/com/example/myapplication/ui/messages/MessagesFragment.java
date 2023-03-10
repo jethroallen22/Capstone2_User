@@ -16,13 +16,10 @@ import com.example.myapplication.databinding.FragmentMessagesBinding;
 
 public class MessagesFragment extends Fragment {
 
-    private MessagesViewModel mViewModel;
     private FragmentMessagesBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        MessagesViewModel messagesViewModel =
-                new ViewModelProvider(this).get(MessagesViewModel.class);
 
         binding = FragmentMessagesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

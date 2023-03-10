@@ -29,7 +29,6 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class NotificationsFragment extends Fragment {
 
-    private NotificationsViewModel mViewModel;
     private FragmentNotificationsBinding binding;
 
     //Notification List Recycler View
@@ -39,8 +38,6 @@ public class NotificationsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        NotificationsViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

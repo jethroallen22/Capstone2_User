@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,19 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.myapplication.R;
-import com.example.myapplication.adapters.HomeCategoryAdapter;
-import com.example.myapplication.adapters.HomeStoreRecAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
-import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentMixMoodBinding;
-import com.example.myapplication.databinding.FragmentPaymentBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.ProductModel;
-import com.example.myapplication.models.StoreModel;
-import com.example.myapplication.ui.categories.CategoryFragment;
-import com.example.myapplication.ui.home.HomeFragment;
-import com.example.myapplication.ui.payment.PaymentViewModel;
-import com.example.myapplication.ui.search.SearchFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;

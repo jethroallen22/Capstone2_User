@@ -4,20 +4,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCheckoutBinding;
-import com.example.myapplication.databinding.FragmentSettingsBinding;
 import com.example.myapplication.models.OrderModel;
-import com.example.myapplication.ui.settings.SettingsViewModel;
-
-import java.util.ArrayList;
 
 public class CheckoutFragment extends Fragment {
 

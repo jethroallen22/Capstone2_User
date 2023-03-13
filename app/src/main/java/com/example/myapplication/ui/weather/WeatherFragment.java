@@ -23,6 +23,7 @@ import com.example.myapplication.ui.moods.MixMoodFragment;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class WeatherFragment extends Fragment implements RecyclerViewInterface {
 
@@ -44,11 +45,14 @@ public class WeatherFragment extends Fragment implements RecyclerViewInterface {
             productModelList = (List<ProductModel>) getArguments().getSerializable("productList");
             weather = bundle.getString("weather");
             for(int i = 0 ; i < productModelList.size() ; i++){
-                //if(productModelList.get(i).get)
+                if(productModelList.get(i).getWeather().toLowerCase().compareTo(weather.toLowerCase()) == 0 ){
+                    tempProductModelList.add(productModelList.get(i));
+                }
             }
         }
+        Collections.shuffle(tempProductModelList);
         rvWeather = root.findViewById(R.id.rv_weather);
-        productAdapter = new ProductAdapter(getActivity(),productModelList, WeatherFragment.this);
+        productAdapter = new ProductAdapter(getActivity(),tempProductModelList, WeatherFragment.this);
         rvWeather.setAdapter(productAdapter);
         rvWeather.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rvWeather.setHasFixedSize(true);

@@ -150,6 +150,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     NotificationManager manager;
 
     Dialog moodDialog, weatherDialog;
+    List<Integer> modalInt;
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -173,8 +174,16 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             Log.d("HOME FRAG name", "FAIL");
         }
 
-        moodModal();
-        weatherModal();
+        modalInt = new ArrayList<>();
+        modalInt.add(1);
+        modalInt.add(2);
+        Collections.shuffle(modalInt);
+        for(int i = 0 ; i < modalInt.size() ; i++)
+            Log.d("modelInt", String.valueOf(modalInt.get(i)));
+        if(modalInt.get(0) == 1)
+            moodModal();
+        else if(modalInt.get(0) == 2)
+            weatherModal();
 
 
         order_item_temp_list = new ArrayList<>();

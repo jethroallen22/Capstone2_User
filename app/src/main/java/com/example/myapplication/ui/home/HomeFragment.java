@@ -71,6 +71,7 @@ import com.example.myapplication.ui.moods.OldMoodFragment;
 import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
+import com.example.myapplication.ui.weather.WeatherFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -148,7 +149,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     NotificationManager manager;
 
-    Dialog moodDialog;
+    Dialog moodDialog, weatherDialog;
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -167,11 +168,13 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             weather = intent.getStringExtra("weather");
             Log.d("HOME FRAG name", userName + userId + " Weather: " + weather);
             Log.d("HOMEuserID", String.valueOf(userId));
+            Log.d("weatherHomeFrag", weather);
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
 
         moodModal();
+        weatherModal();
 
 
         order_item_temp_list = new ArrayList<>();
@@ -845,8 +848,52 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         moodDialog.show();
     }
 
-    public void currentTemp(){
+    public void weatherModal(){
+        weatherDialog = new Dialog(this.getContext());
+        weatherDialog.setContentView(R.layout.weather_modal);
+        weatherDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        CardView weatherHot, weatherCold;
+        ImageView btnClose;
 
+        weatherHot  = weatherDialog.findViewById(R.id.cv_weather_hot);
+        weatherCold = weatherDialog.findViewById(R.id.cv_weather_cold);
+        btnClose = weatherDialog.findViewById(R.id.close_modal);
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                weatherDialog.dismiss();
+            }
+        });
+
+        weatherHot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putInt("userId", userId);
+                bundle.putString("weather", weather);
+                WeatherFragment fragment = new WeatherFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                weatherDialog.dismiss();
+            }
+        });
+
+        weatherCold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putInt("userId", userId);
+                bundle.putString("weather", weather);
+                WeatherFragment fragment = new WeatherFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                weatherDialog.dismiss();
+            }
+        });
+        weatherDialog.show();
     }
 
 

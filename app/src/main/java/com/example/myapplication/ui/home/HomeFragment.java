@@ -89,7 +89,7 @@ import java.util.Map;
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood;
+    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2;
 
     //School IP
     private static String JSON_URL;
@@ -123,13 +123,17 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     List<ProductModel> food_for_you_list;
     HomeFoodForYouAdapter homeFoodForYouAdapter;
 
+    RecyclerView rv_weather;
+    List<ProductModel> weather_list;
+    HomeFoodForYouAdapter weatherAdapter;
+
     //Search
     SearchView searchView;
     List<SearchModel> searchModelList;
 
     //For Product Bottomsheet
     LinearLayout linearLayout;
-    TextView product_name, product_resto, product_price, product_description, tv_counter;
+    TextView product_name, product_resto, product_price, product_description, tv_counter, tv_weather;
     RoundedImageView product_image;
     ConstraintLayout cl_product_add;
     ConstraintLayout cl_product_minus;
@@ -199,6 +203,16 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_category.setNestedScrollingEnabled(false);
         requestQueueCateg = Singleton.getsInstance(getActivity()).getRequestQueue();
 
+        rv_weather = root.findViewById(R.id.rv_weather);
+        rv_weather.setHasFixedSize(true);
+        rv_weather.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
+        rv_weather.setNestedScrollingEnabled(false);
+        weather_list = new ArrayList<>();
+        requestQueueFood2 = Singleton.getsInstance(getActivity()).getRequestQueue();
+        tv_weather = root.findViewById(R.id.tv_weather);
+        tv_weather.setText("Feeling " + weather + "?");
+        extractWeather();
+
         //STORE REC 1
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
         rv_home_store_rec.setHasFixedSize(true);
@@ -207,6 +221,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_store_rec_list = new ArrayList<>();
         requestQueueRec1 = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractDataRec1();
+
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
@@ -318,6 +333,50 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         super.onDestroyView();
         binding = null;
     }*/
+
+    public void extractWeather(){
+        HomeFragment homeFragment = this;
+        JsonArrayRequest jsonArrayRequest7= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject7 = response.getJSONObject(i);
+                        int idProduct = jsonObject7.getInt("idProduct");
+                        int idStore = jsonObject7.getInt("idStore");
+                        String productName = jsonObject7.getString("productName");
+                        String productDescription = jsonObject7.getString("productDescription");
+                        float productPrice = (float) jsonObject7.getDouble("productPrice");
+                        String productImage = jsonObject7.getString("productImage");
+                        String productServingSize = jsonObject7.getString("productServingSize");
+                        String productTag = jsonObject7.getString("productTag");
+                        int productPrepTime = jsonObject7.getInt("productPrepTime");
+                        String storeName = jsonObject7.getString("storeName");
+                        String storeImage = jsonObject7.getString("storeImage");
+                        String weather2 = jsonObject7.getString("weather");
+
+
+                        if(weather.toLowerCase().compareTo(weather2.toLowerCase()) == 0) {
+                            ProductModel weatherModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                    productServingSize, productTag, productPrepTime, storeName, storeImage, weather2);
+                            weather_list.add(weatherModel);
+                        }//list.add(productName);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    weatherAdapter = new HomeFoodForYouAdapter(getActivity(),weather_list,homeFragment);
+                    rv_weather.setAdapter(weatherAdapter);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueFood2.add(jsonArrayRequest7);
+    }
 
     //Store Recommendation for RecView 1 and 2 Function
     public void extractDataRec1(){

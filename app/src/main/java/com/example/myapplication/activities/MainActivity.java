@@ -26,7 +26,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 
 
+import com.example.myapplication.models.WeatherModel;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     LocationManager locationManager;
     double curLong;
     double curLat;
+
+    WeatherModel weatherModel;
+    private String weather;
 
 
     private final String weatherURL = "https://api.openweathermap.org/data/2.5/weather";
@@ -103,9 +108,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(getApplicationContext(), Login.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                    MainActivity.this.startActivity(intent);
+
                 }
             }, 2000);
 
@@ -141,10 +144,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             public void onResponse(String response) {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    Log.d("response", response);
-                    float temp = (float) jsonObject.getDouble("main.temp");
+                    Gson gson = new Gson();
+                    String jsonString = jsonObject.getString("main");
+                    weatherModel = gson.fromJson(jsonString, WeatherModel.class);
+                    Log.d("weather", String.valueOf(weatherModel.getTemp()));
+                    weather(weatherModel);
+                    Intent intent = new Intent(getApplicationContext(), Login.class);
+                    intent.putExtra("weather",weather);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    MainActivity.this.startActivity(intent);
 
-                    Log.d("temp", String.valueOf(jsonObject.getDouble("main.temp")));
+
 
                 }catch (JSONException e){
 
@@ -158,6 +168,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
+    }
+
+    public void weather(WeatherModel weatherModel){
+        float celsius = 0.0F;
+        celsius = convertToCelsius(weatherModel.getTemp());
+        Log.d("celsius", String.valueOf(celsius));
+        if(celsius > 26.6)
+            this.weather = "hot";
+        else if (celsius < 26.6)
+            this.weather = "cold";
+        Log.d("weather", weather);
+    }
+
+    public float convertToCelsius(Double temp){
+        float celsius = 0.0F;
+        double kelvin = 0.0F;
+        kelvin = temp;
+        celsius = (float) (kelvin - 273.15);
+        Log.d("celsius", String.valueOf(celsius));
+        return celsius;
     }
 
     //private void setContentView(int activity_main) {

@@ -67,7 +67,7 @@ public class Home extends AppCompatActivity {
     private RequestQueue requestQueue1;
     List<UserModel> userList;
     UserModel userModel;
-    String image;
+    String image, weather;
 
 
     @Override
@@ -82,6 +82,7 @@ public class Home extends AppCompatActivity {
             name = intent.getStringExtra("name");
             id = intent.getIntExtra("id",0);
             image = intent.getStringExtra("image");
+            weather = intent.getStringExtra("weather");
             Log.d("HOME FRAG name", name + id + image);
         } else {
             Log.d("HOME FRAG name", "FAIL");

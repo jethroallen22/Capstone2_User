@@ -143,7 +143,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     //Getting Bundle
     int userId = 0;
     int tempCount = 0;
-    String userName = "";
+    String userName = "", weather;
     HomeFragment homeFragment = this;
 
     NotificationManager manager;
@@ -164,7 +164,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         if (intent.getStringExtra("name") != null) {
             userName = intent.getStringExtra("name");
             userId = intent.getIntExtra("id", 0);
-            Log.d("HOME FRAG name", userName + userId);
+            weather = intent.getStringExtra("weather");
+            Log.d("HOME FRAG name", userName + userId + " Weather: " + weather);
             Log.d("HOMEuserID", String.valueOf(userId));
         } else {
             Log.d("HOME FRAG name", "FAIL");

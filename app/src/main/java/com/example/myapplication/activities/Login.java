@@ -39,6 +39,7 @@ public class Login extends AppCompatActivity {
     //School IP
     private static String JSON_URL;
     private IPModel ipModel;
+    String weather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,12 @@ public class Login extends AppCompatActivity {
 
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
+
+        Intent intent = getIntent();
+        if(intent != null) {
+            weather = intent.getStringExtra("weather");
+            Log.d("weatherLogin", weather);
+        }
 
         init();
 
@@ -136,6 +143,7 @@ public class Login extends AppCompatActivity {
                         intent.putExtra("name",name);
                         intent.putExtra("id",id);
                         intent.putExtra("image",image);
+                        intent.putExtra("weather", weather);
                         Log.d("NAME LOGIN: " , name);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

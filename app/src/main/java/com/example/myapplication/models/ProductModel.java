@@ -22,6 +22,8 @@ public class ProductModel implements Parcelable {
     String productRestoName;
     String productRestoImage;
 
+    String weather;
+
 
 
 //    public ProductModel(Long product_id, String product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
@@ -44,7 +46,7 @@ public class ProductModel implements Parcelable {
 //    }
 
 
-    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage) {
+    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
         this.idProduct = idProduct;
         this.store_idStore = store_idStore;
         this.productName = productName;
@@ -56,6 +58,7 @@ public class ProductModel implements Parcelable {
         this.productPrepTime = productPrepTime;
         this.productRestoName = productRestoName;
         this.productRestoImage = productRestoImage;
+        this.weather = weather;
     }
 
     public ProductModel(){}
@@ -72,6 +75,7 @@ public class ProductModel implements Parcelable {
         productPrepTime = in.readInt();
         productRestoName = in.readString();
         productRestoImage = in.readString();
+        weather = in.readString();
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -174,6 +178,14 @@ public class ProductModel implements Parcelable {
         this.productRestoImage = productRestoImage;
     }
 
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String weather) {
+        this.weather = weather;
+    }
+
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(productImage, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
@@ -198,5 +210,6 @@ public class ProductModel implements Parcelable {
         parcel.writeInt(productPrepTime);
         parcel.writeString(productRestoName);
         parcel.writeString(productRestoImage);
+        parcel.writeString(weather);
     }
 }

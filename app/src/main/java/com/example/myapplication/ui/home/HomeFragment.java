@@ -504,9 +504,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                        String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,
-                                                                    productServingSize,productTag,productPrepTime,storeName,storeImage);
+                                                                    productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
                         food_for_you_list.add(foodfyModel);
 
                         SearchModel searchModel = new SearchModel(productImage, productName, productTag);

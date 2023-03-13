@@ -232,9 +232,10 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                        String weather = jsonObjectFoodforyou.getString("weather");
 
                         if(idStore == stor_id) {
-                            ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage, productServingSize, productTag, productPrepTime, storeName, storeImage);
+                            ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage, productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
                             food_for_you_list.add(foodfyModel);
                         }
 
@@ -273,12 +274,13 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                        String weather = jsonObjectFoodforyou.getString("weather");
 
                         Log.d("storeid", String.valueOf(stor_id));
                         if(idStore == stor_id){
                             Log.d("storeid", String.valueOf(idStore));
                             ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
-                                                            productImage,productServingSize,productTag,productPrepTime,storeName,storeImage);
+                                                            productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
                             products_list.add(productModel);
                         }
 

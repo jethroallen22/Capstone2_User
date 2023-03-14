@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.ordersummary;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,16 +23,23 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderSummaryBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.ui.home.HomeFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +59,8 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     Button btn_proceed, btn_cancel_order;
     private static String JSON_URL;
     private IPModel ipModel;
+
+    RequestQueue requestQueue;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -89,6 +100,15 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                readStatus();
+            }
+        }, 2000);
+
 
         btn_proceed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +157,42 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         requestQueue.add(stringRequest);
 
     }
+
+    private void readStatus(){
+        JsonArrayRequest jsonArrayRequest7= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderget.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject7 = response.getJSONObject(i);
+                        String orderStatus = jsonObject7.getString("orderStatus");
+
+                        if (orderStatus == "preparing"){
+                            ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
+                            ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
+                        } else if (orderStatus == "pickup"){
+                            ll_prep_line.setBackgroundColor(Color.parseColor("#9E2A2B"));
+                            ll_prep_circle.setBackgroundResource(R.drawable.bg_red_round);
+                        }
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(jsonArrayRequest7);
+    }
+
+
 
     @Override
     public void onItemClickForYou(int position) {

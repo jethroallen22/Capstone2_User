@@ -165,16 +165,17 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject7 = response.getJSONObject(i);
+                        if (jsonObject7.getInt("idOrder") == order.getOrderItem_list().get(0).getIdOrder()){
                         String orderStatus = jsonObject7.getString("orderStatus");
 
-                        if (orderStatus == "preparing"){
+                        if (orderStatus.equals("preparing")){
                             ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
                             ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
-                        } else if (orderStatus == "pickup"){
+                        } else if (orderStatus.equals("pickup")){
                             ll_prep_line.setBackgroundColor(Color.parseColor("#9E2A2B"));
                             ll_prep_circle.setBackgroundResource(R.drawable.bg_red_round);
                         }
-
+                        }
 
 
 

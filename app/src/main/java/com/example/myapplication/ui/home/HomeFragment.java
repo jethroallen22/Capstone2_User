@@ -297,7 +297,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
-
+        /*
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
         builder.setContentTitle("My Title");
         builder.setContentText("Hello mga putotoy");
@@ -310,6 +310,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
         manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
         manager.createNotificationChannel(channel);
+        */
 
         final TextView textView = binding.textHome;
         return root;

@@ -121,6 +121,7 @@ public class Home extends AppCompatActivity {
         iv_user_image = navigationView.getHeaderView(0).findViewById(R.id.iv_user_image);
         tv_user_name = navigationView.getHeaderView(0).findViewById(R.id.tv_user_name);
         tv_view_profile = navigationView.getHeaderView(0).findViewById(R.id.tv_view_profile);
+
         if(image != null) {
             byte[] byteArray = Base64.decode(image, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);

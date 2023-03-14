@@ -1,9 +1,16 @@
 package com.example.myapplication.ui.checkout;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -51,6 +58,8 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
     RequestQueue requestQueueOrder;
     List<OrderModel> orderModelList;
     private Home mActivity;
+
+    NotificationManager manager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -170,12 +179,29 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
                 //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
             }
         }) {
+            @SuppressLint("MissingPermission")
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("orderItemTotalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
                 params.put("orderStatus", orderModel.getOrderStatus());
                 params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
                 params.put("users_id", String.valueOf(orderModel.getUsers_id()));
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
+                builder.setContentTitle("Mosibus");
+                builder.setContentText("Your have placed your order! pending");
+                builder.setSmallIcon(R.drawable.logo);
+                builder.setAutoCancel(true);
+
+                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
+                managerCompat.notify(1, builder.build());
+
+                NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
+                manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
+                manager.createNotificationChannel(channel);
+
+
+
                 return params;
             }
 

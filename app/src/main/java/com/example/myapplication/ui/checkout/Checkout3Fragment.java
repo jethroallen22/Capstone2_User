@@ -30,6 +30,7 @@ import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -181,7 +182,10 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
         };
         requestQueue.add(stringRequest);
 
-        HomeFragment fragment = new HomeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("order", orderModel);
+        OrderSummaryFragment fragment = new OrderSummaryFragment();
+        fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 //
 

@@ -196,7 +196,7 @@ public class Checkout3Fragment extends Fragment{
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
         builder.setContentTitle("Mosibus");
-        builder.setContentText("Your have placed your order! pending");
+        builder.setContentText("Your have successfully placed your order!");
         builder.setSmallIcon(R.drawable.logo);
         builder.setAutoCancel(true);
 

@@ -131,7 +131,6 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     }
 
     private void UpdateStatus(int idOrder, String status){
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+ "testO.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -162,6 +161,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         JsonArrayRequest jsonArrayRequest7= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderget.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("readstatus", String.valueOf(response));
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject7 = response.getJSONObject(i);

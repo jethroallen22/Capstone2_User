@@ -1,14 +1,19 @@
 package com.example.myapplication.ui.checkout;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
@@ -94,6 +99,38 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
     public void onSuccessResponse(int result) {
         // Handle the data returned by the StringRequest
         orderModel.setIdOrder(result);
+
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel("myCh", "My Channel", NotificationManager.IMPORTANCE_HIGH);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
+        builder.setContentTitle("Mosibus");
+        builder.setContentText("Your have placed your order! pending");
+        builder.setSmallIcon(R.drawable.logo);
+        builder.setAutoCancel(true);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        managerCompat.notify(1, builder.build());
+
+        NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
+        manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
+        manager.createNotificationChannel(channel);
+
     }
 
     private void getDataFromServer() {
@@ -186,21 +223,6 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
                 params.put("orderStatus", orderModel.getOrderStatus());
                 params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
                 params.put("users_id", String.valueOf(orderModel.getUsers_id()));
-
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
-                builder.setContentTitle("Mosibus");
-                builder.setContentText("Your have placed your order! pending");
-                builder.setSmallIcon(R.drawable.logo);
-                builder.setAutoCancel(true);
-
-                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
-                managerCompat.notify(1, builder.build());
-
-                NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
-                manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
-                manager.createNotificationChannel(channel);
-
-
 
                 return params;
             }

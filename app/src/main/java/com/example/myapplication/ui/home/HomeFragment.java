@@ -299,8 +299,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         /*
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
-        builder.setContentTitle("My Title");
-        builder.setContentText("Hello mga putotoy");
+        builder.setContentTitle("Mosibus");
+        builder.setContentText("Order Now!");
         builder.setSmallIcon(R.drawable.logo);
         builder.setAutoCancel(true);
 
@@ -965,7 +965,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         });
         weatherDialog.show();
     }
-
 
 
 }

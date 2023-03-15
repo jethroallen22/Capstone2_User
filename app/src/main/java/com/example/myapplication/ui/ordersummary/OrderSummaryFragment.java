@@ -31,6 +31,7 @@ import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderSummaryBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
+import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
@@ -92,6 +93,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         //tv_distance.setText("Distance from you: " + order.getDistance() + "km");
 
         order_item_list = new ArrayList<>();
+        requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
 //        order_item_list.add(new OrderModel("Juan Dela Cruz", "Tondo, Manila", String.valueOf(LocalDateTime.now().getHour()), "3.5", order_item_list, order_item_list.size(), 123F));
 //        order_item_list.add(new OrderModel("Juan Dela Cruz", "Tondo, Manila", String.valueOf(LocalDateTime.now().getHour()), "3.5", order_item_list, order_item_list.size(), 123F));
 
@@ -101,13 +103,14 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        root.postDelayed(new Runnable() {
             @Override
             public void run() {
                 readStatus();
+                root.postDelayed(this,5000);
             }
-        }, 2000);
+        },1000);
+
 
 
         btn_proceed.setOnClickListener(new View.OnClickListener() {
@@ -172,8 +175,8 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                             ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
                             ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
                         } else if (orderStatus.equals("pickup")){
-                            ll_prep_line.setBackgroundColor(Color.parseColor("#9E2A2B"));
-                            ll_prep_circle.setBackgroundResource(R.drawable.bg_red_round);
+                            ll_pup_line.setBackgroundColor(Color.parseColor("#335C67"));
+                            ll_pup_circle.setBackgroundResource(R.drawable.bg_bluegreen_round);
                         }
                         }
 

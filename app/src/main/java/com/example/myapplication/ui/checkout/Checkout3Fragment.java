@@ -54,7 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Checkout3Fragment extends Fragment implements com.example.myapplication.interfaces.VolleyCallback {
+public class Checkout3Fragment extends Fragment{
 
     private FragmentCheckout3Binding binding;
     OrderModel orderModel;
@@ -66,6 +66,7 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
 
     NotificationManager manager;
 
+    @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -95,43 +96,6 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
         mActivity = (Home) getActivity();
     }
 
-    @Override
-    public void onSuccessResponse(int result) {
-        // Handle the data returned by the StringRequest
-        orderModel.setIdOrder(result);
-
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel("myCh", "My Channel", NotificationManager.IMPORTANCE_HIGH);
-
-            NotificationManager manager = (NotificationManager) getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
-        builder.setContentTitle("Mosibus");
-        builder.setContentText("Your have placed your order! pending");
-        builder.setSmallIcon(R.drawable.logo);
-        builder.setAutoCancel(true);
-
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        managerCompat.notify(1, builder.build());
-
-        NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
-        manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
-        manager.createNotificationChannel(channel);
-
-    }
 
     private void getDataFromServer() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
@@ -229,6 +193,19 @@ public class Checkout3Fragment extends Fragment implements com.example.myapplica
 
         };
         requestQueue.add(stringRequest);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
+        builder.setContentTitle("Mosibus");
+        builder.setContentText("Your have placed your order! pending");
+        builder.setSmallIcon(R.drawable.logo);
+        builder.setAutoCancel(true);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
+        managerCompat.notify(1, builder.build());
+
+        NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
+        manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
+        manager.createNotificationChannel(channel);
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("order", orderModel);

@@ -49,12 +49,13 @@ public class OrderModel implements Parcelable {
         this.users_id = users_id;
     }
 
-    public OrderModel(int idOrder, float orderItemTotalPrice, String orderStatus, int store_idstore, int users_id, List<OrderItemModel> orderItem_list) {
+    public OrderModel(int idOrder, float orderItemTotalPrice, String orderStatus, int store_idstore, int users_id, String store_name, List<OrderItemModel> orderItem_list) {
         this.idOrder = idOrder;
         this.orderItemTotalPrice = orderItemTotalPrice;
         this.orderStatus = orderStatus;
         this.store_idstore = store_idstore;
         this.users_id = users_id;
+        this.store_name = store_name;
         this.orderItem_list = orderItem_list;
     }
 

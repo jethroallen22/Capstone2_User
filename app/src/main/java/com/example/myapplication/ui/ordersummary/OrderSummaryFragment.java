@@ -52,7 +52,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     private FragmentOrderSummaryBinding binding;
     //Cart List Recycler View
     RecyclerView rv_order_items;
-    OrderModel order;
+    OrderModel order, tempOrder;
     List<OrderItemModel> order_item_list;
     OrderItemsAdapter orderItemsAdapter;
     TextView tv_order_id, tv_name, tv_total_price, tv_order_date;
@@ -84,9 +84,13 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            order = bundle.getParcelable("order");
+            if(bundle.getParcelable("order") != null)
+                tempOrder = bundle.getParcelable("order");
+            else
+                tempOrder = bundle.getParcelable("orderActivity");
         }
-        tv_order_id.setText(String.valueOf(order.getOrderItem_list().get(0).getIdOrder()));
+        order = tempOrder;
+        tv_order_id.setText(String.valueOf(order.getIdOrder()));
         tv_name.setText(String.valueOf(order.getStore_name()));
         tv_total_price.setText(String.valueOf(order.getOrderItemTotalPrice()));
         //tv_address.setText(order.getAddress());

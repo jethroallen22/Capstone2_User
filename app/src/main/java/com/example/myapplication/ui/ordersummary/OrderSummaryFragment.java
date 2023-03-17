@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -61,6 +62,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     Button btn_proceed, btn_cancel_order;
     private static String JSON_URL;
     private IPModel ipModel;
+    String orderStatus;
 
     RequestQueue requestQueue;
 
@@ -94,14 +96,9 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         tv_order_id.setText(String.valueOf(order.getIdOrder()));
         tv_name.setText(String.valueOf(order.getStore_name()));
         tv_total_price.setText(String.valueOf(order.getOrderItemTotalPrice()));
-        //tv_address.setText(order.getAddress());
-        //tv_distance.setText("Distance from you: " + order.getDistance() + "km");
 
         order_item_list = new ArrayList<>();
-        requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
-//        order_item_list.add(new OrderModel("Juan Dela Cruz", "Tondo, Manila", String.valueOf(LocalDateTime.now().getHour()), "3.5", order_item_list, order_item_list.size(), 123F));
-//        order_item_list.add(new OrderModel("Juan Dela Cruz", "Tondo, Manila", String.valueOf(LocalDateTime.now().getHour()), "3.5", order_item_list, order_item_list.size(), 123F));
-
+        requestQueue = Singleton.getsInstance(getContext()).getRequestQueue();
         orderItemsAdapter = new OrderItemsAdapter(getActivity(), order.getOrderItem_list(), OrderSummaryFragment.this);
         rv_order_items.setAdapter(orderItemsAdapter);
         rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
@@ -109,6 +106,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         rv_order_items.setNestedScrollingEnabled(false);
 
         if(order.getOrderStatus().equals("pickup")){
+            Log.d("Receipt: ", "Activity");
             Log.d("orderitemsize", String.valueOf(order.getOrderItem_list().size()));
             ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
             ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
@@ -127,13 +125,33 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
             });
 
         } else if(order.getOrderStatus().equals("pending")) {
+            Log.d("Receipt: ", "Receipt");
             root.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     readStatus();
-                    root.postDelayed(this, 5000);
+                    Log.d("OrderStatus", order.getOrderStatus());
+                    root.postDelayed(this, 1000);
                 }
             }, 1000);
+            orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    if(order.getOrderStatus().equals("pending")) {
+                        Log.d("orderStatusIFSTMNT", "Pending");
+                        order.getOrderItem_list().remove(position);
+                        orderItemsAdapter.notifyItemRemoved(position);
+                        deleteProduct(position);
+                    }else if(order.getOrderStatus().equals("preparing")){
+                        Log.d("orderStatusIFSTMNT", "Preparing");
+                        Toast.makeText(getContext(), "We're sorry, but your order is now being prepared and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
+                    }else if(order.getOrderStatus().equals("pickup")){
+                        Log.d("orderStatusIFSTMNT", "Pickup");
+                        Toast.makeText(getContext(), "We're sorry, but your order is now ready for pickup and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
 
             btn_proceed.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -195,24 +213,40 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject7 = response.getJSONObject(i);
+                        Log.d("OrderID", String.valueOf(order.getOrderItem_list().get(0).getIdOrder()));
+                        Log.d("OrderIDdb", String.valueOf(jsonObject7.getInt("idOrder")));
+                        final String orderStatus = jsonObject7.getString("orderStatus");
                         if (jsonObject7.getInt("idOrder") == order.getOrderItem_list().get(0).getIdOrder()){
-                        String orderStatus = jsonObject7.getString("orderStatus");
+                            Log.d("Match", "Match");
+                            OrderSummaryFragment.this.orderStatus = orderStatus;
+                            Log.d("OrderStatusInside", OrderSummaryFragment.this.orderStatus);
+                            Log.d("readstatus", orderStatus);
+                            if(orderStatus.equals("pending")){
+                                order.setOrderStatus(orderStatus);
+                                ll_prep_line.setBackgroundColor(Color.parseColor("#979797"));
+                                ll_prep_circle.setBackgroundResource(R.drawable.bg_gray_round);
+                                ll_pup_line.setBackgroundColor(Color.parseColor("#979797"));
+                                ll_pup_circle.setBackgroundResource(R.drawable.bg_gray_round);
 
-                        if (orderStatus.equals("preparing")){
-                            ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
-                            ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
-                        } else if (orderStatus.equals("pickup")){
-                            ll_pup_line.setBackgroundColor(Color.parseColor("#335C67"));
-                            ll_pup_circle.setBackgroundResource(R.drawable.bg_bluegreen_round);
+                            } else if (orderStatus.equals("preparing")){
+                                order.setOrderStatus(orderStatus);
+                                ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
+                                ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
+                            } else if (orderStatus.equals("pickup")){
+                                order.setOrderStatus(orderStatus);
+                                ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
+                                ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
+                                ll_pup_line.setBackgroundColor(Color.parseColor("#335C67"));
+                                ll_pup_circle.setBackgroundResource(R.drawable.bg_bluegreen_round);
+                            }
+
                         }
-                        }
-
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    order.setOrderStatus(orderStatus);
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -220,10 +254,38 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
 
             }
         });
+
         requestQueue.add(jsonArrayRequest7);
+        //Log.d("OrderStatus", OrderSummaryFragment.this.orderStatus);
+
     }
 
+    public void deleteProduct(int position){
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,JSON_URL+ "deleteOrderItem.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("On Res", "inside on res");
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Volley Error", String.valueOf(error));
+            }
+        }){
+            protected Map<String, String> getParams(){
+                Map<String, String> paramV = new HashMap<>();
+                paramV.put("idProduct", String.valueOf(order.getOrderItem_list().get(position).getIdProduct()));
+                paramV.put("idOrder", String.valueOf(order.getIdOrder()));
+                return paramV;
+            }
+        };
+
+        queue.add(stringRequest);
+
+    }
 
     @Override
     public void onItemClickForYou(int position) {

@@ -11,12 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.OrderItemModel;
-import com.example.myapplication.models.OrderModel;
 
 import java.util.List;
 
@@ -25,6 +22,15 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
 
     Context context;
     List<OrderItemModel> list;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener clickListener){
+        listener = clickListener;
+    }
 
     public OrderItemsAdapter(Context context, List<OrderItemModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
@@ -35,7 +41,7 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
     @NonNull
     @Override
     public OrderItemsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new OrderItemsAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cartorder_item,parent,false), recyclerViewInterface);
+        return new OrderItemsAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cartorder_item,parent,false), recyclerViewInterface, listener);
     }
 
     @Override
@@ -59,7 +65,7 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
         TextView tv_order_item_qty;
         TextView tv_order_total_price;
 
-        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface, OnItemClickListener listener) {
             super(itemView);
             
             iv_close_btn = itemView.findViewById(R.id.iv_close_btn);
@@ -67,10 +73,17 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
             tv_order_item_qty = itemView.findViewById(R.id.tv_order_item_qty);
             tv_order_total_price = itemView.findViewById(R.id.tv_order_item_total_price);
 
+
             iv_close_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("Test","Success delete");
+                    if (listener != null){
+                        int pos = getAdapterPosition();
+
+                        if (pos != RecyclerView.NO_POSITION){
+                            listener.onItemClick(pos);
+                        }
+                    }
                 }
             });
 

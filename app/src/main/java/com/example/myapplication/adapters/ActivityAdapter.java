@@ -23,6 +23,15 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
     Context context;
     List<OrderModel> list;
     private final RecyclerViewInterface recyclerViewInterface;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener clickListener){
+        listener = clickListener;
+    }
 
     public ActivityAdapter(Context context, List<OrderModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
@@ -34,7 +43,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
     @NonNull
     @Override
     public ActivityAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ActivityAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_item,parent,false), recyclerViewInterface);
+        return new ActivityAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_item,parent,false), recyclerViewInterface, listener);
     }
 
     @Override
@@ -64,7 +73,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
         TextView tv_activity_price;
         Button btn_activity_reorder;
 
-        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface, OnItemClickListener listener) {
             super(itemView);
 
             iv_activity_icon = itemView.findViewById(R.id.iv_activity_icon);
@@ -73,6 +82,19 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
             tv_activity_date = itemView.findViewById(R.id.tv_activity_date);
             tv_activity_price = itemView.findViewById(R.id.tv_activity_price);
             btn_activity_reorder = itemView.findViewById(R.id.btn_activity_reorder);
+
+            btn_activity_reorder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        int pos = getAdapterPosition();
+
+                        if (pos != RecyclerView.NO_POSITION){
+                            listener.onItemClick(pos);
+                        }
+                    }
+                }
+            });
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

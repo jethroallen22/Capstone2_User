@@ -37,6 +37,7 @@ import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.order.OrderFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -107,24 +108,46 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
 
-        root.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                readStatus();
-                root.postDelayed(this,5000);
-            }
-        },1000);
+        if(order.getOrderStatus().equals("pickup")){
+            Log.d("orderitemsize", String.valueOf(order.getOrderItem_list().size()));
+            ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
+            ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
+            ll_pup_line.setBackgroundColor(Color.parseColor("#335C67"));
+            ll_pup_circle.setBackgroundResource(R.drawable.bg_bluegreen_round);
+            btn_proceed.setText("Reorder");
+            btn_proceed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("order", order);
+                    OrderFragment fragment = new OrderFragment();
+                    fragment.setArguments(bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                }
+            });
+
+        } else if(order.getOrderStatus().equals("pending")) {
+            root.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    readStatus();
+                    root.postDelayed(this, 5000);
+                }
+            }, 1000);
+
+            btn_proceed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    HomeFragment fragment = new HomeFragment();
+                    Log.d("TAG", "Success");
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                }
+            });
+        }
 
 
 
-        btn_proceed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                HomeFragment fragment = new HomeFragment();
-                Log.d("TAG", "Success");
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-            }
-        });
+
 
 
 

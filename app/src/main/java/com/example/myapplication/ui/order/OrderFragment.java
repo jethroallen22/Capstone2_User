@@ -87,6 +87,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
         if (bundle != null){
             orderModel = bundle.getParcelable("order");
+            Log.d("ofragOILSize", String.valueOf(orderModel.getOrderItem_list().size()));
             store_name = orderModel.getStore_name();
             tv_store_name.setText(store_name);
             Log.d("StoreName",store_name);

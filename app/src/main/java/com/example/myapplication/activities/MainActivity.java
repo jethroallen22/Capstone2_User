@@ -1,8 +1,11 @@
 package com.example.myapplication.activities;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -28,6 +31,8 @@ import com.example.myapplication.R;
 
 
 import com.example.myapplication.models.WeatherModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
@@ -61,8 +66,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             requestPermissions(PERMISSIONS, PERMISSIONS_ALL);
         }
 
-        FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if(!task.isSuccessful()){
+                    return;
+                }
+
+                String token = task.getResult();
+                Log.d("token", token);
+            }
+        });
+
+        /*FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
         firebaseMessaging.subscribeToTopic("new_user_forums");
+        firebaseMessaging.subscribeToTopic("sample");*/
 
 
     }
@@ -104,14 +122,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            }, 2000);
 
             Handler handler2 = new Handler();
             handler2.postDelayed(new Runnable() {
@@ -166,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), error.toString().trim(), Toast.LENGTH_SHORT).show();
+
             }
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());

@@ -411,7 +411,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String r_close = jsonObjectRec1.getString("storeEndTime");
 
                         StoreModel rec = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                                        (float) r_rating, r_popularity, r_open, r_close);
+                                (float) r_rating, r_popularity, r_open, r_close);
                         SearchModel searchModel = new SearchModel(r_image, r_name, r_category);
                         searchModelList.add(searchModel);
                         home_store_rec_list.add(rec);
@@ -576,7 +576,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,
-                                                                    productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                                productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
                         food_for_you_list.add(foodfyModel);
 
                         SearchModel searchModel = new SearchModel(productImage, productName, productTag);

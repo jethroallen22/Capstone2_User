@@ -1,21 +1,12 @@
 package com.example.myapplication.ui.home;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,6 +40,8 @@ import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
+import com.example.myapplication.adapters.HomeStoreRecAdapter2;
+import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -73,7 +62,6 @@ import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.example.myapplication.ui.weather.WeatherFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.navigation.NavigationView;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -112,7 +100,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     RecyclerView rv_home_store_rec2;
     List<StoreModel> home_store_rec_list2;
-    HomeStoreRecAdapter homeStoreRecAdapter2;
+    HomeStoreRecAdapter2 homeStoreRecAdapter2;
 
     // Store Popular Recycler View
     RecyclerView rv_home_pop_store;
@@ -235,6 +223,17 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         extractDataRec1();
 
 
+        //STORE REC 2
+        rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
+        rv_home_store_rec2.setHasFixedSize(true);
+        rv_home_store_rec2.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        rv_home_store_rec2.setNestedScrollingEnabled(false);
+        rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
+        requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
+        home_store_rec_list2 = new ArrayList<>();
+        extractDataRec2();
+
+
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
         rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
@@ -251,17 +250,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractFoodforyou();
 
-        //STORE REC 2
-        rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
-        rv_home_store_rec2.setHasFixedSize(true);
-        rv_home_store_rec2.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        rv_home_store_rec2.setNestedScrollingEnabled(false);
-        rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
-        requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
-        home_store_rec_list2 = new ArrayList<>();
-        extractDataRec2();
-        Collections.shuffle(home_store_rec_list2);
-
         //Search List
         searchView = root.findViewById(R.id.searchView2);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -272,6 +260,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 bundle.putSerializable("SearchList", (Serializable) searchModelList);
                 bundle.putSerializable("ProductList", (Serializable) food_for_you_list);
                 bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
+                bundle.putInt("userId", userId);
                 SearchFragment fragment = new SearchFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
@@ -289,7 +278,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 CartFragment fragment = new CartFragment();
-                bundle.putSerializable("tempOrderList", (Serializable) order_temp_list);
+                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
                 bundle.putInt("userID", userId);
                 fragment.setArguments(bundle);
                 Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
@@ -422,12 +411,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-                    homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list, homeFragment);
-                    rv_home_store_rec.setAdapter(homeStoreRecAdapter);
-
-
                 }
+                Collections.shuffle(home_store_rec_list);
+                homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list, homeFragment);
+                rv_home_store_rec.setAdapter(homeStoreRecAdapter);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -463,12 +451,21 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    homeStoreRecAdapter2 = new HomeStoreRecAdapter(getActivity(),home_store_rec_list2, homeFragment);
-                    rv_home_store_rec2.setAdapter(homeStoreRecAdapter2);
-                    Log.d("SEARCH", String.valueOf(searchModelList.size()));
-
-
                 }
+                Log.d("list2Size", String.valueOf(home_store_rec_list2.size()));
+                Collections.shuffle(home_store_rec_list2);
+                for(int j = 0 ; j < 3 ; j++){
+                    for(int k = 0 ; k < home_store_rec_list2.size() ; k++){
+                        if(home_store_rec_list.get(j).getStore_id() == home_store_rec_list2.get(k).getStore_id())
+                            home_store_rec_list2.remove(k);
+                    }
+                }
+                for (int l = 0 ; l < home_store_rec_list2.size() ; l++)
+                    Log.d("StoreTest",  "Pos: " + l + " " + home_store_rec_list2.get(l).getStore_name());
+                Log.d("list2Size", String.valueOf(home_store_rec_list2.size()));
+
+                homeStoreRecAdapter2 = new HomeStoreRecAdapter2(getActivity(),home_store_rec_list2, homeFragment);
+                rv_home_store_rec2.setAdapter(homeStoreRecAdapter2);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -480,36 +477,24 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //Popular Recommendation Function
     public void extractPopular(){
-
-        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistorepopu.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("ResponseJson", String.valueOf(response));
                 for (int i=0; i < response.length(); i++){
                     try {
-                        JSONObject jsonObjectPop = response.getJSONObject(i);
-                        int r_id = jsonObjectPop.getInt("idStore");
-                        String r_image = jsonObjectPop.getString("storeImage");
-                        String r_name = jsonObjectPop.getString("storeName");
-                        String r_description = jsonObjectPop.getString("storeDescription");
-                        String r_location = jsonObjectPop.getString("storeLocation");
-                        String r_category = jsonObjectPop.getString("storeCategory");
-                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
-                        int r_popularity = jsonObjectPop.getInt("storePopularity");
-                        String r_open = jsonObjectPop.getString("storeStartTime");
-                        String r_close = jsonObjectPop.getString("storeEndTime");
-
-                        StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
-                        home_pop_store_list.add(store3);
-
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int store_idStore = jsonObject.getInt("store_idStore");
+                        for (int j = 0 ; j < home_store_rec_list.size() ; j++){
+                            if(home_store_rec_list.get(j).getStore_id() == store_idStore)
+                                home_pop_store_list.add(home_store_rec_list.get(j));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     homeStorePopularAdapter = new HomeStorePopularAdapter( home_pop_store_list,getActivity(), homeFragment);
                     rv_home_pop_store.setAdapter(homeStorePopularAdapter);
-
-
                 }
             }
         }, new Response.ErrorListener() {
@@ -519,6 +504,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
         requestQueuePopu.add(jsonArrayRequest3);
+
     }
     //Category Function
     /*public void extractCateg(){
@@ -651,7 +637,13 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickStoreRec2(int position) {
-
+        Bundle bundle = new Bundle();
+        StoreModel storeModel = home_store_rec_list2.get(position);
+        bundle.putParcelable("StoreClass", storeModel);
+        bundle.putInt("user", userId);
+        StoreFragment fragment = new StoreFragment();
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
     }
 
     @Override
@@ -895,6 +887,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putInt("userId", userId);
                 MixMoodFragment fragment = new MixMoodFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
@@ -943,6 +936,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 bundle.putSerializable("productList", (Serializable) food_for_you_list);
                 bundle.putInt("userId", userId);
                 bundle.putString("weather", weather);
+                bundle.putInt("userId", userId);
                 WeatherFragment fragment = new WeatherFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();

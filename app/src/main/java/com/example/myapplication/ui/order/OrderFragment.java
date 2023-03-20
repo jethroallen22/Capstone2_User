@@ -33,6 +33,7 @@ import com.example.myapplication.activities.Register;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
+import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
@@ -100,6 +101,13 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
         tv_total_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
+
+        orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                deleteProduct(position);
+            }
+        });
 
         btn_place_order.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +187,39 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(stringRequest);
+
+    }
+
+    public void deleteProduct(int position){
+        RequestQueue queue = Singleton.getsInstance(getContext()).getRequestQueue();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,JSON_URL+ "deleteCartItem.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("On Res", "inside on res");
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Volley Error", String.valueOf(error));
+            }
+        }){
+            protected Map<String, String> getParams(){
+                Map<String, String> paramV = new HashMap<>();
+                for(int i = 0 ; i < orderModel.getOrderItem_list().size() ; i++)
+                    Log.d("ProductList", "ID: " + orderModel.getOrderItem_list().get(i).getIdProduct() + " " + orderModel.getOrderItem_list().get(i).getProductName());
+                Log.d("ProductNameDelete", "ID: " + orderModel.getOrderItem_list().get(position).getIdProduct() + " " + orderModel.getOrderItem_list().get(position).getProductName());
+                paramV.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(position).getIdProduct()));
+                paramV.put("idUser", String.valueOf(orderModel.getUsers_id()));
+                orderModel.getOrderItem_list().remove(position);
+                orderItemsAdapter.notifyItemRemoved(position);
+                return paramV;
+            }
+        };
+
+        queue.add(stringRequest);
+
 
     }
 

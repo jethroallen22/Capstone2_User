@@ -76,16 +76,17 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
 
+        order_list = new ArrayList<>();
+        order_item_list = new ArrayList<>();
+        temp_store_list = new ArrayList<>();
         Bundle bundle = getArguments();
         if(bundle != null) {
+            temp_store_list = (List<StoreModel>) bundle.getSerializable("storeList");
             userID = bundle.getInt("userID");
             Log.d("USERID", String.valueOf(userID));
         }
 
         rv_cart = root.findViewById(R.id.rv_cart);
-        order_list = new ArrayList<>();
-        order_item_list = new ArrayList<>();
-        temp_store_list = new ArrayList<>();
         requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueStore = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractStoreCartItem();
@@ -163,43 +164,6 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     public void extractStoreCartItem(){
 
-        List<StoreModel> tempStoreList;
-        tempStoreList = new ArrayList<>();
-        JsonArrayRequest jsonArrayRequest4 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apipopu.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for (int i=0; i < response.length(); i++){
-                    try {
-                        JSONObject jsonObjectPop = response.getJSONObject(i);
-                        int r_id = jsonObjectPop.getInt("idStore");
-                        String r_image = jsonObjectPop.getString("storeImage");
-                        String r_name = jsonObjectPop.getString("storeName");
-                        String r_description = jsonObjectPop.getString("storeDescription");
-                        String r_location = jsonObjectPop.getString("storeLocation");
-                        String r_category = jsonObjectPop.getString("storeCategory");
-                        float r_rating = (float) jsonObjectPop.getDouble("storeRating");
-                        int r_popularity = jsonObjectPop.getInt("storePopularity");
-                        String r_open = jsonObjectPop.getString("storeStartTime");
-                        String r_close = jsonObjectPop.getString("storeEndTime");
-
-                        StoreModel store3 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
-                        temp_store_list.add(store3);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueueStore.add(jsonArrayRequest4);
-
         JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -221,7 +185,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                             OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, userID, c_productName, (float) c_productPrice, c_productQuantity,
                                     (float) (c_productPrice * c_productQuantity));
 
-                            Log.d("BEFORE", String.valueOf(userID));
+                            Log.d("BEFORE", String.valueOf(c_productName));
                             Log.d("BEFOREDB", String.valueOf(c_usersId));
                             if(order_list.isEmpty()){
                                 Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
@@ -253,8 +217,9 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                                                 break;
                                             }
                                         }
-                                    } else{
+                                    } else {// if(order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 1){
                                         if(temp_not == order_list.size()) {
+                                            Log.d("NEWORDER", String.valueOf(order_list.size()));
                                             float totalTotal = 0;
                                             order_item_list = new ArrayList<>();
                                             order_item_list.add(orderItemModel);
@@ -273,12 +238,12 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
-                cartAdapter = new CartAdapter(getActivity(),order_list, CartFragment.this);
-                rv_cart.setAdapter(cartAdapter);
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-                rv_cart.setLayoutManager(layoutManager);
+                 Log.d("CartSize", String.valueOf(order_list.size()));
+                 cartAdapter = new CartAdapter(getActivity(),order_list, CartFragment.this);
+                 rv_cart.setAdapter(cartAdapter);
+                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                 rv_cart.setLayoutManager(layoutManager);
             }
 
         }, new Response.ErrorListener() {

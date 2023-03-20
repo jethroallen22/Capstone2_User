@@ -172,6 +172,25 @@ public class Checkout3Fragment extends Fragment{
                     Log.d("order:", "catch");
                     // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
                 }
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
+                builder.setContentTitle("Mosibus");
+                builder.setContentText("Your have successfully placed your order!");
+                builder.setSmallIcon(R.drawable.logo);
+                builder.setAutoCancel(true);
+
+                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
+                managerCompat.notify(1, builder.build());
+
+                NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
+                manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
+                manager.createNotificationChannel(channel);
+
+                Log.d("OrderIDCheckout3", String.valueOf(orderModel.getIdOrder()));
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("order", orderModel);
+                OrderSummaryFragment fragment = new OrderSummaryFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 
             }
         }, new Response.ErrorListener() {
@@ -194,24 +213,7 @@ public class Checkout3Fragment extends Fragment{
         };
         requestQueue.add(stringRequest);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
-        builder.setContentTitle("Mosibus");
-        builder.setContentText("Your have successfully placed your order!");
-        builder.setSmallIcon(R.drawable.logo);
-        builder.setAutoCancel(true);
 
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
-        managerCompat.notify(1, builder.build());
-
-        NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
-        manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
-        manager.createNotificationChannel(channel);
-
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("order", orderModel);
-        OrderSummaryFragment fragment = new OrderSummaryFragment();
-        fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
 //
 
     }

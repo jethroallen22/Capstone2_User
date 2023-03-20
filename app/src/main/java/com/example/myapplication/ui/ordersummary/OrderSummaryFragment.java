@@ -197,7 +197,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                         JSONObject jsonObject7 = response.getJSONObject(i);
                         if (jsonObject7.getInt("idOrder") == order.getOrderItem_list().get(0).getIdOrder()){
                         String orderStatus = jsonObject7.getString("orderStatus");
-
+                            Log.d("readStatus", orderStatus);
                         if (orderStatus.equals("preparing")){
                             ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
                             ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);

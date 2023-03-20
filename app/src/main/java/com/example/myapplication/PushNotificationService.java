@@ -27,13 +27,29 @@ public class PushNotificationService extends FirebaseMessagingService {
     @SuppressLint(value = "MissingPermission")
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
+
+//        String CHANNEL_ID = "MESSAGE";
+//        CharSequence name;
+//        NotificationChannel notificationChannel = new NotificationChannel(
+//                CHANNEL_ID,
+//                "Message Notification",
+//                NotificationManager.IMPORTANCE_HIGH);
+//        getSystemService(NotificationManager.class).createNotificationChannel(notificationChannel);
+//        Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
+//                .setContentTitle(title)
+//                .setContentText(text)
+//                .setSmallIcon(R.drawable.logo)
+//                .setAutoCancel(true);
+//
+//        NotificationManagerCompat.from(this).notify(1, notification.build());build
+
+        super.onMessageReceived(remoteMessage);
         String title = remoteMessage.getNotification().getTitle();
         String text = remoteMessage.getNotification().getBody();
-        String CHANNEL_ID = "MESSAGE";
-        CharSequence name;
+        final String CHANNEL_ID = "HEADS_UP_NOTIFICATIONS";
         NotificationChannel notificationChannel = new NotificationChannel(
                 CHANNEL_ID,
-                "Message Notification",
+                "MyNotification",
                 NotificationManager.IMPORTANCE_HIGH);
         getSystemService(NotificationManager.class).createNotificationChannel(notificationChannel);
         Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
@@ -41,10 +57,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                 .setContentText(text)
                 .setSmallIcon(R.drawable.logo)
                 .setAutoCancel(true);
-
         NotificationManagerCompat.from(this).notify(1, notification.build());
-
-        super.onMessageReceived(remoteMessage);
     }
 }
 

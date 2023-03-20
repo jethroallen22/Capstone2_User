@@ -35,12 +35,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
+import com.onesignal.OneSignal;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
+    private static final String ONESIGNAL_APP_ID = "941829df-43af-4a89-b2b3-67f4db6e572a";
     final static String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     final static int PERMISSIONS_ALL = 1;
 
@@ -82,7 +84,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         firebaseMessaging.subscribeToTopic("new_user_forums");
         firebaseMessaging.subscribeToTopic("sample");*/
 
+        // Enable verbose OneSignal logging to debug issues if needed.
+        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
 
+        // OneSignal Initialization
+        OneSignal.initWithContext(this);
+        OneSignal.setAppId(ONESIGNAL_APP_ID);
+
+        // promptForPushNotifications will show the native Android notification permission prompt.
+        // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 7)
+        OneSignal.promptForPushNotifications();
     }
 
     @Override

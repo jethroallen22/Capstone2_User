@@ -198,11 +198,11 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                                 for (int h = 0; h < order_list.size(); h++) {
                                     Log.d("Inside for", String.valueOf(order_list.size()));
                                     //Check if Order already exist in CartList
-                                    if (order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 0) {
+                                    if (order_list.get(h).getStore_idstore() == c_storeId) {
                                         Log.d("STOREMATCH", c_productName + " MATCH " + c_storeName);
                                         // Check if order item already exist
                                         for (int k = 0 ; k < order_list.get(h).getOrderItem_list().size() ; k++){
-                                            if(c_productName.toLowerCase().trim().compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName().toLowerCase().trim()) == 0){
+                                            if(c_storeId == order_list.get(h).getOrderItem_list().get(k).getIdStore()){
 //                                                temp_count = c_productQuantity;
                                                 int tempItemQuantity = 0;
                                                 tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
@@ -218,6 +218,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                                             }
                                         }
                                     } else {// if(order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 1){
+                                        Log.d("NEWORDER", "INSIDE NOT MATCH");
+                                        temp_not++;
                                         if(temp_not == order_list.size()) {
                                             Log.d("NEWORDER", String.valueOf(order_list.size()));
                                             float totalTotal = 0;

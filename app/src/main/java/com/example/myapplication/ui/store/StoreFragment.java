@@ -36,8 +36,10 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.Home;
 import com.example.myapplication.activities.Login;
 import com.example.myapplication.activities.Register;
+import com.example.myapplication.activities.Store;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
+import com.example.myapplication.adapters.ProductCategAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -45,6 +47,7 @@ import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.models.ProductCategModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
@@ -87,11 +90,13 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     List<OrderItemModel> order_item_temp_list;
     List<OrderModel> order_temp_list;
+    List<ProductCategModel> product_categ_list;
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
-    List<ProductModel> food_for_you_list;
+    List<ProductModel> food_for_you_list, temp_product_list;
     HomeFoodForYouAdapter homeFoodForYouAdapter;
+    ProductCategAdapter productCategAdapter;
 
     //For Product Bottomsheet
     LinearLayout linearLayout;
@@ -152,6 +157,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
+        product_categ_list = new ArrayList<>();
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
@@ -189,9 +195,6 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onClick(View view) {
                 Log.d("ON CLICK", "SUCCESS");
-                //Snackbar.make(view, "Work in Progress!!! Magreredirect dapat sa cart screen", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
-
                 Bundle bundle2 = new Bundle();
                 CartFragment fragment2 = new CartFragment();
                 bundle2.putSerializable("tempOrderList", (Serializable) order_temp_list);
@@ -242,8 +245,45 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,storeFragment);
-                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                }
+                homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
+                rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                int temp_not = 0;
+                for(int j = 0 ; j < food_for_you_list.size() ; j++){
+                    if(product_categ_list.isEmpty()){
+                        //Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
+                        temp_product_list = new ArrayList<>();
+                        temp_product_list.add(food_for_you_list.get(j));
+                        product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getProductTag(), temp_product_list));
+                    }else{
+                        for (int h = 0; h < product_categ_list.size(); h++) {
+                            //Log.d("Inside for", String.valueOf(order_list.size()));
+                            //Check if Order already exist in CartList
+                            if (product_categ_list.get(h).getCateg().toLowerCase().compareTo(food_for_you_list.get(j).getProductTag()) == 0) {
+                                // Check if order item already exist
+                                product_categ_list.get(h).getList().add(food_for_you_list.get(j));
+                            } else {// if(order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 1){
+                                Log.d("NEWORDER", "INSIDE NOT MATCH");
+                                temp_not++;
+                                if(temp_not == product_categ_list.size()) {
+                                    //Log.d("NEWORDER", String.valueOf(order_list.size()));
+                                    float totalTotal = 0;
+                                    temp_product_list = new ArrayList<>();
+                                    temp_product_list.add(food_for_you_list.get(j));
+                                    product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getProductTag(), temp_product_list));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                productCategAdapter = new ProductCategAdapter(getActivity(), product_categ_list, StoreFragment.this);
+                rv_products.setAdapter(productCategAdapter);
+                Log.d("productCategSize", String.valueOf(product_categ_list.size()));
+                for(int i = 0 ; i < product_categ_list.size() ; i++){
+                    Log.d("categ", product_categ_list.get(i).getCateg());
+                    for(int j = 0 ; j < product_categ_list.get(i).getList().size() ; j++)
+                        Log.d("product", product_categ_list.get(i).getList().get(j).getProductName());
                 }
             }
         }, new Response.ErrorListener() {

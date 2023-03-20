@@ -144,6 +144,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     Dialog moodDialog, weatherDialog;
     List<Integer> modalInt;
 
+    ImageView iv_hot, iv_cold, iv_old, iv_new, iv_mix, iv_trend;
+
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -192,8 +194,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Dinner"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Chinese"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Japanese"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Chiken"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Asian"));
 
         rv_category = root.findViewById(R.id.rv_category);
         homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(), home_categ_list, HomeFragment.this);
@@ -849,6 +849,16 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         moodTrend = moodDialog.findViewById(R.id.cv_mood_trend);
         btnClose = moodDialog.findViewById(R.id.close_modal);
 
+        iv_old = moodDialog.findViewById(R.id.iv_old);
+        iv_new = moodDialog.findViewById(R.id.iv_new);
+        iv_mix = moodDialog.findViewById(R.id.iv_mix);
+        iv_trend = moodDialog.findViewById(R.id.iv_trend);
+
+        iv_old.setImageResource(R.drawable.return_to_the_past);
+        iv_new.setImageResource(R.drawable.new_icon);
+        iv_mix.setImageResource(R.drawable.bowl);
+        iv_trend.setImageResource(R.drawable.trending);
+
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -920,7 +930,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         weatherHot  = weatherDialog.findViewById(R.id.cv_weather_hot);
         weatherCold = weatherDialog.findViewById(R.id.cv_weather_cold);
+        iv_hot = weatherDialog.findViewById(R.id.iv_hot);
+        iv_cold = weatherDialog.findViewById(R.id.iv_cold);
         btnClose = weatherDialog.findViewById(R.id.close_modal);
+
+        iv_hot.setImageResource(R.drawable.hot);
+        iv_cold.setImageResource(R.drawable.cold);
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -29,6 +29,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginRight="8dp"
             android:fontFamily="@font/robotomedium"
+            android:lines="1"
+            android:maxLines="1"
             android:text="Testi"
             android:textAlignment="viewStart"
             android:textSize="16sp" />

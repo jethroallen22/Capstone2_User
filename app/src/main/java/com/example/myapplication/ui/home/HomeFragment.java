@@ -186,14 +186,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         tempStoreList = new ArrayList<>();
         //HOME CATEGORY
         home_categ_list = new ArrayList<>();
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Western"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Fast Food"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Burgers"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Breakfast"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Lunch"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Dinner"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Chinese"));
-        home_categ_list.add(new HomeCategoryModel(R.drawable.logo, "Japanese"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.desert, "Western"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.burger, "Fast Food"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.breakfast, "Breakfast"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.lunch, "Lunch"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.dinner, "Dinner"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.lamp, "Chinese"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.temple, "Japanese"));
+
 
         rv_category = root.findViewById(R.id.rv_category);
         homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(), home_categ_list, HomeFragment.this);

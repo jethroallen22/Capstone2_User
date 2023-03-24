@@ -28,6 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +42,8 @@ public class Login extends AppCompatActivity {
     private static String JSON_URL;
     private IPModel ipModel;
     String weather;
+
+    private TextView currentTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,7 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     public void init(){

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.Singleton;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.UserModel;
 import com.example.myapplication.ui.home.HomeFragment;
@@ -63,11 +65,13 @@ public class Home extends AppCompatActivity {
     ImageView iv_user_image;
     TextView tv_view_profile;
     TextView tv_user_name;
-    private static String JSON_URL = "http://10.207.111.129/mosibus_php/user/";
+    private static String JSON_URL;
+    private IPModel ipModel;
     private RequestQueue requestQueue1;
     List<UserModel> userList;
     UserModel userModel;
     String image, weather;
+    Handler root;
 
 
     @Override
@@ -76,6 +80,9 @@ public class Home extends AppCompatActivity {
 
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        ipModel = new IPModel();
+        JSON_URL = ipModel.getURL();
 
         Intent intent = getIntent();
         if(intent.getStringExtra("name") != null) {
@@ -89,7 +96,15 @@ public class Home extends AppCompatActivity {
         }
         userList = new ArrayList();
         requestQueue1 = Singleton.getsInstance(this).getRequestQueue();
-        profile_user();
+
+        root = new Handler();
+        root.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                profile_user();
+                root.postDelayed(this, 1000);
+            }
+        }, 1000);
         Log.d("USERSIZE", String.valueOf(userList.size()));
         setSupportActionBar(binding.appBarHome.toolbar);
 
@@ -122,20 +137,15 @@ public class Home extends AppCompatActivity {
         tv_user_name = navigationView.getHeaderView(0).findViewById(R.id.tv_user_name);
         tv_view_profile = navigationView.getHeaderView(0).findViewById(R.id.tv_view_profile);
 
-        if(image != null) {
-            byte[] byteArray = Base64.decode(image, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-            iv_user_image.setImageBitmap(bitmap);
-        } else
-            iv_user_image.setImageResource(R.drawable.logo);
-        tv_user_name.setText(name);
+
         tv_view_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Bundle bundle = new Bundle()
                 Bundle bundle = new Bundle();
                 bundle.putInt("id",id);
-                bundle.putSerializable("user", (Serializable) userList);
+                //bundle.putSerializable("user", (Serializable) userList);
+                bundle.putParcelable("user", userModel);
                 Log.d("USERTEST: ", String.valueOf(userList.size()));
 
                 ProfileFragment fragment = new ProfileFragment();
@@ -159,23 +169,30 @@ public class Home extends AppCompatActivity {
                     try {
                         Log.d("Try P: ", "Im in");
                         JSONObject jsonObjectRec1 = response.getJSONObject(i);
+                        if (jsonObjectRec1.getInt("id") == id) {
 
-                        //USER DB
-                        int id = jsonObjectRec1.getInt("id");
-                        String name = jsonObjectRec1.getString("name");
-                        String image = jsonObjectRec1.getString("image");
-                        String email = jsonObjectRec1.getString("email");
-                        String contact = jsonObjectRec1.getString("contact");
-                        String password = jsonObjectRec1.getString("password");
+                            //USER DB
+                            int id = jsonObjectRec1.getInt("id");
+                            String name = jsonObjectRec1.getString("name");
+                            String image = jsonObjectRec1.getString("image");
+                            String email = jsonObjectRec1.getString("email");
+                            String contact = jsonObjectRec1.getString("contact");
+                            String password = jsonObjectRec1.getString("password");
 
-                        userModel = new UserModel(id, image, name, email, contact, password);
-                        userList.add(userModel);
-                        Log.d("USERTEST: ", String.valueOf(userList.size()));
+                            userModel = new UserModel(id, image, name, email, contact, password);
+                            Log.d("USERTEST: ", String.valueOf(userList.size()));
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+
+                if(userModel.getBitmapImage() != null) {
+                    iv_user_image.setImageBitmap(userModel.getBitmapImage());
+                } else
+                    iv_user_image.setImageResource(R.drawable.logo);
+                tv_user_name.setText(userModel.getName());
             }
         }, new Response.ErrorListener() {
             @Override

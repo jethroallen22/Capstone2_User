@@ -96,7 +96,7 @@ public class TrendMoodFragment extends Fragment implements RecyclerViewInterface
         rvTrend.setHasFixedSize(true);
         rvTrend.setNestedScrollingEnabled(false);
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhist5orygetpopu.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistorygetpopu.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d("ResponseJson", String.valueOf(response));
@@ -161,6 +161,11 @@ public class TrendMoodFragment extends Fragment implements RecyclerViewInterface
 
     @Override
     public void onItemClickSearch(int position) {
+
+    }
+
+    @Override
+    public void onItemClickWeather(int position) {
 
     }
 

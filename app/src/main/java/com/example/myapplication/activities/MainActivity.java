@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -40,6 +41,9 @@ import com.onesignal.OneSignal;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     private static final String ONESIGNAL_APP_ID = "941829df-43af-4a89-b2b3-67f4db6e572a";
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private String weather;
 
 
+
     private final String weatherURL = "https://api.openweathermap.org/data/2.5/weather";
     private final String appId = "d7484fc39538bf509fe729a4bbb0a90f";
 
@@ -62,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+
+
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if(Build.VERSION.SDK_INT >= 23){

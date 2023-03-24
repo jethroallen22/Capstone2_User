@@ -89,19 +89,24 @@ public class ProfileFragment extends Fragment {
         userModelList = new ArrayList<>();
         Bundle bundle = getArguments();
         if (bundle != null) {
-            userModelList = (List<UserModel>) bundle.getSerializable("user");
+            userModel = bundle.getParcelable("user");
             Log.d("LISTSIZE", String.valueOf(userModelList.size()));
-            id = bundle.getInt("id");
-            for (int i = 0 ; i < userModelList.size() ; i++){
-                if(id == userModelList.get(i).getId()){
-                    name = userModelList.get(i).getName();
-                    email = userModelList.get(i).getEmail();
-                    password = userModelList.get(i).getPassword();
-                    contact = userModelList.get(i).getContact();
-                    bitmap = userModelList.get(i).getBitmapImage();
-                    Log.d("TESTNAME: ", userModelList.get(i).getName());
-                }
-            }
+            id = userModel.getId();
+            name = userModel.getName();
+            email = userModel.getEmail();
+            password = userModel.getPassword();
+            contact = userModel.getContact();
+            bitmap = userModel.getBitmapImage();
+            //            for (int i = 0 ; i < userModelList.size() ; i++){
+//                if(id == userModelList.get(i).getId()){
+//                    name = userModelList.get(i).getName();
+//                    email = userModelList.get(i).getEmail();
+//                    password = userModelList.get(i).getPassword();
+//                    contact = userModelList.get(i).getContact();
+//                    bitmap = userModelList.get(i).getBitmapImage();
+//                    Log.d("TESTNAME: ", userModelList.get(i).getName());
+//                }
+//            }
 
         }
 
@@ -224,16 +229,7 @@ public class ProfileFragment extends Fragment {
                                 @Override
                                 public void onResponse(String response) {
                                     try {
-//                                            Intent intent = new Intent(getContext(), Home.class);
-//                                            intent.putExtra("name",name2);
-//                                            intent.putExtra("id",id);
-//                                            intent.putExtra("image", base64Image);
-//                                            intent.putExtra("email", email2);
-//                                            intent.putExtra("contact", contact2);
-//                                            intent.putExtra("password", password2);
-//                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                            startActivity(intent);
-//                                        }
+
                                     }
                                     catch (Throwable e) {
                                         Log.d("Catch", String.valueOf(e));

@@ -24,12 +24,13 @@
 
             <TextView
                 android:id="@+id/tv_gcash"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/robotobold"
                 android:gravity="center_horizontal"
                 android:text="GCASH"
                 android:textSize="30sp" />
+
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,13 +64,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="14dp"
+                android:fontFamily="@font/robotoregular"
+                android:text="Order Id:"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/merchant"
+                app:layout_constraintVertical_bias="0.04" />
+
+            <TextView
+                android:id="@+id/amount_due3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
                 android:fontFamily="@font/robotoregular"
                 android:text="Amount Due:"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/merchant"
+                app:layout_constraintTop_toBottomOf="@+id/amount_due"
                 app:layout_constraintVertical_bias="0.04" />
 
             <TextView
@@ -145,6 +159,35 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/tv_merchant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="108dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/merchant"
+                tools:layout_editor_absoluteY="53dp" />
+
+            <TextView
+                android:id="@+id/tv_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="120dp"
+                android:layout_marginTop="20dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/amount_due"
+                app:layout_constraintTop_toBottomOf="@+id/tv_merchant" />
+
+            <TextView
+                android:id="@+id/tv_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="92dp"
+                android:layout_marginTop="20dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/amount_due3"
+                app:layout_constraintTop_toBottomOf="@+id/tv_id" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,5 +1,6 @@
 package com.example.myapplication.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -23,6 +24,16 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.models.UserFirebaseModel;
+import com.example.myapplication.models.UserModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +52,8 @@ public class Register extends AppCompatActivity {
     private static String JSON_URL;
     private IPModel ipModel;
 
+    DatabaseReference databaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +61,18 @@ public class Register extends AppCompatActivity {
         getSupportActionBar().hide();
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
+        databaseReference = FirebaseDatabase.getInstance().getReference("this is the path");
+        databaseReference.setValue("here there").addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d("Fire", "Success");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Fire", "fail");
+            }
+        });
         init();
 
         register_name_text_input = findViewById(R.id.name_text_input);
@@ -101,8 +126,23 @@ public class Register extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(result);
                     String success = jsonObject.getString("success");
-
+                    Log.d("Signup", success );
                     if (success.equals("1")){
+                        Log.d("Signup", "Inside 1" );
+                        FirebaseAuth
+                                .getInstance()
+                                .createUserWithEmailAndPassword(register_email_text_input.trim(), register_password_text_input)
+                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                    @Override
+                                    public void onSuccess(AuthResult authResult) {
+                                        Log.d("firebase ", "onsuccess");
+                                        UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(register_name_text_input).build();
+                                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                        firebaseUser.updateProfile(userProfileChangeRequest);
+                                        UserFirebaseModel userFirebaseModel = new UserFirebaseModel(FirebaseAuth.getInstance().getUid(),register_name_text_input,register_email_text_input,register_password_text_input);
+                                        databaseReference.child(FirebaseAuth.getInstance().getUid()).setValue(userFirebaseModel);
+                                    }
+                                });
                 Intent intent = new Intent(getApplicationContext(), Login.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 Register.this.startActivity(intent);

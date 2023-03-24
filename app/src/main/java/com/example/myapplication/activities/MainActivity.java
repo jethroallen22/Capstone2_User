@@ -27,6 +27,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.cometchat.pro.core.AppSettings;
+import com.cometchat.pro.core.CometChat;
+import com.cometchat.pro.exceptions.CometChatException;
 import com.example.myapplication.R;
 
 
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         // promptForPushNotifications will show the native Android notification permission prompt.
         // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 7)
         OneSignal.promptForPushNotifications();
+        initChat();
     }
 
     @Override
@@ -126,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         curLat = location.getLatitude();
         curLong = location.getLongitude();
         requestWeather();
-        Log.d("my_log", "Location: "+location.getLatitude()+" , "+location.getLongitude());
-        Toast.makeText(this, "Location: "+location.getLatitude()+" , "+location.getLongitude(), Toast.LENGTH_SHORT).show();
+       // Log.d("my_log", "Location: "+location.getLatitude()+" , "+location.getLongitude());
+      //  Toast.makeText(this, "Location: "+location.getLatitude()+" , "+location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -212,6 +216,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         celsius = (float) (kelvin - 273.15);
         Log.d("celsius", String.valueOf(celsius));
         return celsius;
+    }
+
+    public void initChat(){
+        String appID = "2355792d8c1eed1a"; // Replace with your App ID
+        String region = "us"; // Replace with your App Region ("eu" or "us")
+
+        AppSettings appSettings=new AppSettings.AppSettingsBuilder()
+                .subscribePresenceForAllUsers()
+                .setRegion(region)
+                .autoEstablishSocketConnection(true)
+                .build();
+
+        CometChat.init(this, appID,appSettings, new CometChat.CallbackListener<String>() {
+            @Override
+            public void onSuccess(String successMessage) {
+                Log.d("cometchat", "Initialization completed successfully");
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                Log.d("cometchat", "Initialization failed with exception: " + e.getMessage());
+            }
+        });
     }
 
     //private void setContentView(int activity_main) {

@@ -45,6 +45,46 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_gcash">
 
             <TextView
+                android:id="@+id/tv_merchant3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="108dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/merchant"
+                tools:layout_editor_absoluteY="57dp" />
+
+            <TextView
+                android:id="@+id/tv_amount3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="90dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/amount_due5"
+                tools:layout_editor_absoluteY="132dp" />
+
+            <TextView
+                android:id="@+id/tv_id3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="120dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/amount_due"
+                tools:layout_editor_absoluteY="93dp" />
+
+            <TextView
+                android:id="@+id/amount_due5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:fontFamily="@font/robotoregular"
+                android:text="Amount Due:"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/amount_due"
+                app:layout_constraintVertical_bias="0.04" />
+
+            <TextView
                 android:id="@+id/merchant"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,12 +106,12 @@
                 android:layout_marginBottom="16dp"
 
                 android:fontFamily="@font/robotoregular"
-                android:text="Amount Due:"
+                android:text="Order Id:"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/merchant"
-                app:layout_constraintVertical_bias="0.04" />
+                app:layout_constraintVertical_bias="0.035" />
 
             <TextView
                 android:id="@+id/login_to_pay"

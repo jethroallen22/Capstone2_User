@@ -53,7 +53,7 @@ public class Login extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null) {
             weather = intent.getStringExtra("weather");
-            Log.d("weatherLogin", weather);
+//            Log.d("weatherLogin", weather);
         }
 
         init();

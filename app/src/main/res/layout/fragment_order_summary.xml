@@ -77,11 +77,12 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/imageView12"
+                            android:id="@+id/iv_pending"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_baseline_pending_actions_24" />
+                            android:src="@drawable/ic_baseline_pending_actions_24"
+                            app:srcCompat="@drawable/ic_baseline_pending_actions_24" />
                     </LinearLayout>
 
                     <TextView
@@ -97,7 +98,7 @@
 
                 <LinearLayout
                     android:id="@+id/ll_prep_line"
-                    android:layout_width="75dp"
+                    android:layout_width="50dp"
                     android:layout_height="5dp"
                     android:layout_marginBottom="7dp"
                     android:background="#979797"
@@ -120,12 +121,12 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/imageView11"
+                            android:id="@+id/iv_preparing"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:src="@drawable/ic_baseline_pending_actions_24"
-                            tools:srcCompat="@drawable/ic_baseline_outdoor_grill_24" />
+                            app:srcCompat="@drawable/ic_baseline_outdoor_grill_24" />
                     </LinearLayout>
 
                     <TextView
@@ -141,11 +142,13 @@
 
                 <LinearLayout
                     android:id="@+id/ll_pup_line"
-                    android:layout_width="75dp"
+                    android:layout_width="50dp"
                     android:layout_height="5dp"
                     android:layout_marginBottom="7dp"
                     android:background="#979797"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical">
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -163,12 +166,57 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/imageView10"
+                            android:id="@+id/iv_pickup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:src="@drawable/ic_baseline_pending_actions_24"
-                            tools:srcCompat="@drawable/ic_baseline_check_24" />
+                            app:srcCompat="@drawable/ic_baseline_clean_hands_24" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/textView28"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/robotoregular"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="Pick up"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_comp_line"
+                    android:layout_width="50dp"
+                    android:layout_height="5dp"
+                    android:layout_marginBottom="7dp"
+                    android:background="#979797"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/ll_comp_circle"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_gray_round"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_complete"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_baseline_pending_actions_24"
+                            app:srcCompat="@drawable/ic_baseline_check_24" />
                     </LinearLayout>
 
                     <TextView
@@ -177,7 +225,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/robotoregular"
                         android:gravity="center_horizontal|center_vertical"
-                        android:text="Pick up"
+                        android:text="Complete"
                         android:textSize="12sp" />
 
                 </LinearLayout>

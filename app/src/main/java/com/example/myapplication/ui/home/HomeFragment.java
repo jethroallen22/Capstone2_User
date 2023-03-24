@@ -168,17 +168,17 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             Log.d("HOME FRAG name", "FAIL");
         }
 
-        modalInt = new ArrayList<>();
-        modalInt.add(1);
-        modalInt.add(2);
-        Collections.shuffle(modalInt);
-        for(int i = 0 ; i < modalInt.size() ; i++)
-            Log.d("modelInt", String.valueOf(modalInt.get(i)));
-        if(modalInt.get(0) == 1)
-            moodModal();
-        else if(modalInt.get(0) == 2)
-            weatherModal();
-
+//        modalInt = new ArrayList<>();
+//        modalInt.add(1);
+//        modalInt.add(2);
+//        Collections.shuffle(modalInt);
+//        for(int i = 0 ; i < modalInt.size() ; i++)
+//            Log.d("modelInt", String.valueOf(modalInt.get(i)));
+//        if(modalInt.get(0) == 1)
+//            moodModal();
+//        else if(modalInt.get(0) == 2)
+//            weatherModal();
+        moodModal();
 
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();

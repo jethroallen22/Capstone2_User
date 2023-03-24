@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,7 +59,8 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     List<OrderItemModel> order_item_list;
     OrderItemsAdapter orderItemsAdapter;
     TextView tv_order_id, tv_name, tv_total_price, tv_order_date;
-    LinearLayout ll_prep_line, ll_prep_circle, ll_pup_line, ll_pup_circle;
+    LinearLayout ll_prep_line, ll_prep_circle, ll_pup_line, ll_pup_circle, ll_comp_line, ll_comp_circle;
+    ImageView iv_pending, iv_preparing, iv_pickup, iv_complete;
     Button btn_proceed, btn_cancel_order;
     private static String JSON_URL;
     private IPModel ipModel;
@@ -83,7 +85,13 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         ll_prep_circle = root.findViewById(R.id.ll_prep_circle);
         ll_pup_line = root.findViewById(R.id.ll_pup_line);
         ll_pup_circle = root.findViewById(R.id.ll_pup_circle);
+        ll_comp_circle = root.findViewById(R.id.ll_comp_circle);
+        ll_comp_line = root.findViewById(R.id.ll_comp_line);
         btn_proceed = root.findViewById(R.id.btn_proceed);
+        iv_pending = root.findViewById(R.id.iv_pending);
+        iv_preparing = root.findViewById(R.id.iv_preparing);
+        iv_pickup = root.findViewById(R.id.iv_pickup);
+        iv_complete = root.findViewById(R.id.iv_complete);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -93,6 +101,10 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                 tempOrder = bundle.getParcelable("orderActivity");
         }
         order = tempOrder;
+        iv_pending.setImageResource(R.drawable.ic_baseline_pending_actions_24);
+        iv_preparing.setImageResource(R.drawable.ic_baseline_outdoor_grill_24);
+        iv_pickup.setImageResource(R.drawable.ic_baseline_clean_hands_24);
+        iv_complete.setImageResource(R.drawable.ic_baseline_check_24);
         tv_order_id.setText(String.valueOf(order.getIdOrder()));
         tv_name.setText(String.valueOf(order.getStore_name()));
         tv_total_price.setText(String.valueOf(order.getOrderItemTotalPrice()));
@@ -148,7 +160,8 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                     }else if(order.getOrderStatus().equals("pickup")){
                         Log.d("orderStatusIFSTMNT", "Pickup");
                         Toast.makeText(getContext(), "We're sorry, but your order is now ready for pickup and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
-                    }
+                    }else if(order.getOrderStatus().equals("complete"))
+                        Toast.makeText(getContext(), "We're sorry, but your order is already complete", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -227,17 +240,27 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                                 ll_prep_circle.setBackgroundResource(R.drawable.bg_gray_round);
                                 ll_pup_line.setBackgroundColor(Color.parseColor("#979797"));
                                 ll_pup_circle.setBackgroundResource(R.drawable.bg_gray_round);
+                                ll_comp_line.setBackgroundColor(Color.parseColor("#979797"));
+                                ll_comp_circle.setBackgroundResource(R.drawable.bg_gray_round);
 
                             } else if (orderStatus.equals("preparing")){
                                 order.setOrderStatus(orderStatus);
-                                ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
-                                ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
+                                ll_prep_line.setBackgroundColor(Color.parseColor("#67335F"));
+                                ll_prep_circle.setBackgroundResource(R.drawable.bg_light_yellow_round);
                             } else if (orderStatus.equals("pickup")){
                                 order.setOrderStatus(orderStatus);
-                                ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
-                                ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
-                                ll_pup_line.setBackgroundColor(Color.parseColor("#335C67"));
-                                ll_pup_circle.setBackgroundResource(R.drawable.bg_bluegreen_round);
+                                ll_prep_line.setBackgroundColor(Color.parseColor("#67335F"));
+                                ll_prep_circle.setBackgroundResource(R.drawable.bg_light_yellow_round);
+                                ll_pup_line.setBackgroundColor(Color.parseColor("#E09F3E"));
+                                ll_pup_circle.setBackgroundResource(R.drawable.bg_yellow_round);
+                            } else if (orderStatus.equals("complete")){
+                                order.setOrderStatus(orderStatus);
+                                ll_prep_line.setBackgroundColor(Color.parseColor("#67335F"));
+                                ll_prep_circle.setBackgroundResource(R.drawable.bg_light_yellow_round);
+                                ll_pup_line.setBackgroundColor(Color.parseColor("#E09F3E"));
+                                ll_pup_circle.setBackgroundResource(R.drawable.bg_yellow_round);
+                                ll_comp_line.setBackgroundColor(Color.parseColor("#335C67"));
+                                ll_comp_circle.setBackgroundResource(R.drawable.bg_bluegreen_round);
                             }
 
                         }

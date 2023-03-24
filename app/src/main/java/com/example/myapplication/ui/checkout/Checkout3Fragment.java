@@ -79,7 +79,6 @@ public class Checkout3Fragment extends Fragment{
         JSON_URL = ipModel.getURL();
 
         merchant3 = root.findViewById(R.id.tv_merchant3);
-        id3 = root.findViewById(R.id.tv_id3);
         amount3 = root.findViewById(R.id.tv_amount3);
 
         Bundle bundle = this.getArguments();
@@ -89,7 +88,6 @@ public class Checkout3Fragment extends Fragment{
         requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
 
         merchant3.setText(orderModel.getStore_name());
-        id3.setText(orderModel.getIdOrder());
         amount3.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
 
 

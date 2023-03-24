@@ -381,6 +381,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
+    @Override
+    public void onItemClickWeather(int position) {
+
+    }
+
     public void showBottomSheet(int position){
         String TAG = "Bottomsheet";
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);

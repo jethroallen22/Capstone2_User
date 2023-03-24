@@ -201,7 +201,9 @@ public class Checkout3Fragment extends Fragment{
                 manager.createNotificationChannel(channel);
 
                 Log.d("OrderIDCheckout3", String.valueOf(orderModel.getIdOrder()));
+                orderModel.setOrderStatus("pending");
                 Bundle bundle = new Bundle();
+                Log.d("orderStatus", orderModel.getOrderStatus());
                 bundle.putParcelable("order", orderModel);
                 OrderSummaryFragment fragment = new OrderSummaryFragment();
                 fragment.setArguments(bundle);
@@ -218,7 +220,7 @@ public class Checkout3Fragment extends Fragment{
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("orderItemTotalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-                params.put("orderStatus", orderModel.getOrderStatus());
+                params.put("orderStatus", "pending");
                 params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
                 params.put("users_id", String.valueOf(orderModel.getUsers_id()));
 

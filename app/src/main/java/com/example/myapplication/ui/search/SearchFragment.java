@@ -226,6 +226,11 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
     }
 
     @Override
+    public void onItemClickWeather(int position) {
+
+    }
+
+    @Override
     public void onItemClickCategory(int pos) {
 
     }

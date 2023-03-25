@@ -280,7 +280,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:numStars="5"
-                    android:rating="3"
+                    android:rating="0"
                     android:stepSize="1.0" />
             </LinearLayout>
 

@@ -82,7 +82,7 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
         outerRequest = Singleton.getsInstance(getActivity()).getRequestQueue();
         innerRequest = Singleton.getsInstance(getActivity()).getRequestQueue();
         //extractOrders();
-        JsonArrayRequest jsonArrayRequest7= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiordergetActivity.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest7= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderget.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {

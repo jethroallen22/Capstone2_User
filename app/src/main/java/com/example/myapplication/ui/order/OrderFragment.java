@@ -164,6 +164,11 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
+    @Override
+    public void onItemClickWeather(int position) {
+
+    }
+
     private void PayM(String amount){
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"index.php", new Response.Listener<String>() {

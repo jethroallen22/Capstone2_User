@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -68,6 +69,8 @@ public class Checkout3Fragment extends Fragment{
 
     NotificationManager manager;
 
+    TextView merchant3, id3, amount3;
+
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -76,11 +79,20 @@ public class Checkout3Fragment extends Fragment{
         View root = binding.getRoot();
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
+
+        merchant3 = root.findViewById(R.id.tv_merchant3);
+        amount3 = root.findViewById(R.id.tv_amount3);
+
         Bundle bundle = this.getArguments();
         if (bundle != null)
             orderModel = bundle.getParcelable("order");
         orderModelList = new ArrayList<>();
         requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
+
+        merchant3.setText(orderModel.getStore_name());
+        amount3.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
+
+
 
         binding.nextBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +114,7 @@ public class Checkout3Fragment extends Fragment{
     private void getDataFromServer() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorderpost.php", new Response.Listener<String>() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onResponse(String result) {
                 Log.d("1 ", result);
@@ -188,7 +201,9 @@ public class Checkout3Fragment extends Fragment{
                 manager.createNotificationChannel(channel);
 
                 Log.d("OrderIDCheckout3", String.valueOf(orderModel.getIdOrder()));
+                orderModel.setOrderStatus("pending");
                 Bundle bundle = new Bundle();
+                Log.d("orderStatus", orderModel.getOrderStatus());
                 bundle.putParcelable("order", orderModel);
                 OrderSummaryFragment fragment = new OrderSummaryFragment();
                 fragment.setArguments(bundle);
@@ -205,7 +220,7 @@ public class Checkout3Fragment extends Fragment{
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("orderItemTotalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
-                params.put("orderStatus", orderModel.getOrderStatus());
+                params.put("orderStatus", "pending");
                 params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
                 params.put("users_id", String.valueOf(orderModel.getUsers_id()));
 

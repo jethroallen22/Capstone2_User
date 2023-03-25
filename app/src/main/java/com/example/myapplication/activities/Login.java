@@ -27,10 +27,8 @@ import com.example.myapplication.ui.home.HomeFragment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,11 +54,10 @@ public class Login extends AppCompatActivity {
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
 
-
         Intent intent = getIntent();
         if(intent != null) {
             weather = intent.getStringExtra("weather");
-            Log.d("weatherLogin", weather);
+//            Log.d("weatherLogin", weather);
         }
 
         init();
@@ -92,25 +89,6 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        //GET CURRENT TIME
-        // on below line we are initializing our variables.
-        //currentTV = (TextView) findViewById(R.id.idTvCurrent);
-
-        TextView currentTV = findViewById(R.id.idTvCurrent);
-
-        // on below line we are creating and initializing
-        // variable for simple date format.
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm");
-
-        // on below line we are creating a variable
-        // for current date and time and calling a simple date format in it.
-        //Date currentTime = Calendar.getInstance().getTime();
-        String time = sdf.format(new Date());
-
-
-        // on below line we are setting current
-        // date and time to our text view.
-        //currentTV.setText(time);
     }
 
     public void init(){

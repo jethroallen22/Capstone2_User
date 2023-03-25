@@ -180,9 +180,11 @@
 
             <Button
                 android:id="@+id/submit_btn"
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
                 android:layout_marginTop="52dp"
+                android:layout_marginEnd="32dp"
                 android:backgroundTint="@color/mosibusPrimary"
                 android:foregroundGravity="center"
                 android:gravity="center|center_horizontal"

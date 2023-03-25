@@ -105,7 +105,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         iv_preparing.setImageResource(R.drawable.ic_baseline_outdoor_grill_24);
         iv_pickup.setImageResource(R.drawable.ic_baseline_clean_hands_24);
         iv_complete.setImageResource(R.drawable.ic_baseline_check_24);
-        tv_order_id.setText(String.valueOf(order.getIdOrder()));
+        tv_order_id.setText("Order ID: " + String.valueOf(order.getIdOrder()));
         tv_name.setText(String.valueOf(order.getStore_name()));
         tv_total_price.setText(String.valueOf(order.getOrderItemTotalPrice()));
 
@@ -117,70 +117,43 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
 
-        if(order.getOrderStatus().equals("pickup")){
-            Log.d("Receipt: ", "Activity");
-            Log.d("orderitemsize", String.valueOf(order.getOrderItem_list().size()));
-            ll_prep_line.setBackgroundColor(Color.parseColor("#E09F3E"));
-            ll_prep_circle.setBackgroundResource(R.drawable.bg_yellow_round);
-            ll_pup_line.setBackgroundColor(Color.parseColor("#335C67"));
-            ll_pup_circle.setBackgroundResource(R.drawable.bg_bluegreen_round);
-            btn_proceed.setText("Reorder");
-            btn_proceed.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("order", order);
-                    OrderFragment fragment = new OrderFragment();
-                    fragment.setArguments(bundle);
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-                }
-            });
 
-        } else if(order.getOrderStatus().equals("pending")) {
-            Log.d("Receipt: ", "Receipt");
-            root.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    readStatus();
-                    Log.d("OrderStatus", order.getOrderStatus());
-                    root.postDelayed(this, 1000);
-                }
+        Log.d("Receipt: ", "Receipt");
+        root.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                readStatus();
+                //Log.d("OrderStatus", order.getOrderStatus());
+                root.postDelayed(this, 1000);
+            }
             }, 1000);
-            orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(int position) {
-                    if(order.getOrderStatus().equals("pending")) {
-                        Log.d("orderStatusIFSTMNT", "Pending");
-                        order.getOrderItem_list().remove(position);
-                        orderItemsAdapter.notifyItemRemoved(position);
-                        deleteProduct(position);
-                    }else if(order.getOrderStatus().equals("preparing")){
-                        Log.d("orderStatusIFSTMNT", "Preparing");
-                        Toast.makeText(getContext(), "We're sorry, but your order is now being prepared and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
-                    }else if(order.getOrderStatus().equals("pickup")){
-                        Log.d("orderStatusIFSTMNT", "Pickup");
-                        Toast.makeText(getContext(), "We're sorry, but your order is now ready for pickup and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
-                    }else if(order.getOrderStatus().equals("complete"))
-                        Toast.makeText(getContext(), "We're sorry, but your order is already complete", Toast.LENGTH_SHORT).show();
-                }
-            });
+        orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if(order.getOrderStatus().equals("pending")) {
+                    Log.d("orderStatusIFSTMNT", "Pending");
+                    order.getOrderItem_list().remove(position);
+                    orderItemsAdapter.notifyItemRemoved(position);
+                    deleteProduct(position);
+                }else if(order.getOrderStatus().equals("preparing")){
+                    Log.d("orderStatusIFSTMNT", "Preparing");
+                    Toast.makeText(getContext(), "We're sorry, but your order is now being prepared and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
+                }else if(order.getOrderStatus().equals("pickup")){
+                    Log.d("orderStatusIFSTMNT", "Pickup");
+                    Toast.makeText(getContext(), "We're sorry, but your order is now ready for pickup and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
+                }else if(order.getOrderStatus().equals("complete"))
+                    Toast.makeText(getContext(), "We're sorry, but your order is already complete", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-
-            btn_proceed.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    HomeFragment fragment = new HomeFragment();
-                    Log.d("TAG", "Success");
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-                }
-            });
-        }
-
-
-
-
-
-
+        btn_proceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HomeFragment fragment = new HomeFragment();
+                Log.d("TAG", "Success");
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        });
 
         return root;
     }
@@ -337,6 +310,11 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
 
     @Override
     public void onItemClickSearch(int position) {
+
+    }
+
+    @Override
+    public void onItemClickWeather(int position) {
 
     }
 

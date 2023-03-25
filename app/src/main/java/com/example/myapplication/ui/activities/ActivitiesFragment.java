@@ -35,6 +35,7 @@ import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.order.OrderFragment;
+import com.example.myapplication.ui.ordersummary.OrderSummaryActivityFragment;
 import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
 
 import org.json.JSONArray;
@@ -324,7 +325,7 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
         Log.d("order", String.valueOf(orderModelList.get(position).getOrderItem_list().size()));
         bundle.putParcelable("orderActivity", orderModelList.get(position));
 
-        OrderSummaryFragment fragment = new OrderSummaryFragment();
+        OrderSummaryActivityFragment fragment = new OrderSummaryActivityFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
     }
@@ -341,6 +342,11 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
 
     @Override
     public void onItemClickSearch(int position) {
+
+    }
+
+    @Override
+    public void onItemClickWeather(int position) {
 
     }
 

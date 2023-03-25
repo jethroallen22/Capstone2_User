@@ -8,6 +8,6 @@ public interface RecyclerViewInterface {
     void onItemClickStoreRec2(int position);
 
     void onItemClickSearch(int position);
-
+    void onItemClickWeather(int position);
     void onItemClickCategory(int pos);
 }

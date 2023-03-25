@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -27,6 +28,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.cometchat.pro.core.AppSettings;
+import com.cometchat.pro.core.CometChat;
+import com.cometchat.pro.exceptions.CometChatException;
 import com.example.myapplication.R;
 
 
@@ -39,6 +43,9 @@ import com.onesignal.OneSignal;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -54,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private String weather;
 
 
+
     private final String weatherURL = "https://api.openweathermap.org/data/2.5/weather";
     private final String appId = "d7484fc39538bf509fe729a4bbb0a90f";
 
@@ -62,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+
+
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if(Build.VERSION.SDK_INT >= 23){
@@ -94,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         // promptForPushNotifications will show the native Android notification permission prompt.
         // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 7)
         OneSignal.promptForPushNotifications();
+        initChat();
     }
 
     @Override
@@ -126,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         curLat = location.getLatitude();
         curLong = location.getLongitude();
         requestWeather();
-        Log.d("my_log", "Location: "+location.getLatitude()+" , "+location.getLongitude());
-        Toast.makeText(this, "Location: "+location.getLatitude()+" , "+location.getLongitude(), Toast.LENGTH_SHORT).show();
+       // Log.d("my_log", "Location: "+location.getLatitude()+" , "+location.getLongitude());
+      //  Toast.makeText(this, "Location: "+location.getLatitude()+" , "+location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -212,6 +223,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         celsius = (float) (kelvin - 273.15);
         Log.d("celsius", String.valueOf(celsius));
         return celsius;
+    }
+
+    public void initChat(){
+        String appID = "2355792d8c1eed1a"; // Replace with your App ID
+        String region = "us"; // Replace with your App Region ("eu" or "us")
+
+        AppSettings appSettings=new AppSettings.AppSettingsBuilder()
+                .subscribePresenceForAllUsers()
+                .setRegion(region)
+                .autoEstablishSocketConnection(true)
+                .build();
+
+        CometChat.init(this, appID,appSettings, new CometChat.CallbackListener<String>() {
+            @Override
+            public void onSuccess(String successMessage) {
+                Log.d("cometchat", "Initialization completed successfully");
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                Log.d("cometchat", "Initialization failed with exception: " + e.getMessage());
+            }
+        });
     }
 
     //private void setContentView(int activity_main) {

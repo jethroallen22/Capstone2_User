@@ -28,7 +28,6 @@ public class CheckoutFragment extends Fragment {
         View root = binding.getRoot();
 
         merchant = root.findViewById(R.id.tv_merchant);
-        id = root.findViewById(R.id.tv_id);
         amount = root.findViewById(R.id.tv_amount);
 
 
@@ -38,7 +37,6 @@ public class CheckoutFragment extends Fragment {
             orderModel = bundle.getParcelable("order");
 
         merchant.setText(orderModel.getStore_name());
-        id.setText(orderModel.getIdOrder());
         amount.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
 
         binding.nextBtn.setOnClickListener(new View.OnClickListener() {

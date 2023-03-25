@@ -123,7 +123,55 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         rb_order_rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+
+                rb_order_rating.setEnabled(false);
                 // Do something with the rating value
+                    RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST,JSON_URL+ "apirating.php",
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String result) {
+                                    Log.d("On Res", "inside on res");
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("Volley Error", String.valueOf(error));
+                        }
+                    }){
+                        protected Map<String, String> getParams(){
+                            Map<String, String> paramV = new HashMap<>();
+                            paramV.put("rating", String.valueOf(rating));
+                            paramV.put("idOrder", String.valueOf(order.getIdOrder()));
+                            return paramV;
+                        }
+                    };
+
+                    queue.add(stringRequest);
+
+                RequestQueue queue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+                StringRequest stringRequest2 = new StringRequest(Request.Method.POST,JSON_URL+ "update_rating.php",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String result) {
+                                Log.d("On Res", "inside on res");
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Volley Error", String.valueOf(error));
+                    }
+                }){
+                    protected Map<String, String> getParams(){
+                        Map<String, String> paramD = new HashMap<>();
+                        paramD.put("store_idStore", String.valueOf(order.getStore_idstore()));
+                        return paramD;
+                    }
+                };
+
+                queue2.add(stringRequest2);
             }
         });
 

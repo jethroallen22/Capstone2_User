@@ -44,6 +44,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,10 +97,11 @@ public class TrendMoodFragment extends Fragment implements RecyclerViewInterface
         rvTrend.setHasFixedSize(true);
         rvTrend.setNestedScrollingEnabled(false);
 
+        Log.d("Trend", "Before JSON");
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistorygetpopu.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Log.d("ResponseJson", String.valueOf(response));
+                Log.d("Trend Resp", String.valueOf(response));
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
@@ -120,7 +122,7 @@ public class TrendMoodFragment extends Fragment implements RecyclerViewInterface
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.printStackTrace();
             }
         });
         requestQueue.add(jsonArrayRequest);
@@ -161,11 +163,6 @@ public class TrendMoodFragment extends Fragment implements RecyclerViewInterface
 
     @Override
     public void onItemClickSearch(int position) {
-
-    }
-
-    @Override
-    public void onItemClickWeather(int position) {
 
     }
 

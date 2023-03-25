@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,6 +69,7 @@ public class NewMoodFragment extends Fragment implements RecyclerViewInterface {
     ConstraintLayout cl_product_minus;
     Button btn_add_to_cart;
     int product_count = 0;
+    ImageView iv_icon_new;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +79,9 @@ public class NewMoodFragment extends Fragment implements RecyclerViewInterface {
 
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
+
+        iv_icon_new = root.findViewById(R.id.iv_icon_new);
+        iv_icon_new.setImageResource(R.drawable.new_icon);
 
         productModelList = new ArrayList<>();
         tempProductModelList = new ArrayList<>();

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +55,7 @@ public class MixMoodFragment extends Fragment implements RecyclerViewInterface {
     //For Product Bottomsheet
     LinearLayout linearLayout;
     TextView product_name, product_resto, product_price, product_description, tv_counter, tv_weather;
+    ImageView iv_icon_mix;
     RoundedImageView product_image;
     ConstraintLayout cl_product_add;
     ConstraintLayout cl_product_minus;
@@ -71,6 +73,9 @@ public class MixMoodFragment extends Fragment implements RecyclerViewInterface {
 
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
+
+        iv_icon_mix = root.findViewById(R.id.iv_icon_mix);
+        iv_icon_mix.setImageResource(R.drawable.bowl);
 
         Bundle bundle = getArguments();
         if (bundle != null){

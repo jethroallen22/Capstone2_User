@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +66,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     private static String JSON_URL;
     private IPModel ipModel;
     String orderStatus;
+    RatingBar rb_order_rating;
 
     RequestQueue requestQueue;
 
@@ -92,6 +94,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         iv_preparing = root.findViewById(R.id.iv_preparing);
         iv_pickup = root.findViewById(R.id.iv_pickup);
         iv_complete = root.findViewById(R.id.iv_complete);
+        rb_order_rating = root.findViewById(R.id.rb_order_rating);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -116,6 +119,13 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
+
+        rb_order_rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                // Do something with the rating value
+            }
+        });
 
 
         Log.d("Receipt: ", "Receipt");

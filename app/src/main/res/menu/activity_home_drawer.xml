@@ -20,11 +20,6 @@
             android:title="@string/menu_notifications"/>
 
         <item
-            android:id="@+id/nav_addresses"
-            android:icon="@drawable/ic_baseline_location_on_24"
-            android:title="@string/menu_addresses"/>
-
-        <item
             android:id="@+id/nav_cart"
             android:icon="@drawable/ic_baseline_shopping_cart_24"
             android:title="@string/menu_cart"/>
@@ -43,11 +38,6 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/menu_settings"/>
-
-        <item
-            android:id="@+id/nav_store"
-            android:icon="@drawable/ic_baseline_payment_24"
-            android:title="@string/menu_store"/>
 
     </group>
 

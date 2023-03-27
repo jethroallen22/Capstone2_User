@@ -9,12 +9,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +57,7 @@ import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.categories.CategoryFragment;
+import com.example.myapplication.ui.filter.FilterFragment;
 import com.example.myapplication.ui.moods.MixMoodFragment;
 import com.example.myapplication.ui.moods.NewMoodFragment;
 import com.example.myapplication.ui.moods.OldMoodFragment;
@@ -144,6 +147,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     Dialog moodDialog, weatherDialog;
     List<Integer> modalInt;
+
+    Dialog filterDialog;
 
     ImageView iv_hot, iv_cold, iv_old, iv_new, iv_mix, iv_trend;
 
@@ -904,6 +909,77 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            // Handle settings item click
+            //filterModal();
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void filterModal(){
+        filterDialog = new Dialog(this.getContext());
+        filterDialog.setContentView(R.layout.filter_modal);
+        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        SeekBar sb_budget;
+        Button btn_confirm_filter;
+        ImageView close_modal;
+
+        sb_budget = filterDialog.findViewById(R.id.sb_budget);
+        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
+        close_modal = filterDialog.findViewById(R.id.close_modal);
+        int filterValue;
+
+
+        close_modal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterDialog.dismiss();
+            }
+        });
+
+        sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int filterValue;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                filterValue = progress;
+
+                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("FilterValue", String.valueOf(filterValue));
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("budget", filterValue);
+                        FilterFragment fragment = new FilterFragment();
+                        fragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                        filterDialog.dismiss();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+
+        filterDialog.show();
     }
 
     public void moodModal(){

@@ -2,9 +2,12 @@ package com.example.myapplication.activities;
 
 import static android.app.PendingIntent.getActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +16,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -27,7 +32,12 @@ import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.UserModel;
+import com.example.myapplication.ui.filter.FilterFragment;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.moods.MixMoodFragment;
+import com.example.myapplication.ui.moods.NewMoodFragment;
+import com.example.myapplication.ui.moods.OldMoodFragment;
+import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.notifications.NotificationsFragment;
 import com.example.myapplication.ui.profile.ProfileFragment;
 import com.example.myapplication.ui.store.StoreFragment;
@@ -35,6 +45,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -72,6 +83,7 @@ public class Home extends AppCompatActivity {
     UserModel userModel;
     String image, weather;
     Handler root;
+    Dialog filterDialog;
 
 
     @Override
@@ -160,6 +172,63 @@ public class Home extends AppCompatActivity {
 
     }
 
+    public void filterModal(){
+        filterDialog = new Dialog(this);
+        filterDialog.setContentView(R.layout.filter_modal);
+        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        SeekBar sb_budget;
+        Button btn_confirm_filter;
+        ImageView close_modal;
+
+        sb_budget = filterDialog.findViewById(R.id.sb_budget);
+        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
+        close_modal = filterDialog.findViewById(R.id.close_modal);
+        int filterValue;
+
+
+        close_modal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterDialog.dismiss();
+            }
+        });
+
+        sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int filterValue;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                filterValue = progress;
+
+                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("FilterValue", String.valueOf(filterValue));
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("budget", filterValue);
+                        FilterFragment fragment = new FilterFragment();
+                        fragment.setArguments(bundle);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                        filterDialog.dismiss();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        filterDialog.show();
+    }
+
     public void profile_user(){
 
         JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "profile.php", null, new Response.Listener<JSONArray>() {
@@ -210,9 +279,27 @@ public class Home extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
-        menu.add("Test");
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            // Handle settings item click
+            filterModal();
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+
+
+
+
 
     @Override
     public boolean onSupportNavigateUp() {

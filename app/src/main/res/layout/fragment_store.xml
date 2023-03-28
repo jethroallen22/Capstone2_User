@@ -32,7 +32,7 @@
 
             <ImageView
                 android:id="@+id/iv_store_image"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ad_banner" />

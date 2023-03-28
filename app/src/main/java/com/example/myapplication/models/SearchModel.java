@@ -1,7 +1,10 @@
 package com.example.myapplication.models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -57,6 +60,12 @@ public class SearchModel implements Parcelable {
     public void setSearchTag(String searchTag) {
         this.searchTag = searchTag;
     }
+
+    public Bitmap getBitmapImage(){
+        byte[] byteArray = Base64.decode(searchImage, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
+        return bitmap;
+    };
 
     @Override
     public int describeContents() {

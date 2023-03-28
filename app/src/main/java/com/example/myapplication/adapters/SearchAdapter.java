@@ -38,9 +38,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
-        Glide.with(context)
-                .load(list.get(position).getSearchImage())
-                .into(holder.iv_search_item_img);
+        holder.iv_search_item_img.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_search_item_name.setText(list.get(position).getSearchName());
         holder.tv_search_item_tag.setText(list.get(position).getSearchTag());
 

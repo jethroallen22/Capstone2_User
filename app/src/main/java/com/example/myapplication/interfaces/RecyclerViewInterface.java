@@ -9,5 +9,6 @@ public interface RecyclerViewInterface {
 
     void onItemClickSearch(int position);
     void onItemClickWeather(int position);
-    void onItemClickCategory(int pos);
+    void onItemClickCategory(int position);
+
 }

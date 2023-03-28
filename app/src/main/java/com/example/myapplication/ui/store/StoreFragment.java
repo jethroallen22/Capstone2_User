@@ -115,6 +115,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     int userId = 0;
     String userName = "";
     Context context;
+    int categPos;
 
 
 
@@ -145,9 +146,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 stor_description = storeModel.getStore_description();
                 userId = bundle.getInt("user");
 
-                Glide.with(getActivity().getApplicationContext())
-                        .load(storeModel.getStore_image())
-                        .into(store_image);
+                store_image.setImageBitmap(storeModel.getBitmapImage());
                 store_name.setText(stor_name);
                 store_address.setText(stor_address);
                 store_description.setText(stor_description);
@@ -277,6 +276,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         }
                     }
                 }
+                Log.d("CategSize", String.valueOf(product_categ_list.size()));
                 productCategAdapter = new ProductCategAdapter(getActivity(), product_categ_list, StoreFragment.this);
                 rv_products.setAdapter(productCategAdapter);
                 Log.d("productCategSize", String.valueOf(product_categ_list.size()));
@@ -355,7 +355,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClick(int position) {
-
+        categPos = position;
     }
 
     @Override
@@ -370,7 +370,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickCategory(int position) {
-
+        showBottomSheetCateg(position);
     }
 
     @Override
@@ -412,6 +412,142 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         product_resto.setText(food_for_you_list.get(position).getProductRestoName());
         product_description.setText(food_for_you_list.get(position).getProductDescription());
         product_price.setText("P"+food_for_you_list.get(position).getProductPrice());
+
+        btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("QueryResult", result );
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            String success = jsonObject.getString("success");
+
+                            if (success.equals("1")){
+                                Log.d("TEMP CART INSERT", "success");
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted",Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            Log.d("TEMP CART", "catch" );
+                            Toast.makeText(getActivity().getApplicationContext(), "Catch ",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                    }
+                }){
+                    @Nullable
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("temp_productId", String.valueOf(food_for_you_list.get(position).getIdProduct()));
+                        params.put("temp_storeId", String.valueOf(food_for_you_list.get(position).getStore_idStore()));
+                        params.put("temp_usersId", String.valueOf(userId));
+                        params.put("temp_productName", food_for_you_list.get(position).getProductName());
+                        params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
+                        params.put("temp_productQuantity", String.valueOf(product_count));
+                        return params;
+                    }
+
+                };
+                //Toast.makeText(this,"Success!!!",Toast.LENGTH_SHORT).show();
+                //if(arraylist.isEmpty())
+                //orderlist.add.orderModel
+                //else
+                float tempPrice = 0;
+                Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
+//                order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
+//                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,
+//                        food_for_you_list.get(position).getProductName()));
+                Log.d("ADD TO CART: ", "AFTER ORDER_ITEM");
+                for (int i = 0 ; i < order_item_temp_list.size() ; i++){
+                    tempPrice += order_item_temp_list.get(i).getItemPrice();
+                }
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getIdProduct()));
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductPrice()));
+                Log.d("idProduct: ", String.valueOf(product_count));
+                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductName()));
+
+                order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
+                        food_for_you_list.get(position).getProductRestoImage(),food_for_you_list.get(position).getProductRestoName(),
+                        userId, order_item_temp_list));
+                Log.d("ordertemp", String.valueOf(order_item_temp_list.size()));
+                Log.d("order", String.valueOf(order_temp_list.size()));
+
+
+                RequestQueue requestQueueTempCart = Volley.newRequestQueue(getActivity().getApplicationContext());
+                requestQueueTempCart.add(stringRequest);
+
+//                Bundle bundle = new Bundle();
+////                bundle.putParcelableArrayList(order_temp_list);
+//                CartFragment fragment = new CartFragment();
+//                //bundle.putSerializable("OrderSummary", order_list);
+//                bundle.putParcelableArrayList("tempOrderItemList", (ArrayList<? extends Parcelable>) order_item_temp_list);
+//                //order.putParcelable("Order",order_list.get(position));
+//                fragment.setArguments(bundle);
+//                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        //Add count to order
+        cl_product_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (product_count >= 0 ){
+                    cl_product_minus.setClickable(true);
+                    product_count +=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+
+        //Subtract count to order
+        cl_product_minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(product_count == 0){
+                    cl_product_minus.setClickable(false);
+                }else{
+                    product_count -=1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+    }
+
+    public void showBottomSheetCateg(int position){
+        String TAG = "Bottomsheet";
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
+        View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext())
+                .inflate(
+                        R.layout.product_bottom_sheet_layout,
+                        getActivity().findViewById(R.id.product_bottomSheet_container)
+                );
+        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        product_image = bottomSheetView.findViewById(R.id.iv_product_imagee2);
+        product_name = bottomSheetView.findViewById(R.id.tv_product_namee2);
+        product_resto = bottomSheetView.findViewById(R.id.tv_product_restos);
+        product_description = bottomSheetView.findViewById(R.id.tv_product_description2);
+        product_price = bottomSheetView.findViewById(R.id.tv_product_pricee2);
+        btn_add_to_cart = bottomSheetView.findViewById(R.id.btn_add_to_cart);
+        cl_product_add = bottomSheetView.findViewById(R.id.cl_product_add);
+        cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
+        tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
+
+        //product_image.setImageResource(food_for_you_list.get(position).getProductImage());
+        product_image.setImageBitmap(product_categ_list.get(categPos).getList().get(position).getBitmapImage());
+        product_name.setText(product_categ_list.get(categPos).getList().get(position).getProductName());
+        product_resto.setText(product_categ_list.get(categPos).getList().get(position).getProductRestoName());
+        product_description.setText(product_categ_list.get(categPos).getList().get(position).getProductDescription());
+        product_price.setText("P"+product_categ_list.get(categPos).getList().get(position).getProductPrice());
 
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             @Override

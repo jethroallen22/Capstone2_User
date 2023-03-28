@@ -209,7 +209,7 @@ public class NewMoodFragment extends Fragment implements RecyclerViewInterface {
         cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
 
-        Glide.with(getActivity()).load(productModelList.get(position).getProductImage()).into(product_image);
+        product_image.setImageBitmap(productModelList.get(position).getBitmapImage());
         product_name.setText(productModelList.get(position).getProductName());
         product_resto.setText(productModelList.get(position).getProductRestoName());
         product_description.setText(productModelList.get(position).getProductDescription());

@@ -407,7 +407,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
 
         //product_image.setImageResource(food_for_you_list.get(position).getProductImage());
-        Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
+        product_image.setImageBitmap(food_for_you_list.get(position).getBitmapImage());
         product_name.setText(food_for_you_list.get(position).getProductName());
         product_resto.setText(food_for_you_list.get(position).getProductRestoName());
         product_description.setText(food_for_you_list.get(position).getProductDescription());

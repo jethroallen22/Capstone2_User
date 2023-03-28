@@ -379,6 +379,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 for (int i = 0 ; i < weather_list.size() ; i++){
                     Log.d("WeatherModel", weather_list.get(i).getProductName());
                 }
+                Collections.shuffle(weather_list);
                 weatherAdapter = new WeatherAdapter(getActivity(),weather_list,homeFragment);
                 rv_weather.setAdapter(weatherAdapter);
             }
@@ -396,6 +397,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"api.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("StoreResponse", String.valueOf(response));
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectRec1 = response.getJSONObject(i);
@@ -406,12 +408,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String r_location = jsonObjectRec1.getString("storeLocation");
                         String r_category = jsonObjectRec1.getString("storeCategory");
                         float r_rating = (float) jsonObjectRec1.getDouble("storeRating");
-                        int r_popularity = jsonObjectRec1.getInt("storePopularity");
                         String r_open = jsonObjectRec1.getString("storeStartTime");
                         String r_close = jsonObjectRec1.getString("storeEndTime");
 
                         StoreModel rec = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
+                                (float) r_rating, r_open, r_close);
                         SearchModel searchModel = new SearchModel(r_image, r_name, r_category);
                         searchModelList.add(searchModel);
                         home_store_rec_list.add(rec);
@@ -422,8 +423,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    Log.d("StoreSize", String.valueOf(home_store_rec_list.size()));
                 }
                 Collections.shuffle(home_store_rec_list);
+
                 homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list, homeFragment);
                 rv_home_store_rec.setAdapter(homeStoreRecAdapter);
 
@@ -451,12 +454,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String r_location = jsonObject.getString("storeLocation");
                         String r_category = jsonObject.getString("storeCategory");
                         float r_rating = (float) jsonObject.getDouble("storeRating");
-                        int r_popularity = jsonObject.getInt("storePopularity");
                         String r_open = jsonObject.getString("storeStartTime");
                         String r_close = jsonObject.getString("storeEndTime");
 
                         StoreModel store2 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_popularity, r_open, r_close);
+                                (float) r_rating, r_open, r_close);
                         home_store_rec_list2.add(store2);
 
                     } catch (JSONException e) {
@@ -497,9 +499,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         JSONObject jsonObject = response.getJSONObject(i);
                         int store_idStore = jsonObject.getInt("store_idStore");
                         for (int j = 0 ; j < home_store_rec_list.size() ; j++){
-                            if(home_store_rec_list.get(j).getStore_id() == store_idStore)
+                            if(home_store_rec_list.get(j).getStore_id() == store_idStore) {
+                                Log.d("StorePopuMatch", "Match");
                                 home_pop_store_list.add(home_store_rec_list.get(j));
+                            }
                         }
+                        Log.d("StorePopuSize", String.valueOf(home_pop_store_list.size()));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -556,6 +561,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("FoodResponseLength", String.valueOf(response.length()));
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
@@ -574,8 +580,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
                         ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,
                                 productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                        Log.d("FoodModel", String.valueOf(foodfyModel));
                         food_for_you_list.add(foodfyModel);
-
+                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
                         SearchModel searchModel = new SearchModel(productImage, productName, productTag);
                         searchModelList.add(searchModel);
                         //list.add(productName);
@@ -583,6 +590,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
+                    Collections.shuffle(food_for_you_list);
                     homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,homeFragment);
                     rv_food_for_you.setAdapter(homeFoodForYouAdapter);
                 }
@@ -705,7 +714,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
 
-        Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
+        //Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
+        product_image.setImageBitmap(food_for_you_list.get(position).getBitmapImage());
         product_name.setText(food_for_you_list.get(position).getProductName());
         product_resto.setText(food_for_you_list.get(position).getProductRestoName());
         product_description.setText(food_for_you_list.get(position).getProductDescription());
@@ -818,7 +828,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
 
-        Glide.with(getActivity()).load(weather_list.get(position).getProductImage()).into(product_image);
+        product_image.setImageBitmap(weather_list.get(position).getBitmapImage());
         product_name.setText(weather_list.get(position).getProductName());
         product_resto.setText(weather_list.get(position).getProductRestoName());
         product_description.setText(weather_list.get(position).getProductDescription());

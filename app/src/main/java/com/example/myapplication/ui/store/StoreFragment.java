@@ -171,11 +171,9 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
         rv_products = root.findViewById(R.id.rv_products);
         products_list = new ArrayList<>();
-        productAdapter = new ProductAdapter(getActivity(), products_list, StoreFragment.this);
-        rv_products.setAdapter(productAdapter);
-        rv_products.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        rv_products.setHasFixedSize(true);
-        rv_products.setNestedScrollingEnabled(false);
+//        productAdapter = new ProductAdapter(getActivity(), products_list, StoreFragment.this);
+//        rv_products.setAdapter(productAdapter);
+
         requestQueueProd = Singleton.getsInstance(getActivity()).getRequestQueue();
         SendtoDb(stor_id);
 
@@ -279,6 +277,9 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 Log.d("CategSize", String.valueOf(product_categ_list.size()));
                 productCategAdapter = new ProductCategAdapter(getActivity(), product_categ_list, StoreFragment.this);
                 rv_products.setAdapter(productCategAdapter);
+                rv_products.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+                rv_products.setHasFixedSize(true);
+                rv_products.setNestedScrollingEnabled(false);
                 Log.d("productCategSize", String.valueOf(product_categ_list.size()));
                 for(int i = 0 ; i < product_categ_list.size() ; i++){
                     Log.d("categ", product_categ_list.get(i).getCateg());
@@ -356,6 +357,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     @Override
     public void onItemClick(int position) {
         categPos = position;
+        Log.d("clickONITEM:", String.valueOf(categPos));
     }
 
     @Override
@@ -541,7 +543,17 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         cl_product_add = bottomSheetView.findViewById(R.id.cl_product_add);
         cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
+//        for (int i = 0 ; i < product_categ_list.size() ; i++){
+////            for(int j = 0 ; j < product_categ_list.get(i).getList().size() ; j++){
+////                if(product_categ_list.get(i).getCateg().equals( product_categ_list.get(i).getList().get(j).getProductTag())){
+////                    categPos = i;
+////                }
+////            }
+//            if(product_categ_list.get(i).getCateg().equals( product_categ_list.get(i).getList().get(position).getProductTag()))
+//                    categPos = i;
+//        }
 
+        Log.d("clickClick", String.valueOf(categPos));
         //product_image.setImageResource(food_for_you_list.get(position).getProductImage());
         product_image.setImageBitmap(product_categ_list.get(categPos).getList().get(position).getBitmapImage());
         product_name.setText(product_categ_list.get(categPos).getList().get(position).getProductName());

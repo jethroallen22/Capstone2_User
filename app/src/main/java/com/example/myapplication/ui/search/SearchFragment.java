@@ -122,13 +122,23 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
 
         /////////////////////////////////////
         if (getSearchQuery.length()>0){
-            for (int i = 0 ; i < searchModelList.size() ; i++){
-                if (searchModelList.get(i).getSearchName().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
-                        searchModelList.get(i).getSearchTag().toLowerCase().contains(getSearchQuery.toLowerCase())){
-                    SearchModel searchModel = new SearchModel(searchModelList.get(i).getSearchImage(),searchModelList.get(i).getSearchName(),searchModelList.get(i).getSearchTag());
+            for (int i = 0 ; i < productModelList.size() ; i++){
+                if (productModelList.get(i).getProductName().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
+                        productModelList.get(i).getProductTag().toLowerCase().contains(getSearchQuery.toLowerCase())){
+                    SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
                     tempSearchModelList.add(searchModel);
                 }
             }
+            for (int i = 0 ; i < storeModelList.size() ; i++){
+                if (storeModelList.get(i).getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
+                        storeModelList.get(i).getStore_category().toLowerCase().contains(getSearchQuery.toLowerCase())){
+                    SearchModel searchModel = new SearchModel(storeModelList.get(i).getStore_image(),storeModelList.get(i).getStore_name(),storeModelList.get(i).getStore_category());
+                    tempSearchModelList.add(searchModel);
+                }
+            }
+            Log.d("FirstSearch", String.valueOf(tempSearchModelList.size()));
+            for (int i = 0 ; i < tempSearchModelList.size() ; i++)
+                Log.d("FirstSearchItems", tempSearchModelList.get(i).getSearchName());
             searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
             rv_search.setAdapter(searchAdapter);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -148,10 +158,24 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
             public boolean onQueryTextChange(String newText) {
                 tempSearchModelList = new ArrayList<>();
                 if(newText.length()>0){
-                    for (int i = 0; i < searchModelList.size() ; i++){
-                        if (searchModelList.get(i).getSearchName().toLowerCase().contains(newText.toLowerCase()) ||
-                                searchModelList.get(i).getSearchTag().toLowerCase().contains(newText.toLowerCase())){
-                            SearchModel searchModel = new SearchModel(searchModelList.get(i).getSearchImage(),searchModelList.get(i).getSearchName(),searchModelList.get(i).getSearchTag());
+//                    for (int i = 0; i < searchModelList.size() ; i++){
+//                        if (searchModelList.get(i).getSearchName().toLowerCase().contains(newText.toLowerCase()) ||
+//                                searchModelList.get(i).getSearchTag().toLowerCase().contains(newText.toLowerCase())){
+//                            SearchModel searchModel = new SearchModel(searchModelList.get(i).getSearchImage(),searchModelList.get(i).getSearchName(),searchModelList.get(i).getSearchTag());
+//                            tempSearchModelList.add(searchModel);
+//                        }
+//                    }
+                    for (int i = 0 ; i < productModelList.size() ; i++){
+                        if (productModelList.get(i).getProductName().toLowerCase().contains(newText.toLowerCase()) ||
+                                productModelList.get(i).getProductTag().toLowerCase().contains(newText.toLowerCase())){
+                            SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
+                            tempSearchModelList.add(searchModel);
+                        }
+                    }
+                    for (int i = 0 ; i < storeModelList.size() ; i++){
+                        if (storeModelList.get(i).getStore_name().toLowerCase().contains(newText.toLowerCase()) ||
+                                storeModelList.get(i).getStore_category().toLowerCase().contains(newText.toLowerCase())){
+                            SearchModel searchModel = new SearchModel(storeModelList.get(i).getStore_image(),storeModelList.get(i).getStore_name(),storeModelList.get(i).getStore_category());
                             tempSearchModelList.add(searchModel);
                         }
                     }
@@ -160,7 +184,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
                     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
                     rv_search.setLayoutManager(layoutManager);
                 } else{
-                    searchAdapter = new SearchAdapter(getActivity(),searchModelList, SearchFragment.this);
+                    searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
                     rv_search.setAdapter(searchAdapter);
                     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
                     rv_search.setLayoutManager(layoutManager);
@@ -220,7 +244,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
         //Scan product list if query exists
         for (int k = 0 ; k < productModelList.size() ; k++){
             if(tempSearchModelList.get(position).getSearchName().toLowerCase().compareTo(productModelList.get(k).getProductName().toLowerCase()) == 0){
-                showBottomSheet(position);
+                showBottomSheet(k);
             }
         }
     }

@@ -36,12 +36,11 @@ public class ProductCategAdapter extends RecyclerView.Adapter<ProductCategAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ProductCategAdapter.ViewHolder holder, int position) {
-        holder.tv_categ.setText(list.get(position).getCateg());
-        ProductAdapter productAdapter = new ProductAdapter(context,list.get(position).getList(),recyclerViewInterface);
+        ProductCategModel productCategModel = list.get(position);
+        holder.tv_categ.setText(productCategModel.getCateg());
+
+        ProductAdapter productAdapter = new ProductAdapter(context,productCategModel.getList(),recyclerViewInterface);
         holder.rv_product.setAdapter(productAdapter);
-        holder.rv_product.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        holder.rv_product.setHasFixedSize(true);
-        holder.rv_product.setNestedScrollingEnabled(false);
     }
 
     @Override
@@ -57,6 +56,7 @@ public class ProductCategAdapter extends RecyclerView.Adapter<ProductCategAdapte
 
             tv_categ = itemView.findViewById(R.id.tv_categ);
             rv_product = itemView.findViewById(R.id.rv_product);
+            rv_product.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
         }
     }
 }

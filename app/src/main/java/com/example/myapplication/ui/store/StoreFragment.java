@@ -214,12 +214,12 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         return root;
     }
 
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
 
     public void extractFoodforyou(){
         StoreFragment storeFragment = this;

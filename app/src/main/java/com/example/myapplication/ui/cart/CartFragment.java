@@ -81,7 +81,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         temp_store_list = new ArrayList<>();
         Bundle bundle = getArguments();
         if(bundle != null) {
-            temp_store_list = (List<StoreModel>) bundle.getSerializable("storeList");
+//            temp_store_list = (List<StoreModel>) bundle.getSerializable("storeList");
             userID = bundle.getInt("userID");
             Log.d("USERID", String.valueOf(userID));
         }

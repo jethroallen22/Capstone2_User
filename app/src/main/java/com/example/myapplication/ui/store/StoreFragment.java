@@ -191,14 +191,22 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         binding.fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("ON CLICK", "SUCCESS");
-                Bundle bundle2 = new Bundle();
-                CartFragment fragment2 = new CartFragment();
-                bundle2.putSerializable("tempOrderList", (Serializable) order_temp_list);
-                fragment2.setArguments(bundle2);
-                Log.d("Bundling tempOrderItemList", String.valueOf(bundle2.size()));
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment2).commit();
-                Log.d("END" , "END");
+//                Log.d("ON CLICK", "SUCCESS");
+//                Bundle bundle2 = new Bundle();
+//                CartFragment fragment2 = new CartFragment();
+//                bundle2.putSerializable("tempOrderList", (Serializable) order_temp_list);
+//                fragment2.setArguments(bundle2);
+//                Log.d("Bundling tempOrderItemList", String.valueOf(bundle2.size()));
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment2).commit();
+//                Log.d("END" , "END");
+
+                Bundle bundle = new Bundle();
+                CartFragment fragment = new CartFragment();
+
+                bundle.putInt("userID", userId);
+                fragment.setArguments(bundle);
+                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         });
 

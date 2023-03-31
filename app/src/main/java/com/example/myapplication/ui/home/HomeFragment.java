@@ -425,6 +425,39 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     }
                     Log.d("StoreSize", String.valueOf(home_store_rec_list.size()));
                 }
+                JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistorepopu.php", null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("ResponseJson", String.valueOf(response));
+                        for (int i=0; i < response.length(); i++){
+                            Log.d("PopuLength", String.valueOf(response.length()));
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                int store_idStore = jsonObject.getInt("store_idStore");
+                                for (int j = 0 ; j < home_store_rec_list.size() ; j++){
+                                    if(home_store_rec_list.get(j).getStore_id() == store_idStore) {
+                                        Log.d("StorePopuMatch", "Match");
+                                        home_pop_store_list.add(home_store_rec_list.get(j));
+                                    }
+                                }
+                                Log.d("Popu", String.valueOf(home_pop_store_list.size()));
+                                Log.d("StorePopuSize", String.valueOf(home_pop_store_list.size()));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            homeStorePopularAdapter = new HomeStorePopularAdapter( home_pop_store_list,getActivity(), homeFragment);
+                            rv_home_pop_store.setAdapter(homeStorePopularAdapter);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+                requestQueuePopu.add(jsonArrayRequest3);
+
                 Collections.shuffle(home_store_rec_list);
 
                 homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list, homeFragment);
@@ -490,36 +523,38 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //Popular Recommendation Function
     public void extractPopular(){
-        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistorepopu.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Log.d("ResponseJson", String.valueOf(response));
-                for (int i=0; i < response.length(); i++){
-                    try {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        int store_idStore = jsonObject.getInt("store_idStore");
-                        for (int j = 0 ; j < home_store_rec_list.size() ; j++){
-                            if(home_store_rec_list.get(j).getStore_id() == store_idStore) {
-                                Log.d("StorePopuMatch", "Match");
-                                home_pop_store_list.add(home_store_rec_list.get(j));
-                            }
-                        }
-                        Log.d("StorePopuSize", String.valueOf(home_pop_store_list.size()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    homeStorePopularAdapter = new HomeStorePopularAdapter( home_pop_store_list,getActivity(), homeFragment);
-                    rv_home_pop_store.setAdapter(homeStorePopularAdapter);
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueuePopu.add(jsonArrayRequest3);
+//        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistorepopu.php", null, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                Log.d("ResponseJson", String.valueOf(response));
+//                for (int i=0; i < response.length(); i++){
+//                    Log.d("PopuLength", String.valueOf(response.length()));
+//                    try {
+//                        JSONObject jsonObject = response.getJSONObject(i);
+//                        int store_idStore = jsonObject.getInt("store_idStore");
+//                        for (int j = 0 ; j < home_store_rec_list.size() ; j++){
+//                            if(home_store_rec_list.get(j).getStore_id() == store_idStore) {
+//                                Log.d("StorePopuMatch", "Match");
+//                                home_pop_store_list.add(home_store_rec_list.get(j));
+//                            }
+//                        }
+//                        Log.d("Popu", String.valueOf(home_pop_store_list.size()));
+//                        Log.d("StorePopuSize", String.valueOf(home_pop_store_list.size()));
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    homeStorePopularAdapter = new HomeStorePopularAdapter( home_pop_store_list,getActivity(), homeFragment);
+//                    rv_home_pop_store.setAdapter(homeStorePopularAdapter);
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        requestQueuePopu.add(jsonArrayRequest3);
 
     }
     //Category Function

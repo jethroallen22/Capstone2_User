@@ -190,8 +190,6 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
             public void onItemClick(int position) {
                 if(order.getOrderStatus().equals("pending")) {
                     Log.d("orderStatusIFSTMNT", "Pending");
-                    order.getOrderItem_list().remove(position);
-                    orderItemsAdapter.notifyItemRemoved(position);
                     deleteProduct(position);
                 }else if(order.getOrderStatus().equals("preparing")){
                     Log.d("orderStatusIFSTMNT", "Preparing");
@@ -331,8 +329,13 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
         }){
             protected Map<String, String> getParams(){
                 Map<String, String> paramV = new HashMap<>();
+                for(int i = 0 ; i < order.getOrderItem_list().size() ; i++)
+                    Log.d("ProductList", "ID: " + order.getOrderItem_list().get(i).getIdProduct() + " " + order.getOrderItem_list().get(i).getProductName());
+                Log.d("ProductNameDelete", "ID: " + order.getOrderItem_list().get(position).getIdProduct() + " " + order.getOrderItem_list().get(position).getProductName());
                 paramV.put("idProduct", String.valueOf(order.getOrderItem_list().get(position).getIdProduct()));
                 paramV.put("idOrder", String.valueOf(order.getIdOrder()));
+                order.getOrderItem_list().remove(position);
+                orderItemsAdapter.notifyItemRemoved(position);
                 return paramV;
             }
         };

@@ -421,7 +421,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String result) {
-                        Log.d("QueryResult", result );
+                        Log.d("1 ", result );
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             String success = jsonObject.getString("success");
@@ -452,46 +452,14 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         params.put("temp_productName", food_for_you_list.get(position).getProductName());
                         params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
                         params.put("temp_productQuantity", String.valueOf(product_count));
+                        params.put("temp_totalProductPrice", String.valueOf(product_count * food_for_you_list.get(position).getProductPrice()));
+                        product_count = 0;
                         return params;
                     }
 
                 };
-                //Toast.makeText(this,"Success!!!",Toast.LENGTH_SHORT).show();
-                //if(arraylist.isEmpty())
-                //orderlist.add.orderModel
-                //else
-                float tempPrice = 0;
-                Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
-//                order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
-//                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,
-//                        food_for_you_list.get(position).getProductName()));
-                Log.d("ADD TO CART: ", "AFTER ORDER_ITEM");
-                for (int i = 0 ; i < order_item_temp_list.size() ; i++){
-                    tempPrice += order_item_temp_list.get(i).getItemPrice();
-                }
-                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getIdProduct()));
-                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductPrice()));
-                Log.d("idProduct: ", String.valueOf(product_count));
-                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductName()));
-
-                order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
-                        food_for_you_list.get(position).getProductRestoImage(),food_for_you_list.get(position).getProductRestoName(),
-                        userId, order_item_temp_list));
-                Log.d("ordertemp", String.valueOf(order_item_temp_list.size()));
-                Log.d("order", String.valueOf(order_temp_list.size()));
-
-
                 RequestQueue requestQueueTempCart = Volley.newRequestQueue(getActivity().getApplicationContext());
                 requestQueueTempCart.add(stringRequest);
-
-//                Bundle bundle = new Bundle();
-////                bundle.putParcelableArrayList(order_temp_list);
-//                CartFragment fragment = new CartFragment();
-//                //bundle.putSerializable("OrderSummary", order_list);
-//                bundle.putParcelableArrayList("tempOrderItemList", (ArrayList<? extends Parcelable>) order_item_temp_list);
-//                //order.putParcelable("Order",order_list.get(position));
-//                fragment.setArguments(bundle);
-//                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
                 bottomSheetDialog.dismiss();
             }
         });
@@ -567,7 +535,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String result) {
-                        Log.d("QueryResult", result );
+                        Log.d("1 ", result );
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             String success = jsonObject.getString("success");
@@ -592,52 +560,20 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> params = new HashMap<>();
-                        params.put("temp_productId", String.valueOf(food_for_you_list.get(position).getIdProduct()));
-                        params.put("temp_storeId", String.valueOf(food_for_you_list.get(position).getStore_idStore()));
+                        params.put("temp_productId", String.valueOf(product_categ_list.get(categPos).getList().get(position).getIdProduct()));
+                        params.put("temp_storeId", String.valueOf(product_categ_list.get(categPos).getList().get(position).getStore_idStore()));
                         params.put("temp_usersId", String.valueOf(userId));
-                        params.put("temp_productName", food_for_you_list.get(position).getProductName());
-                        params.put("temp_productPrice", String.valueOf(food_for_you_list.get(position).getProductPrice()));
+                        params.put("temp_productName", product_categ_list.get(categPos).getList().get(position).getProductName());
+                        params.put("temp_productPrice", String.valueOf(product_categ_list.get(categPos).getList().get(position).getProductPrice()));
                         params.put("temp_productQuantity", String.valueOf(product_count));
+                        params.put("temp_totalProductPrice", String.valueOf(product_count * product_categ_list.get(categPos).getList().get(position).getProductPrice()));
+                        product_count = 0;
                         return params;
                     }
 
                 };
-                //Toast.makeText(this,"Success!!!",Toast.LENGTH_SHORT).show();
-                //if(arraylist.isEmpty())
-                //orderlist.add.orderModel
-                //else
-                float tempPrice = 0;
-                Log.d("ADD TO CART: ", "BEFORE ORDER_ITEM");
-//                order_item_temp_list.add(new OrderItemModel(food_for_you_list.get(position).getIdProduct(), food_for_you_list.get(position).getStore_idStore(),
-//                        food_for_you_list.get(position).getProductPrice()*product_count, product_count,
-//                        food_for_you_list.get(position).getProductName()));
-                Log.d("ADD TO CART: ", "AFTER ORDER_ITEM");
-                for (int i = 0 ; i < order_item_temp_list.size() ; i++){
-                    tempPrice += order_item_temp_list.get(i).getItemPrice();
-                }
-                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getIdProduct()));
-                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductPrice()));
-                Log.d("idProduct: ", String.valueOf(product_count));
-                Log.d("idProduct: ", String.valueOf(food_for_you_list.get(position).getProductName()));
-
-                order_temp_list.add(new OrderModel(6,tempPrice,"preparing",food_for_you_list.get(position).getStore_idStore(),
-                        food_for_you_list.get(position).getProductRestoImage(),food_for_you_list.get(position).getProductRestoName(),
-                        userId, order_item_temp_list));
-                Log.d("ordertemp", String.valueOf(order_item_temp_list.size()));
-                Log.d("order", String.valueOf(order_temp_list.size()));
-
-
                 RequestQueue requestQueueTempCart = Volley.newRequestQueue(getActivity().getApplicationContext());
                 requestQueueTempCart.add(stringRequest);
-
-//                Bundle bundle = new Bundle();
-////                bundle.putParcelableArrayList(order_temp_list);
-//                CartFragment fragment = new CartFragment();
-//                //bundle.putSerializable("OrderSummary", order_list);
-//                bundle.putParcelableArrayList("tempOrderItemList", (ArrayList<? extends Parcelable>) order_item_temp_list);
-//                //order.putParcelable("Order",order_list.get(position));
-//                fragment.setArguments(bundle);
-//                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
                 bottomSheetDialog.dismiss();
             }
         });

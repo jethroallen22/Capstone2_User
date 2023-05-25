@@ -39,6 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
+import com.example.myapplication.adapters.HomeDealsAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
@@ -48,6 +49,7 @@ import com.example.myapplication.adapters.WeatherAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
+import com.example.myapplication.models.DealsModel;
 import com.example.myapplication.models.HomeCategoryModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
@@ -82,9 +84,8 @@ import java.util.Map;
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2;
+    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2, requestQueueDeals;
 
-    //School IP
     private static String JSON_URL;
     private IPModel ipModel;
 
@@ -105,6 +106,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     RecyclerView rv_home_store_rec2;
     List<StoreModel> home_store_rec_list2;
     HomeStoreRecAdapter2 homeStoreRecAdapter2;
+
+    //Store Deals Recycler View
+    RecyclerView rv_deals;
+    List<DealsModel> home_deals_list;
+    HomeDealsAdapter homeDealsAdapter;
+
 
     // Store Popular Recycler View
     RecyclerView rv_home_pop_store;
@@ -218,6 +225,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         tv_weather = root.findViewById(R.id.tv_weather);
         tv_weather.setText("Feeling " + weather + "?");
         extractWeather();
+
+        rv_deals = root.findViewById(R.id.rv_deals);
+        home_deals_list = new ArrayList<>();
+        requestQueueDeals = Singleton.getsInstance(getActivity()).getRequestQueue();
+        rv_deals.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+        rv_deals.setHasFixedSize(true);
+        rv_deals.setNestedScrollingEnabled(false);
+        extractDeals();
 
         //STORE REC 1
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
@@ -392,6 +407,46 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueueFood2.add(jsonArrayRequest7);
     }
 
+    public void extractDeals(){
+        JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apideals.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("DealsResponse", String.valueOf(response));
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int dealId = jsonObject.getInt("dealsId");
+                        int storeId = jsonObject.getInt("storeId");
+                        String type = jsonObject.getString("type");
+                        int percentage = jsonObject.getInt("percentage");
+                        String convFee = jsonObject.getString("convFee");
+                        String storeImage = jsonObject.getString("storeImage");
+                        String storeName = jsonObject.getString("storeName");
+
+                        Log.d("Dealings", String.valueOf(dealId));
+
+                        DealsModel deal = new DealsModel(dealId,storeId,type,percentage,convFee,
+                                storeImage, storeName);
+                        home_deals_list.add(deal);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d("DealList", String.valueOf(home_deals_list.size()));
+
+                homeDealsAdapter = new HomeDealsAdapter(getActivity(),home_deals_list,homeFragment);
+                rv_deals.setAdapter(homeDealsAdapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        requestQueueDeals.add(jsonArrayRequestDeals);
+    }
+
     //Store Recommendation for RecView 1 and 2 Function
     public void extractDataRec1(){
         JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"api.php", null, new Response.Listener<JSONArray>() {
@@ -457,9 +512,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     }
                 });
                 requestQueuePopu.add(jsonArrayRequest3);
-
                 Collections.shuffle(home_store_rec_list);
-
                 homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list, homeFragment);
                 rv_home_store_rec.setAdapter(homeStoreRecAdapter);
 

@@ -82,6 +82,7 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
         outerRequest = Singleton.getsInstance(getActivity()).getRequestQueue();
         innerRequest = Singleton.getsInstance(getActivity()).getRequestQueue();
         //extractOrders();
+
         JsonArrayRequest jsonArrayRequest7= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderget.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -116,7 +117,7 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
                                             JSONObject jsonObject8 = response.getJSONObject(i);
                                             Log.d("OrderID", String.valueOf(idOrder));
                                             Log.d("OrderItemOrderID", String.valueOf(jsonObject8.getInt("idOrder")));
-                                            if (jsonObject8.getInt("idOrder") == idOrder) {
+                                            if (jsonObject8.getInt("idOrder") == idOrder && jsonObject8.getString("itemStatus") == "ordered") {
                                                 int idProduct2 = jsonObject8.getInt("idProduct");
                                                 int idStore2 = jsonObject8.getInt("idStore");
                                                 int idUser2 = jsonObject8.getInt("idUser");

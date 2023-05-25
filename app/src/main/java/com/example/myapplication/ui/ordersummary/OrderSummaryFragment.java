@@ -334,6 +334,9 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                 Log.d("ProductNameDelete", "ID: " + order.getOrderItem_list().get(position).getIdProduct() + " " + order.getOrderItem_list().get(position).getProductName());
                 paramV.put("idProduct", String.valueOf(order.getOrderItem_list().get(position).getIdProduct()));
                 paramV.put("idOrder", String.valueOf(order.getIdOrder()));
+                paramV.put("totalAmount", String.valueOf(order.getOrderItem_list().get(position).getTotalPrice()));
+                paramV.put("userId", String.valueOf(order.getUsers_id()));
+                paramV.put("itemStatus", "cancelled");
                 order.getOrderItem_list().remove(position);
                 orderItemsAdapter.notifyItemRemoved(position);
                 return paramV;

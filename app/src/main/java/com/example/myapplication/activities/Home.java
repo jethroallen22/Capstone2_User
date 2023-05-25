@@ -39,6 +39,7 @@ import com.example.myapplication.ui.moods.NewMoodFragment;
 import com.example.myapplication.ui.moods.OldMoodFragment;
 import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.notifications.NotificationsFragment;
+import com.example.myapplication.ui.payment.PaymentFragment;
 import com.example.myapplication.ui.profile.ProfileFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.snackbar.Snackbar;
@@ -84,6 +85,7 @@ public class Home extends AppCompatActivity {
     String image, weather;
     Handler root;
     Dialog filterDialog;
+    float wallet;
 
 
     @Override
@@ -102,6 +104,7 @@ public class Home extends AppCompatActivity {
             id = intent.getIntExtra("id",0);
             image = intent.getStringExtra("image");
             weather = intent.getStringExtra("weather");
+            wallet = intent.getFloatExtra("wallet", 0.0F);
             Log.d("HOME FRAG name", name + id + image);
         } else {
             Log.d("HOME FRAG name", "FAIL");
@@ -131,6 +134,20 @@ public class Home extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        navigationView.getMenu().getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem item) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", id);
+                bundle.putDouble("wallet", wallet);
+                PaymentFragment fragment = new PaymentFragment();
+                fragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                Log.d("WalletHome", String.valueOf(wallet));
+                return false;
+            }
+        });
 
         //LOGOUT!!!
         navigationView.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {

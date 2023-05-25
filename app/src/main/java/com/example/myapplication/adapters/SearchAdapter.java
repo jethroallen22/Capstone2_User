@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.models.SearchModel;
@@ -56,8 +55,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
-            iv_search_item_img = itemView.findViewById(R.id.iv_search_item_img);
-            tv_search_item_name = itemView.findViewById(R.id.tv_search_item_name);
+            iv_search_item_img = itemView.findViewById(R.id.iv_transac_icon);
+            tv_search_item_name = itemView.findViewById(R.id.tv_name);
             tv_search_item_tag = itemView.findViewById(R.id.tv_search_item_tag);
 
             itemView.setOnClickListener(new View.OnClickListener() {

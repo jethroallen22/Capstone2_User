@@ -114,6 +114,7 @@ public class Login extends AppCompatActivity {
                     int id = 0;
                     String name = "";
                     String image = "";
+                    float wallet = 0.0F;
 
                     if (success.equals("1")){
                         for (int i = 0; i < jsonArray.length(); i++){
@@ -124,6 +125,7 @@ public class Login extends AppCompatActivity {
                             String email = object.getString("email").trim();
                             id = object.getInt("id");
                             image = object.getString("image");
+                            wallet = Float.parseFloat(String.valueOf(object.getDouble("wallet")));
 
                             Toast.makeText(Login.this, "Success Login. \nYour Name : "
                                     + name + "\nYour Email : "
@@ -148,6 +150,7 @@ public class Login extends AppCompatActivity {
                         intent.putExtra("name",name);
                         intent.putExtra("id",id);
                         intent.putExtra("image",image);
+                        intent.putExtra("wallet", wallet);
                         intent.putExtra("weather", weather);
                         Log.d("NAME LOGIN: " , name);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);

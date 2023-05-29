@@ -68,7 +68,7 @@ public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.View
                         int pos = getAdapterPosition();
 
                         if (pos != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClickStoreRec(pos);
+                            recyclerViewInterface.onItemClickDeals(pos);
                         }
                     }
                 }

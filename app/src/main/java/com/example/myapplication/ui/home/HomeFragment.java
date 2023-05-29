@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -727,7 +728,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickStoreRec(int position) {
-        Log.d("CLICKPOPU", "Success");
+        Log.d("CLICKSTOREREC", "Success");
         Bundle bundle = new Bundle();
 //        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
 //        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
@@ -741,6 +742,32 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+    }
+
+    @Override
+    public void onItemClickDeals(int position) {
+        Log.d("CLICKDEALS", "Success");
+        Bundle bundle = new Bundle();
+//        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
+//        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
+//        bundle.putString("StoreName", home_store_rec_list.get(position).getStore_name());
+//        bundle.putString("StoreAddress", home_store_rec_list.get(position).getStore_location());
+//        bundle.putString("StoreCategory", home_store_rec_list.get(position).getStore_category());
+//        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
+        DealsModel dealsModel = home_deals_list.get(position);
+        bundle.putParcelable("DealsClass", dealsModel);
+
+        for(int i = 0 ; i < home_store_rec_list.size() ; i++){
+            if(home_store_rec_list.get(i).getStore_id() == home_deals_list.get(position).getStoreId()){
+                StoreModel storeModel = home_store_rec_list.get(i);
+                bundle.putParcelable("StoreClass", storeModel);
+                bundle.putParcelable("deals", home_deals_list.get(position));
+                bundle.putInt("user", userId);
+                StoreFragment fragment = new StoreFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        }
     }
 
     @Override

@@ -2,9 +2,13 @@ package com.example.myapplication.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Base64;
 
-public class DealsModel {
+import androidx.annotation.NonNull;
+
+public class DealsModel implements Parcelable {
     int dealsId;
     int storeId;
     String type;
@@ -23,6 +27,28 @@ public class DealsModel {
         this.storeImage = storeImage;
         this.storeName = storeName;
     }
+
+    protected DealsModel(Parcel in) {
+        dealsId = in.readInt();
+        storeId = in.readInt();
+        type = in.readString();
+        percentage = in.readInt();
+        convFee = in.readString();
+        storeImage = in.readString();
+        storeName = in.readString();
+    }
+
+    public static final Creator<DealsModel> CREATOR = new Creator<DealsModel>() {
+        @Override
+        public DealsModel createFromParcel(Parcel in) {
+            return new DealsModel(in);
+        }
+
+        @Override
+        public DealsModel[] newArray(int size) {
+            return new DealsModel[size];
+        }
+    };
 
     public int getDealsId() {
         return dealsId;
@@ -76,5 +102,21 @@ public class DealsModel {
         Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
         return bitmap;
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(dealsId);
+        dest.writeInt(storeId);
+        dest.writeString(type);
+        dest.writeInt(percentage);
+        dest.writeString(convFee);
+        dest.writeString(storeImage);
+        dest.writeString(storeName);
+    }
 }
 

@@ -35,6 +35,8 @@ android {
         abortOnError false
     }
 
+//    tasks.packageDebugResources.doNotTrackState()
+
 }
 
 configurations.implementation {

@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,10 +65,9 @@ public class CashInFragment extends Fragment {
                             @Override
                             public void onResponse(String response) {
                                 try {
-
+                                    Log.d("On Res", "inside on res");
                                 } catch (Throwable e) {
                                     Log.d("Catch", String.valueOf(e));
-                                    //Toast.makeText(Login.this, "Invalid Email and/or Password", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }, new Response.ErrorListener() {
@@ -87,7 +87,11 @@ public class CashInFragment extends Fragment {
                     }
                 };
                 queue.add(stringRequest);
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", id);
+                bundle.putDouble("wallet", wallet);
                 PaymentFragment fragment = new PaymentFragment();
+                fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         });

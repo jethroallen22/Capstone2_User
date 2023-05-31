@@ -975,7 +975,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         SeekBar sb_budget;
         Button btn_confirm_filter;
         ImageView close_modal;
+        TextView tv_set_budget;
 
+        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
         sb_budget = filterDialog.findViewById(R.id.sb_budget);
         btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
         close_modal = filterDialog.findViewById(R.id.close_modal);
@@ -995,6 +997,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 filterValue = progress;
+                String budget = "₱ " + filterValue;
+                Log.d("budget", String.valueOf(filterValue));
+                Log.d("budget", budget);
 
                 btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1008,6 +1013,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         filterDialog.dismiss();
                     }
                 });
+
+                tv_set_budget.setText(budget);
+                Log.d("budget", tv_set_budget.getText().toString());
 
             }
 

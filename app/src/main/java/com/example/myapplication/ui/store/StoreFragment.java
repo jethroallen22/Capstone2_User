@@ -43,6 +43,7 @@ import com.example.myapplication.adapters.ProductCategAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
+import com.example.myapplication.models.DealsModel;
 import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
@@ -82,6 +83,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_address;
     public String stor_category;
     public String stor_description;
+
+    Bundle bundle;
 
     //School IP
     private static String JSON_URL;
@@ -133,7 +136,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         store_address = root.findViewById(R.id.tv_store_address);
         store_description = root.findViewById(R.id.tv_store_description);
 
-        Bundle bundle = this.getArguments();
+        bundle = this.getArguments();
 //        Log.d("Result Store: " , bundle.getParcelable("StoreClass"));
         if(bundle != null){
             if (bundle.getParcelable("StoreClass") != null){
@@ -249,6 +252,13 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    }
+                }
+
+                if  (bundle.getParcelable("deals") != null){
+                    DealsModel dealsModel = bundle.getParcelable("deals");
+                    for (int i = 0;i < food_for_you_list.size();i++){
+                        food_for_you_list.get(i).setProductPrice((food_for_you_list.get(i).getProductPrice() * (100 - dealsModel.getPercentage())) /100);
                     }
                 }
                 homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
@@ -381,6 +391,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     @Override
     public void onItemClickCategory(int position) {
         showBottomSheetCateg(position);
+    }
+
+    @Override
+    public void onItemClickDeals(int pos) {
+
     }
 
     @Override

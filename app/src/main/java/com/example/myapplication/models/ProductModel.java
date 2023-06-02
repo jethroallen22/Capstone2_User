@@ -21,7 +21,7 @@ public class ProductModel implements Parcelable {
     int productPrepTime;
     String productRestoName;
     String productRestoImage;
-
+    String productRestoCategory;
     String weather;
 
 
@@ -75,6 +75,7 @@ public class ProductModel implements Parcelable {
         productPrepTime = in.readInt();
         productRestoName = in.readString();
         productRestoImage = in.readString();
+        productRestoCategory = in.readString();
         weather = in.readString();
     }
 
@@ -178,6 +179,14 @@ public class ProductModel implements Parcelable {
         this.productRestoImage = productRestoImage;
     }
 
+    public String getProductRestoCategory() {
+        return productRestoCategory;
+    }
+
+    public void setProductRestoCategory(String productRestoCategory) {
+        this.productRestoCategory = productRestoCategory;
+    }
+
     public String getWeather() {
         return weather;
     }
@@ -210,6 +219,7 @@ public class ProductModel implements Parcelable {
         parcel.writeInt(productPrepTime);
         parcel.writeString(productRestoName);
         parcel.writeString(productRestoImage);
+        parcel.writeString(productRestoCategory);
         parcel.writeString(weather);
     }
 }

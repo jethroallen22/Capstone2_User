@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="mosibusPrimary">#7EE2DA</color>
     <color name="mosibusOffWhite">#F8F8F8</color>
+    <color name="gray">#e6e3e3</color>
+    <color name="darkGray">#d1d1d1</color>
 </resources>

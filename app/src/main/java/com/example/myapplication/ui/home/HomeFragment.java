@@ -68,7 +68,10 @@ import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.example.myapplication.ui.weather.WeatherFragment;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -77,6 +80,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -141,6 +145,19 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     Button btn_add_to_cart;
     int product_count = 0;
 
+    //Filter Bottomsheet
+
+
+    Chip chip_categ, chip_weather, chip_mood;
+    ImageView close_btn;
+    SeekBar sb_budget;
+    TextView tv_set_budget;
+    Button btn_confirm_filter;
+    List<String> chp_category_list, chp_mood_list, chp_weather_list;
+    ImageView btn_filter;
+
+
+
     //Category
     List<StoreModel> tempStoreList;
     String category;
@@ -160,6 +177,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     ImageView iv_hot, iv_cold, iv_old, iv_new, iv_mix, iv_trend;
 
+    ChipGroup chip_group;
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -181,19 +199,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
-
-//        modalInt = new ArrayList<>();
-//        modalInt.add(1);
-//        modalInt.add(2);
-//        Collections.shuffle(modalInt);
-//        for(int i = 0 ; i < modalInt.size() ; i++)
-//            Log.d("modelInt", String.valueOf(modalInt.get(i)));
-//        if(modalInt.get(0) == 1)
-//            moodModal();
-//        else if(modalInt.get(0) == 2)
-//            weatherModal();
         moodModal();
-
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
         searchModelList = new ArrayList<>();
@@ -207,7 +213,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_categ_list.add(new HomeCategoryModel(R.drawable.dinner, "Dinner"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.lamp, "Chinese"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.temple, "Japanese"));
-
 
         rv_category = root.findViewById(R.id.rv_category);
         homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(), home_categ_list, HomeFragment.this);
@@ -255,7 +260,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_store_rec_list2 = new ArrayList<>();
         extractDataRec2();
 
-
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
         rv_home_pop_store.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
@@ -295,6 +299,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
+        btn_filter = root.findViewById(R.id.btn_filter);
+        btn_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterBottomSheet();
+            }
+        });
+
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -307,21 +319,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         });
-
-        /*
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
-        builder.setContentTitle("Mosibus");
-        builder.setContentText("Order Now!");
-        builder.setSmallIcon(R.drawable.logo);
-        builder.setAutoCancel(true);
-
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
-        managerCompat.notify(1, builder.build());
-
-        NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
-        manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
-        manager.createNotificationChannel(channel);
-        */
 
         final TextView textView = binding.textHome;
         return root;
@@ -350,13 +347,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         super.onStop();
         Log.d("Stop", "Stop");
     }
-
-
-    /*@Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }*/
 
     public void extractWeather(){
         HomeFragment homeFragment = this;
@@ -1036,40 +1026,139 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            // Handle settings item click
-            //filterModal();
+    public void showFilterBottomSheet(){
+        String TAG = "Bottomsheet";
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.filter_bottom_sheet_layout,
+                        getActivity().findViewById(R.id.filter_bottomSheet_container)
+                );
+        ChipGroup cg_category, cg_mood, cg_weather;
+        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        cg_category = bottomSheetView.findViewById(R.id.cg_category);
+        cg_weather = bottomSheetView.findViewById(R.id.cg_weather);
+        cg_mood = bottomSheetView.findViewById(R.id.cg_mood);
+        close_btn = bottomSheetView.findViewById(R.id.close_btn);
+        sb_budget = bottomSheetView.findViewById(R.id.sb_budget);
+        tv_set_budget = bottomSheetView.findViewById(R.id.tv_set_budget);
+        btn_confirm_filter = bottomSheetView.findViewById(R.id.btn_confirm_filter);
 
-            return true;
+        chp_category_list = new ArrayList<>();
+        chp_mood_list = new ArrayList<>();
+        chp_mood_list = new ArrayList<>();
+
+        for(int i = 0; i < home_categ_list.size();  i++){
+            chp_category_list.add(home_categ_list.get(i).getCateg_name());
         }
-        return super.onOptionsItemSelected(item);
-    }
+        chp_mood_list = Arrays.asList("Old", "New", "Mix", "Trend");
+        chp_weather_list = Arrays.asList("Hot", "Cold");
 
-    public void filterModal(){
-        filterDialog = new Dialog(this.getContext());
-        filterDialog.setContentView(R.layout.filter_modal);
-        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        SeekBar sb_budget;
-        Button btn_confirm_filter;
-        ImageView close_modal;
-        TextView tv_set_budget;
+        List<String> category_list, mood_list, weather_list;
+        category_list = new ArrayList<>();
+        mood_list = new ArrayList<>();
+        weather_list = new ArrayList<>();
+        String mood;
 
-        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
-        sb_budget = filterDialog.findViewById(R.id.sb_budget);
-        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
-        close_modal = filterDialog.findViewById(R.id.close_modal);
-        int filterValue;
+        for(int i = 0 ; i < chp_category_list.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_category_list.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    if(chip.isSelected()){
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        category_list.remove(value);
+                    } else {
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        category_list.add(value);
+                    }
+                }
+            });
+            cg_category.addView(chip);
+        }
 
+        for(int i = 0 ; i < chp_mood_list.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_mood_list.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    mood_list.add("");
+                    if(chip.isSelected()){
+                        for (int i = 0; i < cg_mood.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_mood.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(true);
+                            }
+                        }
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        mood_list.remove(value);
+                    } else {
+                        for (int i = 0; i < cg_mood.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_mood.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(false);
+                                chip.setChipBackgroundColorResource(R.color.darkGray);
+                            }
+                        }
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        mood_list.set(0, value);
+                    }
+                }
+            });            cg_mood.addView(chip);
+        }
 
-        close_modal.setOnClickListener(new View.OnClickListener() {
+        cg_mood.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                filterDialog.dismiss();
+            public void onCheckedChanged(ChipGroup group, int checkedId) {
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    Chip chip = (Chip) group.getChildAt(i);
+                    if (chip.getId() != checkedId) {
+                        chip.setEnabled(false);
+                    }
+                }
             }
         });
+
+        for (int i = 0 ; i < chp_weather_list.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_weather_list.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    if(chip.isSelected()){
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        weather_list.remove(value);
+
+                    } else {
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        weather_list.add(value);
+                    }
+                }
+            });
+            cg_weather.addView(chip);
+        }
 
         sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int filterValue;
@@ -1081,21 +1170,28 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 Log.d("budget", String.valueOf(filterValue));
                 Log.d("budget", budget);
 
+                tv_set_budget.setText(budget);
+                Log.d("budget", tv_set_budget.getText().toString());
+
                 btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d("FilterValue", String.valueOf(filterValue));
+                        Log.d("filterCateg", String.valueOf(category_list.size()));
+                        Log.d("filterMood", String.valueOf(mood_list.size()));
+                        Log.d("filterWeather", String.valueOf(weather_list.size()));
+                        Log.d("filterBudget", String.valueOf(filterValue));
+
                         Bundle bundle = new Bundle();
-                        bundle.putInt("budget", filterValue);
                         FilterFragment fragment = new FilterFragment();
+                        bundle.putSerializable("categlist", (Serializable) category_list);
+                        bundle.putString("mood", mood_list.get(0));
+                        bundle.putSerializable("weatherlist", (Serializable) weather_list);
+                        bundle.putInt("budget", filterValue);
                         fragment.setArguments(bundle);
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-                        filterDialog.dismiss();
+                        bottomSheetDialog.dismiss();
                     }
                 });
-
-                tv_set_budget.setText(budget);
-                Log.d("budget", tv_set_budget.getText().toString());
 
             }
 
@@ -1110,9 +1206,29 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
+        btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("filterCateg", String.valueOf(category_list.size()));
+                Log.d("filterMood", String.valueOf(mood_list.size()));
+                Log.d("filterMood", mood_list.get(0));
+                Log.d("filterWeather", String.valueOf(weather_list.size()));
 
+                Bundle bundle = new Bundle();
+                FilterFragment fragment = new FilterFragment();
+                bundle.putSerializable("categlist", (Serializable) category_list);
+                bundle.putString("moodlist", mood_list.get(0));
+                bundle.putSerializable("weatherlist", (Serializable) weather_list);
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                bottomSheetDialog.dismiss();
+            }
+        });
 
-        filterDialog.show();
+        bottomSheetDialog.setContentView(bottomSheetView);
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from((View) bottomSheetView.getParent());
+        bottomSheetBehavior.setPeekHeight(10000);
+        bottomSheetDialog.show();
     }
 
     public void moodModal(){

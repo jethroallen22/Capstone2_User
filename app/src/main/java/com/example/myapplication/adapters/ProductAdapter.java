@@ -1,6 +1,7 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -40,6 +42,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ProductAdapter.ViewHolder holder, int position) {
         ProductModel productModel = list.get(position);
+        if(list.get(position).getPercentage() != 0){
+            Log.d("deals","W/ percentage");
+            holder.cv_deals.setVisibility(View.VISIBLE);
+        } else {
+            Log.d("deals","W/O percentage");
+            holder.cv_deals.setVisibility(View.INVISIBLE);
+        }
         holder.iv_product_image.setImageBitmap(productModel.getBitmapImage());
         holder.tv_product_name.setText(productModel.getProductName());
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
@@ -57,6 +66,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         TextView tv_product_name;
         TextView tv_product_price;
         TextView tv_product_cal;
+        CardView cv_deals;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -64,6 +74,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tv_product_name = itemView.findViewById(R.id.tv_product_name);
             tv_product_price = itemView.findViewById(R.id.tv_product_price);
             tv_product_cal = itemView.findViewById(R.id.tv_product_cal);
+            cv_deals = itemView.findViewById(R.id.cv_deals);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

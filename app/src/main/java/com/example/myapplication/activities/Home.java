@@ -244,7 +244,7 @@ public class Home extends AppCompatActivity {
         ImageView close_modal;
         TextView tv_set_budget;
 
-        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
+//        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
         sb_budget = filterDialog.findViewById(R.id.sb_budget);
         btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
         close_modal = filterDialog.findViewById(R.id.close_modal);
@@ -281,8 +281,8 @@ public class Home extends AppCompatActivity {
                     }
                 });
 
-                tv_set_budget.setText(budget);
-                Log.d("budget", tv_set_budget.getText().toString());
+//                tv_set_budget.setText(budget);
+//                Log.d("budget", tv_set_budget.getText().toString());
 
             }
 

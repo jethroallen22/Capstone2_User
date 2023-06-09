@@ -152,15 +152,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/tv_set_budget"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/robotoregular"
-                    app:layout_constraintStart_toEndOf="@+id/textView47"
-                    app:layout_constraintTop_toTopOf="@+id/textView47" />
-
-                <TextView
                     android:id="@+id/textView46"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -172,53 +163,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/textView47"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/robotomedium"
-                    android:text="Amount: "
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="@+id/linearLayout12"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
-
                 <LinearLayout
-                    android:id="@+id/linearLayout12"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:gravity="center_horizontal|center_vertical"
                     android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView46">
+                    app:layout_constraintTop_toBottomOf="@id/textView46">
 
-                    <TextView
-                        android:id="@+id/textView33"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cg_budget"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/robotoregular"
-                        android:text="0"
-                        android:textSize="16sp" />
-
-                    <SeekBar
-                        android:id="@+id/sb_budget"
-                        android:layout_width="320dp"
-                        android:layout_height="40dp"
-                        android:max="1000"
-                        android:progress="500" />
-
-                    <TextView
-                        android:id="@+id/textView34"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/robotoregular"
-                        android:text="1000"
-                        android:textSize="16sp" />
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp" />
                 </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button

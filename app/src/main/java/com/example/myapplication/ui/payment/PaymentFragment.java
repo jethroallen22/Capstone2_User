@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
+import com.example.myapplication.adapters.CartAdapter;
 import com.example.myapplication.adapters.PaymentMethodAdapter;
 import com.example.myapplication.adapters.RefundMethodAdapter;
 import com.example.myapplication.adapters.TransacHistoryAdapter;
@@ -52,8 +53,10 @@ public class PaymentFragment extends Fragment {
     List<TransacHistoryModel> transacHistoryModelList;
     RequestQueue requestQueue, requestQueueBalance;
     int userId = 0;
+    double tmpWallet = 0;
     WalletModel walletModel;
     List<WalletModel> walletModelList;
+    private boolean stopExecution = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -76,6 +79,9 @@ public class PaymentFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             userId = bundle.getInt("id");
+            tmpWallet = bundle.getDouble("wallet");
+            binding.tvBalanceAvail.setText("₱ " + tmpWallet);
+            Log.d("userId", String.valueOf(userId));
         } else {
             Log.d("PaymentFragment", "FAIL");
         }
@@ -92,51 +98,101 @@ public class PaymentFragment extends Fragment {
         rv_pay_method.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         rv_pay_method.setHasFixedSize(true);
         rv_pay_method.setNestedScrollingEnabled(false);
+
         requestQueueBalance = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
+        getTransacHistory();
         root.postDelayed(new Runnable() {
             @Override
             public void run() {
-                String tmp = "₱ ";
-                tv_balance.setText(tmp);
-
-
-                JsonArrayRequest jsonArrayRequestBalance = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apiwalletget.php", null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                int id = jsonObject.getInt("id");
-                                double wallet = jsonObject.getDouble("wallet");
-
-                                walletModel = new WalletModel(id,wallet);
-                                walletModelList.add(walletModel);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        for(int i = 0 ; i < walletModelList.size() ; i++){
-                            if (walletModelList.get(i).getUserId() == userId) {
-                                String tmp = String.valueOf(walletModelList.get(i).getWallet());
-                                Log.d("Match", "IDread: " + walletModelList.get(i).getUserId() + " ID: " + userId);
-                                tv_balance.setText("₱ "+ tmp);
-                                Log.d("Match", tv_balance.getText() + " " + walletModelList.get(i).getWallet());
-                            }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error response
-                    }
-                });
-                requestQueueBalance.add(jsonArrayRequestBalance);
-                root.postDelayed(this, 1000);
+                if(!stopExecution) {
+                    getAvailBalance();
+                    root.postDelayed(this, 3000);
+                }
             }
-        }, 1000);
+        }, 3000);
+
+        binding.btnCashIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopExecution = true;
+                String fullString = binding.tvBalanceAvail.getText().toString();
+                int startIndex = 2;
+                double wallet = Double.parseDouble(fullString.substring(startIndex));
+                Bundle bundle = new Bundle();
+                bundle.putInt("id",userId);
+                bundle.putDouble("wallet", wallet);
+                CashInFragment fragment = new CashInFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        });
 
         return root;
     }
+
+    public void getAvailBalance(){
+        walletModel = new WalletModel(0,0);
+        JsonArrayRequest jsonArrayRequestBalance = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apiwalletget.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int id = jsonObject.getInt("id");
+                        final double wallet = jsonObject.getDouble("wallet");
+                        if(id == PaymentFragment.this.userId)
+                            binding.tvBalanceAvail.setText("₱ " + wallet);
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle error response
+            }
+        });
+        requestQueueBalance.add(jsonArrayRequestBalance);
+    }
+
+    public void getTransacHistory(){
+
+        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apitransacget.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject2 = response.getJSONObject(i);
+                        int id = jsonObject2.getInt("userId");
+                        if(id == userId) {
+                            String transacType = jsonObject2.getString("transacType");
+                            double amount = jsonObject2.getDouble("amount");
+                            String date = jsonObject2.getString("date");
+                            TransacHistoryModel transacHistoryModel = new TransacHistoryModel(transacType, date, amount);
+                            transacHistoryModelList.add(transacHistoryModel);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                transacHistoryAdapter = new TransacHistoryAdapter(getActivity(),transacHistoryModelList);
+                rv_transac_history.setAdapter(transacHistoryAdapter);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                rv_transac_history.setLayoutManager(layoutManager);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(jsonArrayRequestFoodforyou);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

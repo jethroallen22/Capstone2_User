@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
+import com.example.myapplication.adapters.HomeDealsAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
@@ -48,6 +50,7 @@ import com.example.myapplication.adapters.WeatherAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
+import com.example.myapplication.models.DealsModel;
 import com.example.myapplication.models.HomeCategoryModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
@@ -65,7 +68,10 @@ import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.example.myapplication.ui.weather.WeatherFragment;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -74,6 +80,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -82,9 +89,8 @@ import java.util.Map;
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2;
+    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2, requestQueueDeals;
 
-    //School IP
     private static String JSON_URL;
     private IPModel ipModel;
 
@@ -105,6 +111,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     RecyclerView rv_home_store_rec2;
     List<StoreModel> home_store_rec_list2;
     HomeStoreRecAdapter2 homeStoreRecAdapter2;
+
+    //Store Deals Recycler View
+    RecyclerView rv_deals;
+    List<DealsModel> home_deals_list;
+    HomeDealsAdapter homeDealsAdapter;
+
 
     // Store Popular Recycler View
     RecyclerView rv_home_pop_store;
@@ -133,6 +145,19 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     Button btn_add_to_cart;
     int product_count = 0;
 
+    //Filter Bottomsheet
+
+
+    Chip chip_categ, chip_weather, chip_mood;
+    ImageView close_btn;
+    SeekBar sb_budget;
+    TextView tv_set_budget;
+    Button btn_confirm_filter;
+    List<String> chp_category_list, chp_mood_list, chp_weather_list, chp_budget;
+    ImageView btn_filter;
+
+
+
     //Category
     List<StoreModel> tempStoreList;
     String category;
@@ -152,6 +177,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     ImageView iv_hot, iv_cold, iv_old, iv_new, iv_mix, iv_trend;
 
+    ChipGroup chip_group;
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -173,19 +199,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
-
-//        modalInt = new ArrayList<>();
-//        modalInt.add(1);
-//        modalInt.add(2);
-//        Collections.shuffle(modalInt);
-//        for(int i = 0 ; i < modalInt.size() ; i++)
-//            Log.d("modelInt", String.valueOf(modalInt.get(i)));
-//        if(modalInt.get(0) == 1)
-//            moodModal();
-//        else if(modalInt.get(0) == 2)
-//            weatherModal();
         moodModal();
-
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
         searchModelList = new ArrayList<>();
@@ -199,7 +213,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         home_categ_list.add(new HomeCategoryModel(R.drawable.dinner, "Dinner"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.lamp, "Chinese"));
         home_categ_list.add(new HomeCategoryModel(R.drawable.temple, "Japanese"));
-
 
         rv_category = root.findViewById(R.id.rv_category);
         homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(), home_categ_list, HomeFragment.this);
@@ -218,6 +231,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         tv_weather = root.findViewById(R.id.tv_weather);
         tv_weather.setText("Feeling " + weather + "?");
         extractWeather();
+
+        rv_deals = root.findViewById(R.id.rv_deals);
+        home_deals_list = new ArrayList<>();
+        requestQueueDeals = Singleton.getsInstance(getActivity()).getRequestQueue();
+        rv_deals.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+        rv_deals.setHasFixedSize(true);
+        rv_deals.setNestedScrollingEnabled(false);
+        extractDeals();
 
         //STORE REC 1
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
@@ -238,7 +259,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
         home_store_rec_list2 = new ArrayList<>();
         extractDataRec2();
-
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
@@ -279,6 +299,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
+        btn_filter = root.findViewById(R.id.btn_filter);
+        btn_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterBottomSheet();
+            }
+        });
+
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -291,21 +319,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         });
-
-        /*
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
-        builder.setContentTitle("Mosibus");
-        builder.setContentText("Order Now!");
-        builder.setSmallIcon(R.drawable.logo);
-        builder.setAutoCancel(true);
-
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
-        managerCompat.notify(1, builder.build());
-
-        NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
-        manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
-        manager.createNotificationChannel(channel);
-        */
 
         final TextView textView = binding.textHome;
         return root;
@@ -334,13 +347,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         super.onStop();
         Log.d("Stop", "Stop");
     }
-
-
-    /*@Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }*/
 
     public void extractWeather(){
         HomeFragment homeFragment = this;
@@ -390,6 +396,49 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
         requestQueueFood2.add(jsonArrayRequest7);
+    }
+
+    public void extractDeals(){
+        JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apideals.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("DealsResponse", String.valueOf(response));
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int dealId = jsonObject.getInt("dealsId");
+                        int storeId = jsonObject.getInt("storeId");
+                        String type = jsonObject.getString("type");
+                        int percentage = jsonObject.getInt("percentage");
+                        String convFee = jsonObject.getString("convFee");
+                        String storeImage = jsonObject.getString("storeImage");
+                        String storeName = jsonObject.getString("storeName");
+
+                        Log.d("Dealings", String.valueOf(dealId));
+
+                        DealsModel deal = new DealsModel(dealId,storeId,type,percentage,convFee,
+                                storeImage, storeName);
+                        home_deals_list.add(deal);
+                        for (int j =  0 ; j < food_for_you_list.size() ; j++){
+                            if(food_for_you_list.get(j).getStore_idStore() == storeId){
+                                food_for_you_list.get(j).setPercentage(percentage);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d("DealList", String.valueOf(home_deals_list.size()));
+
+                homeDealsAdapter = new HomeDealsAdapter(getActivity(),home_deals_list,homeFragment);
+                rv_deals.setAdapter(homeDealsAdapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        requestQueueDeals.add(jsonArrayRequestDeals);
     }
 
     //Store Recommendation for RecView 1 and 2 Function
@@ -457,9 +506,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     }
                 });
                 requestQueuePopu.add(jsonArrayRequest3);
-
                 Collections.shuffle(home_store_rec_list);
-
                 homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list, homeFragment);
                 rv_home_store_rec.setAdapter(homeStoreRecAdapter);
 
@@ -674,7 +721,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickStoreRec(int position) {
-        Log.d("CLICKPOPU", "Success");
+        Log.d("CLICKSTOREREC", "Success");
         Bundle bundle = new Bundle();
 //        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
 //        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
@@ -688,6 +735,32 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+    }
+
+    @Override
+    public void onItemClickDeals(int position) {
+        Log.d("CLICKDEALS", "Success");
+        Bundle bundle = new Bundle();
+//        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
+//        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
+//        bundle.putString("StoreName", home_store_rec_list.get(position).getStore_name());
+//        bundle.putString("StoreAddress", home_store_rec_list.get(position).getStore_location());
+//        bundle.putString("StoreCategory", home_store_rec_list.get(position).getStore_category());
+//        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
+        DealsModel dealsModel = home_deals_list.get(position);
+        bundle.putParcelable("DealsClass", dealsModel);
+
+        for(int i = 0 ; i < home_store_rec_list.size() ; i++){
+            if(home_store_rec_list.get(i).getStore_id() == home_deals_list.get(position).getStoreId()){
+                StoreModel storeModel = home_store_rec_list.get(i);
+                bundle.putParcelable("StoreClass", storeModel);
+                bundle.putParcelable("deals", home_deals_list.get(position));
+                bundle.putInt("user", userId);
+                StoreFragment fragment = new StoreFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        }
     }
 
     @Override
@@ -961,75 +1034,257 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            // Handle settings item click
-            //filterModal();
+    public void showFilterBottomSheet(){
+        String TAG = "Bottomsheet";
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.filter_bottom_sheet_layout,
+                        getActivity().findViewById(R.id.filter_bottomSheet_container)
+                );
+        ChipGroup cg_category, cg_mood, cg_weather, cg_budget;
+        int budget;
+        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        cg_category = bottomSheetView.findViewById(R.id.cg_category);
+        cg_weather = bottomSheetView.findViewById(R.id.cg_weather);
+        cg_mood = bottomSheetView.findViewById(R.id.cg_mood);
+        close_btn = bottomSheetView.findViewById(R.id.close_btn);
+        cg_budget = bottomSheetView.findViewById(R.id.cg_budget);
+        btn_confirm_filter = bottomSheetView.findViewById(R.id.btn_confirm_filter);
 
-            return true;
+        chp_category_list = new ArrayList<>();
+        chp_mood_list = new ArrayList<>();
+        chp_mood_list = new ArrayList<>();
+
+        for(int i = 0; i < home_categ_list.size();  i++){
+            chp_category_list.add(home_categ_list.get(i).getCateg_name());
         }
-        return super.onOptionsItemSelected(item);
-    }
+        chp_mood_list = Arrays.asList("Old", "New", "Mix", "Trend");
+        chp_weather_list = Arrays.asList("Hot", "Cold");
+        chp_budget = Arrays.asList("₱₱", "₱₱₱", "₱₱₱₱");
 
-    public void filterModal(){
-        filterDialog = new Dialog(this.getContext());
-        filterDialog.setContentView(R.layout.filter_modal);
-        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        SeekBar sb_budget;
-        Button btn_confirm_filter;
-        ImageView close_modal;
+        List<String> category_list, mood_list, weather_list, budget_list;
+        category_list = new ArrayList<>();
+        mood_list = new ArrayList<>();
+        budget_list = new ArrayList<>();
+        weather_list = new ArrayList<>();
+        String mood;
 
-        sb_budget = filterDialog.findViewById(R.id.sb_budget);
-        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
-        close_modal = filterDialog.findViewById(R.id.close_modal);
-        int filterValue;
+        for(int i = 0 ; i < chp_category_list.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_category_list.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    if(chip.isSelected()){
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        category_list.remove(value);
+                    } else {
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        category_list.add(value);
+                    }
+                }
+            });
+            cg_category.addView(chip);
+        }
 
+        for(int i = 0 ; i < chp_mood_list.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_mood_list.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    mood_list.add("");
+                    if(chip.isSelected()){
+                        for (int i = 0; i < cg_mood.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_mood.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(true);
+                            }
+                        }
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        mood_list.remove(value);
+                    } else {
+                        for (int i = 0; i < cg_mood.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_mood.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(false);
+                                chip.setChipBackgroundColorResource(R.color.darkGray);
+                            }
+                        }
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        mood_list.set(0, value);
+                    }
+                }
+            });            cg_mood.addView(chip);
+        }
 
-        close_modal.setOnClickListener(new View.OnClickListener() {
+        cg_mood.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(ChipGroup group, int checkedId) {
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    Chip chip = (Chip) group.getChildAt(i);
+                    if (chip.getId() != checkedId) {
+                        chip.setEnabled(false);
+                    }
+                }
+            }
+        });
+
+        for (int i = 0 ; i < chp_weather_list.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_weather_list.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    if(chip.isSelected()){
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        weather_list.remove(value);
+
+                    } else {
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        weather_list.add(value);
+                    }
+                }
+            });
+            cg_weather.addView(chip);
+        }
+
+//        for (int i = 0 ; i < chp_budget.size() ; i++){
+//            Chip chip = new Chip(this.getContext());
+//            chip.setText(chp_budget.get(i));
+//            chip.setChipBackgroundColorResource(R.color.gray);
+//            chip.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    String value = chip.getText().toString();
+//                    if(chip.isSelected()){
+//                        chip.setSelected(false);
+//                        chip.setTextColor(Color.BLACK);
+//                        chip.setChipBackgroundColorResource(R.color.gray);
+//                        if(value.equals("₱₱")){
+//                            budget = 99;
+//                        } else if (value.equals("₱₱₱")){
+//                            budget = 999;
+//                        } else if (value.equals("₱₱₱₱")){
+//                            budget = 9999;
+//                        }
+//
+//                    } else {
+//                        chip.setSelected(true);
+//                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+//                        chip.setChipStrokeColorResource(R.color.teal_700);
+//                        chip.setTextColor(getResources().getColor(R.color.white));
+//                        weather_list.add(value);
+//                    }
+//                }
+//            });
+//            cg_budget.addView(chip);
+//        }
+
+        for(int i = 0 ; i < chp_budget.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_budget.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    budget_list.add("");
+                    if(chip.isSelected()){
+                        for (int i = 0; i < cg_budget.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_budget.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(true);
+                            }
+                        }
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        budget_list.remove(value);
+                    } else {
+                        for (int i = 0; i < cg_budget.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_budget.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(false);
+                                chip.setChipBackgroundColorResource(R.color.darkGray);
+                            }
+                        }
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        budget_list.set(0, value);
+                    }
+                }
+            });            cg_budget.addView(chip);
+        }
+
+        cg_budget.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(ChipGroup group, int checkedId) {
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    Chip chip = (Chip) group.getChildAt(i);
+                    if (chip.getId() != checkedId) {
+                        chip.setEnabled(false);
+                    }
+                }
+            }
+        });
+
+        btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                filterDialog.dismiss();
+                Log.d("filterCateg", String.valueOf(category_list.size()));
+                Log.d("filterWeather", String.valueOf(weather_list.size()));
+                int budget = 0;
+                Bundle bundle = new Bundle();
+                FilterFragment fragment = new FilterFragment();
+                bundle.putInt("userId", userId);
+                bundle.putSerializable("categlist", (Serializable) category_list);
+                if(mood_list.size() != 0) {
+                    bundle.putString("mood", mood_list.get(0));
+                } if(budget_list.size() != 0) {
+                    if(budget_list.get(0).equals("₱₱"))
+                        budget = 99;
+                    else if(budget_list.get(0).equals("₱₱₱"))
+                        budget = 999;
+                    else if(budget_list.get(0).equals("₱₱₱₱"))
+                        budget = 9999;
+
+                    bundle.putInt("budget", budget);
+                }
+                bundle.putSerializable("weatherlist", (Serializable) weather_list);
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                bottomSheetDialog.dismiss();
             }
         });
 
-        sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int filterValue;
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                filterValue = progress;
-
-                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d("FilterValue", String.valueOf(filterValue));
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("budget", filterValue);
-                        FilterFragment fragment = new FilterFragment();
-                        fragment.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-                        filterDialog.dismiss();
-                    }
-                });
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-
-
-        filterDialog.show();
+        bottomSheetDialog.setContentView(bottomSheetView);
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from((View) bottomSheetView.getParent());
+        bottomSheetBehavior.setPeekHeight(10000);
+        bottomSheetDialog.show();
     }
 
     public void moodModal(){

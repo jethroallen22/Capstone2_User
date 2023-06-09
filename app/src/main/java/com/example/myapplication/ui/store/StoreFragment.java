@@ -43,6 +43,7 @@ import com.example.myapplication.adapters.ProductCategAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
+import com.example.myapplication.models.DealsModel;
 import com.example.myapplication.models.HomeFoodForYouModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
@@ -69,7 +70,7 @@ import java.util.Map;
 public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentStoreBinding binding;
-    private RequestQueue requestQueueFood,requestQueueProd,requestQueueTempCart;
+    private RequestQueue requestQueueFood,requestQueueProd,requestQueueTempCart, requestQueueDeals;
 
     ImageView store_image;
     TextView store_name;
@@ -82,6 +83,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     public String stor_address;
     public String stor_category;
     public String stor_description;
+
+    Bundle bundle;
 
     //School IP
     private static String JSON_URL;
@@ -133,7 +136,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         store_address = root.findViewById(R.id.tv_store_address);
         store_description = root.findViewById(R.id.tv_store_description);
 
-        Bundle bundle = this.getArguments();
+        bundle = this.getArguments();
 //        Log.d("Result Store: " , bundle.getParcelable("StoreClass"));
         if(bundle != null){
             if (bundle.getParcelable("StoreClass") != null){
@@ -175,6 +178,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 //        rv_products.setAdapter(productAdapter);
 
         requestQueueProd = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueDeals = Singleton.getsInstance(getActivity()).getRequestQueue();
         SendtoDb(stor_id);
 
         binding.fabBack.setOnClickListener(new View.OnClickListener() {
@@ -223,7 +227,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     public void extractFoodforyou(){
         StoreFragment storeFragment = this;
-        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistoredeals.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -241,9 +245,13 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
                         String weather = jsonObjectFoodforyou.getString("weather");
+                        int percentage = jsonObjectFoodforyou.getInt("percentage");
 
                         if(idStore == stor_id) {
+                            Log.d("storeid", String.valueOf(idStore));
+
                             ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage, productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                            foodfyModel.setPercentage(percentage);
                             food_for_you_list.add(foodfyModel);
                         }
 
@@ -251,8 +259,16 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         e.printStackTrace();
                     }
                 }
+
+//                if  (bundle.getParcelable("deals") != null){
+//                    DealsModel dealsModel = bundle.getParcelable("deals");
+//                    for (int i = 0;i < food_for_you_list.size();i++){
+//                        food_for_you_list.get(i).setProductPrice((food_for_you_list.get(i).getProductPrice() * (100 - dealsModel.getPercentage())) /100);
+//                    }
+//                }
                 homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
                 rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+
                 int temp_not = 0;
                 for(int j = 0 ; j < food_for_you_list.size() ; j++){
                     if(product_categ_list.isEmpty()){
@@ -306,7 +322,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
     private void SendtoDb(long stor_id){
         Log.d("SendtoDB: ", "im in");
-        JsonArrayRequest jsonArrayRequestProd= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiprod.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestProd= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistoredeals.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i=0; i < response.length(); i++){
@@ -324,16 +340,16 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
                         String weather = jsonObjectFoodforyou.getString("weather");
+                        int percentage = jsonObjectFoodforyou.getInt("percentage");
 
                         Log.d("storeid", String.valueOf(stor_id));
                         if(idStore == stor_id){
                             Log.d("storeid", String.valueOf(idStore));
                             ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
-                                                            productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                                    productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                            productModel.setPercentage(percentage);
                             products_list.add(productModel);
                         }
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

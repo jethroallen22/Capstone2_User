@@ -35,8 +35,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull NotificationAdapter.ViewHolder holder, int position) {
-        holder.iv_notif_img.setImageResource(list.get(position).getImage());
-        holder.tv_notif_text.setText(list.get(position).getText());
+        holder.iv_notif_img.setImageResource(R.drawable.ic_baseline_money_24);
+        holder.tv_notif_description.setText(list.get(position).getDescription());
+        holder.tv_notif_title.setText(list.get(position).getTitle());
     }
 
     @Override
@@ -47,13 +48,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView iv_notif_img;
-        TextView tv_notif_text;
+        TextView tv_notif_description;
+        TextView tv_notif_title;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             iv_notif_img = itemView.findViewById(R.id.iv_notif_img);
-            tv_notif_text = itemView.findViewById(R.id.tv_notif_text);
+            tv_notif_description = itemView.findViewById(R.id.tv_notif_description);
+            tv_notif_title = itemView.findViewById(R.id.tv_notif_title);
         }
     }
 }

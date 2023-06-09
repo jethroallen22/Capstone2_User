@@ -10,11 +10,6 @@
             android:title="@string/menu_home" />
 
         <item
-            android:id="@+id/nav_messages"
-            android:icon="@drawable/ic_baseline_chat_bubble_24"
-            android:title="@string/menu_messages"/>
-
-        <item
             android:id="@+id/nav_notifications"
             android:icon="@drawable/ic_baseline_notifications_24"
             android:title="@string/menu_notifications"/>
@@ -42,5 +37,6 @@
     </group>
 
 
-    <item android:title="Logout" />
+    <item android:title="Logout"
+          android:id="@+id/nav_logout"/>
 </menu>

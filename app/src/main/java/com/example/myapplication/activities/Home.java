@@ -32,6 +32,8 @@ import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.UserModel;
+import com.example.myapplication.ui.activities.ActivitiesFragment;
+import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.filter.FilterFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.moods.MixMoodFragment;
@@ -135,30 +137,74 @@ public class Home extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        navigationView.getMenu().getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+        /// Set the Bundle for the specific MenuItem
+
+        MenuItem paymentItem = navigationView.getMenu().findItem(R.id.nav_payment);
+        Bundle bundle = new Bundle();
+        bundle.putInt("userId", id);
+        paymentItem.setIntent(new Intent().putExtras(bundle));
+
+
+        // Handle the click event of the MenuItem
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onMenuItemClick(@NonNull MenuItem item) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("id", id);
-                bundle.putDouble("wallet", wallet);
-                PaymentFragment fragment = new PaymentFragment();
-                fragment.setArguments(bundle);
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-                Log.d("WalletHome", String.valueOf(wallet));
-                return false;
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if(item.getItemId() == R.id.nav_home){
+//                    Bundle bundle = new Bundle();
+//                    bundle.putInt("id", id);
+//                    bundle.putString("name", name);
+//                    bundle.putString("weather", weather);
+                    HomeFragment fragment = new HomeFragment();
+//                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                } else if (item.getItemId() == R.id.nav_payment) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", id);
+                    bundle.putDouble("wallet", wallet);
+                    PaymentFragment fragment = new PaymentFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                } else if (item.getItemId() == R.id.nav_cart){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("userID", id);
+                    CartFragment fragment = new CartFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                } else if (item.getItemId() == R.id.nav_activities){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", id);
+                    ActivitiesFragment fragment = new ActivitiesFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                } else if(item.getItemId() == R.id.nav_notifications){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", id);
+                    NotificationsFragment fragment = new NotificationsFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                } else if (item.getItemId() == R.id.nav_logout){
+                    Intent intent = new Intent(getApplicationContext(), Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+                drawer.closeDrawers();
+                return true;
             }
         });
 
+
         //LOGOUT!!!
-        navigationView.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem item) {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return false;
-            }
-        });
+//        navigationView.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(@NonNull MenuItem item) {
+//                Intent intent = new Intent(getApplicationContext(), Login.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
+//                return false;
+//            }
+//        });
 
 
 
@@ -196,7 +242,9 @@ public class Home extends AppCompatActivity {
         SeekBar sb_budget;
         Button btn_confirm_filter;
         ImageView close_modal;
+        TextView tv_set_budget;
 
+//        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
         sb_budget = filterDialog.findViewById(R.id.sb_budget);
         btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
         close_modal = filterDialog.findViewById(R.id.close_modal);
@@ -216,6 +264,9 @@ public class Home extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 filterValue = progress;
+                String budget = "₱ " + filterValue;
+                Log.d("budget", String.valueOf(filterValue));
+                Log.d("budget", budget);
 
                 btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -230,6 +281,9 @@ public class Home extends AppCompatActivity {
                     }
                 });
 
+//                tv_set_budget.setText(budget);
+//                Log.d("budget", tv_set_budget.getText().toString());
+
             }
 
             @Override
@@ -242,6 +296,8 @@ public class Home extends AppCompatActivity {
 
             }
         });
+
+
 
         filterDialog.show();
     }

@@ -337,6 +337,11 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                 paramV.put("totalAmount", String.valueOf(order.getOrderItem_list().get(position).getTotalPrice()));
                 paramV.put("userId", String.valueOf(order.getUsers_id()));
                 paramV.put("itemStatus", "cancelled");
+
+                paramV.put("iduser", String.valueOf(order.getUsers_id()));
+                paramV.put("type", "refund");
+                paramV.put("title", order.getOrderItem_list().get(position).getProductName() + " has been refunded!");
+                paramV.put("description", order.getOrderItem_list().get(position).getProductName() + " has successfully been refunded. Please check your outstanding balance.");
                 order.getOrderItem_list().remove(position);
                 orderItemsAdapter.notifyItemRemoved(position);
                 return paramV;

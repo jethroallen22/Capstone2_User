@@ -11,4 +11,5 @@ public interface RecyclerViewInterface {
     void onItemClickWeather(int position);
     void onItemClickCategory(int position);
 
+    void onItemClickDeals(int pos);
 }

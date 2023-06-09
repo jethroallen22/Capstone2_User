@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.order;
 
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,12 +27,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.Home;
 import com.example.myapplication.activities.Login;
 import com.example.myapplication.activities.Register;
+import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
@@ -38,10 +43,13 @@ import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.store.StoreFragment;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -51,6 +59,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,12 +73,26 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     private FragmentOrderBinding binding;
     TextView tv_store_name;
     TextView tv_total_price;
+
+    TextView tv_total_discount;
+    TextView tv_final_price;
+    TextView tv_total2;
+
+    TextView tv_total;
+
+    TextView tv_voucher;
+
+    ConstraintLayout cv_discount;
+
+    BottomSheetDialog voucherDialog;
     Button btn_place_order;
     WebView webPay;
     private String store_name;
     //School IP
     private static String JSON_URL;
     private IPModel ipModel;
+
+    private RequestQueue requestQueueVoucher;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -82,8 +105,19 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
         tv_store_name = root.findViewById(R.id.tv_store_name);
         tv_total_price = root.findViewById(R.id.tv_total_price);
+        tv_voucher = root.findViewById(R.id.tv_voucher);
         btn_place_order = root.findViewById(R.id.btn_place_order);
         webPay = root.findViewById(R.id.webPay);
+
+        tv_total_discount = root.findViewById(R.id.tv_total_discount);
+        tv_final_price = root.findViewById(R.id.tv_final_price);
+        tv_total2 = root.findViewById(R.id.tv_total2);
+        tv_total = root.findViewById(R.id.tv_total);
+        cv_discount = root.findViewById(R.id.cv_discount);
+
+
+        voucherDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+
         Bundle bundle = this.getArguments();
 
         if (bundle != null){
@@ -102,6 +136,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         rv_order_items.setNestedScrollingEnabled(false);
         tv_total_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
 
+        requestQueueVoucher = Singleton.getsInstance(getActivity()).getRequestQueue();
+
         orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -117,6 +153,13 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 CheckoutFragment fragment = new CheckoutFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+            }
+        });
+
+        tv_voucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showVoucherBottomSheet();
             }
         });
 
@@ -156,6 +199,11 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickCategory(int position) {
+
+    }
+
+    @Override
+    public void onItemClickDeals(int pos) {
 
     }
 
@@ -226,6 +274,78 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         queue.add(stringRequest);
 
 
+    }
+
+    //BottomSheet for Vouchers
+    public void showVoucherBottomSheet() {
+        View view = LayoutInflater.from(getActivity())
+                .inflate(R.layout.vouchers_bottom_sheet_layout, getActivity().findViewById(R.id.voucher_bottomSheet_container));
+
+        BottomSheetDialog voucherDialog = new BottomSheetDialog(getActivity());
+        voucherDialog.setContentView(view);
+
+        TextView tv_voucher_status = view.findViewById(R.id.tv_voucher_status);
+        EditText et_voucher_code = view.findViewById(R.id.et_voucher_code);
+        Button bt_voucher = view.findViewById(R.id.bt_voucher);
+
+        //OnClick for Apply in Voucher Bottomsheet
+        bt_voucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                //JsonArrayRequest for Reading Vouchers DB
+                JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for (int i=0; i < response.length(); i++){
+                            try {
+                                JSONObject jsonObjectVoucher = response.getJSONObject(i);
+                                int voucherId = jsonObjectVoucher.getInt("voucherId");
+                                String voucherName = jsonObjectVoucher.getString("voucherName");
+                                int storeId = jsonObjectVoucher.getInt("storeId");
+                                int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
+                                int voucherMin = jsonObjectVoucher.getInt("voucherMin");
+
+
+                                if(Integer.parseInt(et_voucher_code.getText().toString().trim()) == voucherId) {
+                                    if (orderModel.getOrderItemTotalPrice() >= voucherMin) {
+                                        cv_discount.setVisibility(View.VISIBLE);
+                                        tv_total.setText("Subtotal");
+                                        tv_total2.setVisibility(View.VISIBLE);
+                                        tv_total_discount.setVisibility(View.VISIBLE);
+                                        tv_total2.setVisibility(View.VISIBLE);
+                                        tv_total2.setVisibility(View.VISIBLE);
+                                        tv_final_price.setVisibility(View.VISIBLE);
+                                        tv_total_discount.setText("-" + voucherAmount);
+                                        tv_final_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice() - voucherAmount));
+                                       orderModel.setOrderItemTotalPrice(orderModel.getOrderItemTotalPrice() - voucherAmount);
+                                        voucherDialog.dismiss();
+                                    }else {
+                                        tv_voucher_status.setText("Total Amount did not meet the Voucher Minimum Requirements!");
+                                    }
+                                } else {
+                                    tv_voucher_status.setText("Voucher does not exist!");
+                                }
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+                requestQueueVoucher.add(jsonArrayRequestVouchers);
+                //
+            }
+        });
+
+        voucherDialog.show();
     }
 
 }

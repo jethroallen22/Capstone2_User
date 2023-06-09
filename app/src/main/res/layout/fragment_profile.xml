@@ -56,7 +56,7 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/textView21"
+                        android:id="@+id/tv_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/robotoregular"
@@ -76,7 +76,7 @@
                         android:hint="Email"
                         android:inputType="text"
                         android:singleLine="true"
-                        app:layout_constraintTop_toBottomOf="@+id/textView21"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_total"
                         tools:layout_editor_absoluteX="16dp" />
 
                     <ImageView

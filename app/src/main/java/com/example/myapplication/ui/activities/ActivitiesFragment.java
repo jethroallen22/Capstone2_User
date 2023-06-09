@@ -355,4 +355,9 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
     public void onItemClickCategory(int pos) {
 
     }
+
+    @Override
+    public void onItemClickDeals(int pos) {
+
+    }
 }

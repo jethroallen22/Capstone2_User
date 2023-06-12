@@ -146,7 +146,8 @@ public class Login extends AppCompatActivity {
 //                            fragmentTransaction.add(R.id.nav_host_fragment_content_home, homeFragment).commit();
 
                         }
-                        Intent intent = new Intent(getApplicationContext(), Home.class);
+                        Intent intent = new Intent(getApplicationContext(), Preferences.class);
+                        Log.d("Login", "intent");
                         intent.putExtra("name",name);
                         intent.putExtra("id",id);
                         intent.putExtra("image",image);

@@ -82,6 +82,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     TextView tv_voucher;
 
+    int voucher_code;
+
     ConstraintLayout cv_discount;
 
     BottomSheetDialog voucherDialog;
@@ -148,6 +150,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         btn_place_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("voucherid", String.valueOf(voucher_code));
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("order", orderModel);
                 CheckoutFragment fragment = new CheckoutFragment();
@@ -310,6 +313,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
                                 if(Integer.parseInt(et_voucher_code.getText().toString().trim()) == voucherId) {
                                     if (orderModel.getOrderItemTotalPrice() >= voucherMin) {
+                                        voucher_code = Integer.parseInt(et_voucher_code.getText().toString().trim());
                                         cv_discount.setVisibility(View.VISIBLE);
                                         tv_total.setText("Subtotal");
                                         tv_total2.setVisibility(View.VISIBLE);

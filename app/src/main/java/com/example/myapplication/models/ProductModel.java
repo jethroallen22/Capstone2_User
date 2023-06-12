@@ -23,6 +23,7 @@ public class ProductModel implements Parcelable {
     String productRestoImage;
     String productRestoCategory;
     String weather;
+    int percentage;
 
 
 
@@ -77,6 +78,7 @@ public class ProductModel implements Parcelable {
         productRestoImage = in.readString();
         productRestoCategory = in.readString();
         weather = in.readString();
+        percentage = in.readInt();
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -195,6 +197,18 @@ public class ProductModel implements Parcelable {
         this.weather = weather;
     }
 
+    public void setProductPrice(float productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public int getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(int percentage) {
+        this.percentage = percentage;
+    }
+
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(productImage, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
@@ -221,5 +235,6 @@ public class ProductModel implements Parcelable {
         parcel.writeString(productRestoImage);
         parcel.writeString(productRestoCategory);
         parcel.writeString(weather);
+        parcel.writeInt(percentage);
     }
 }

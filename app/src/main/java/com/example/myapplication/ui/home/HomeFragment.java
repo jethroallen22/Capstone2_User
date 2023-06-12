@@ -153,7 +153,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     SeekBar sb_budget;
     TextView tv_set_budget;
     Button btn_confirm_filter;
-    List<String> chp_category_list, chp_mood_list, chp_weather_list;
+    List<String> chp_category_list, chp_mood_list, chp_weather_list, chp_budget;
     ImageView btn_filter;
 
 
@@ -419,8 +419,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         DealsModel deal = new DealsModel(dealId,storeId,type,percentage,convFee,
                                 storeImage, storeName);
                         home_deals_list.add(deal);
-
-
+                        for (int j =  0 ; j < food_for_you_list.size() ; j++){
+                            if(food_for_you_list.get(j).getStore_idStore() == storeId){
+                                food_for_you_list.get(j).setPercentage(percentage);
+                            }
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -1033,14 +1036,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         View bottomSheetView = getLayoutInflater().inflate(R.layout.filter_bottom_sheet_layout,
                         getActivity().findViewById(R.id.filter_bottomSheet_container)
                 );
-        ChipGroup cg_category, cg_mood, cg_weather;
+        ChipGroup cg_category, cg_mood, cg_weather, cg_budget;
+        int budget;
         Log.d(TAG,"bottomSheetView = LayoutInflater.from");
         cg_category = bottomSheetView.findViewById(R.id.cg_category);
         cg_weather = bottomSheetView.findViewById(R.id.cg_weather);
         cg_mood = bottomSheetView.findViewById(R.id.cg_mood);
         close_btn = bottomSheetView.findViewById(R.id.close_btn);
-        sb_budget = bottomSheetView.findViewById(R.id.sb_budget);
-        tv_set_budget = bottomSheetView.findViewById(R.id.tv_set_budget);
+        cg_budget = bottomSheetView.findViewById(R.id.cg_budget);
         btn_confirm_filter = bottomSheetView.findViewById(R.id.btn_confirm_filter);
 
         chp_category_list = new ArrayList<>();
@@ -1052,10 +1055,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         }
         chp_mood_list = Arrays.asList("Old", "New", "Mix", "Trend");
         chp_weather_list = Arrays.asList("Hot", "Cold");
+        chp_budget = Arrays.asList("₱₱", "₱₱₱", "₱₱₱₱");
 
-        List<String> category_list, mood_list, weather_list;
+        List<String> category_list, mood_list, weather_list, budget_list;
         category_list = new ArrayList<>();
         mood_list = new ArrayList<>();
+        budget_list = new ArrayList<>();
         weather_list = new ArrayList<>();
         String mood;
 
@@ -1160,49 +1165,53 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             cg_weather.addView(chip);
         }
 
-        sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int filterValue;
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                filterValue = progress;
-                String budget = "₱ " + filterValue;
-                Log.d("budget", String.valueOf(filterValue));
-                Log.d("budget", budget);
-
-                tv_set_budget.setText(budget);
-                Log.d("budget", tv_set_budget.getText().toString());
-
-                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d("filterCateg", String.valueOf(category_list.size()));
-                        Log.d("filterMood", String.valueOf(mood_list.size()));
-                        Log.d("filterWeather", String.valueOf(weather_list.size()));
-                        Log.d("filterBudget", String.valueOf(filterValue));
-
-                        Bundle bundle = new Bundle();
-                        FilterFragment fragment = new FilterFragment();
-                        bundle.putSerializable("categlist", (Serializable) category_list);
-                        bundle.putString("mood", mood_list.get(0));
-                        bundle.putSerializable("weatherlist", (Serializable) weather_list);
-                        bundle.putInt("budget", filterValue);
-                        fragment.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-                        bottomSheetDialog.dismiss();
+        for(int i = 0 ; i < chp_budget.size() ; i++){
+            Chip chip = new Chip(this.getContext());
+            chip.setText(chp_budget.get(i));
+            chip.setChipBackgroundColorResource(R.color.gray);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = chip.getText().toString();
+                    budget_list.add("");
+                    if(chip.isSelected()){
+                        for (int i = 0; i < cg_budget.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_budget.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(true);
+                            }
+                        }
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        budget_list.remove(value);
+                    } else {
+                        for (int i = 0; i < cg_budget.getChildCount(); i++) {
+                            Chip chip = (Chip) cg_budget.getChildAt(i);
+                            if (chip.getText() != value) {
+                                chip.setEnabled(false);
+                                chip.setChipBackgroundColorResource(R.color.darkGray);
+                            }
+                        }
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        budget_list.set(0, value);
                     }
-                });
+                }
+            });            cg_budget.addView(chip);
+        }
 
-            }
-
+        cg_budget.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+            public void onCheckedChanged(ChipGroup group, int checkedId) {
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    Chip chip = (Chip) group.getChildAt(i);
+                    if (chip.getId() != checkedId) {
+                        chip.setEnabled(false);
+                    }
+                }
             }
         });
 
@@ -1210,15 +1219,27 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onClick(View v) {
                 Log.d("filterCateg", String.valueOf(category_list.size()));
-                Log.d("filterMood", String.valueOf(mood_list.size()));
-                Log.d("filterMood", mood_list.get(0));
                 Log.d("filterWeather", String.valueOf(weather_list.size()));
-
+                int budget = 0;
                 Bundle bundle = new Bundle();
                 FilterFragment fragment = new FilterFragment();
+                bundle.putInt("userId", userId);
                 bundle.putSerializable("categlist", (Serializable) category_list);
-                bundle.putString("moodlist", mood_list.get(0));
+                if(mood_list.size() != 0) {
+                    bundle.putString("mood", mood_list.get(0));
+                } if(budget_list.size() != 0) {
+                    if(budget_list.get(0).equals("₱₱"))
+                        budget = 99;
+                    else if(budget_list.get(0).equals("₱₱₱"))
+                        budget = 999;
+                    else if(budget_list.get(0).equals("₱₱₱₱"))
+                        budget = 9999;
+
+                    bundle.putInt("budget", budget);
+                }
                 bundle.putSerializable("weatherlist", (Serializable) weather_list);
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 bottomSheetDialog.dismiss();

@@ -1170,38 +1170,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             cg_weather.addView(chip);
         }
 
-//        for (int i = 0 ; i < chp_budget.size() ; i++){
-//            Chip chip = new Chip(this.getContext());
-//            chip.setText(chp_budget.get(i));
-//            chip.setChipBackgroundColorResource(R.color.gray);
-//            chip.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    String value = chip.getText().toString();
-//                    if(chip.isSelected()){
-//                        chip.setSelected(false);
-//                        chip.setTextColor(Color.BLACK);
-//                        chip.setChipBackgroundColorResource(R.color.gray);
-//                        if(value.equals("₱₱")){
-//                            budget = 99;
-//                        } else if (value.equals("₱₱₱")){
-//                            budget = 999;
-//                        } else if (value.equals("₱₱₱₱")){
-//                            budget = 9999;
-//                        }
-//
-//                    } else {
-//                        chip.setSelected(true);
-//                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-//                        chip.setChipStrokeColorResource(R.color.teal_700);
-//                        chip.setTextColor(getResources().getColor(R.color.white));
-//                        weather_list.add(value);
-//                    }
-//                }
-//            });
-//            cg_budget.addView(chip);
-//        }
-
         for(int i = 0 ; i < chp_budget.size() ; i++){
             Chip chip = new Chip(this.getContext());
             chip.setText(chp_budget.get(i));
@@ -1275,6 +1243,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     bundle.putInt("budget", budget);
                 }
                 bundle.putSerializable("weatherlist", (Serializable) weather_list);
+                bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 bottomSheetDialog.dismiss();

@@ -1,9 +1,13 @@
 package com.example.myapplication.ui.filter;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,8 +43,10 @@ import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.models.SearchModel;
 import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.moods.NewMoodFragment;
+import com.example.myapplication.ui.weather.WeatherFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -48,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,14 +67,12 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     //School IP
     private static String JSON_URL;
     private IPModel ipModel;
-
     RecyclerView rv_filter;
     List<ProductModel> productModelList;
     int budget;
     ProductAdapter productAdapter;
     RequestQueue requestQueue, requestQueueInner, requestQueueOuter;
     TextView tv_budget, tv_current;
-
     //For Product Bottomsheet
     LinearLayout linearLayout;
     TextView product_name, product_resto, product_price, product_description, tv_counter, tv_weather;
@@ -84,6 +89,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     String TAG = "filter";
     LinearLayout ll_no_result;
     float current = 0;
+    Dialog bugetDialog;
+    boolean continueShop = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -156,6 +163,19 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             extractFood();
         }
 
+        binding.fab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                CartFragment fragment = new CartFragment();
+//                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
+                bundle.putInt("userID", userId);
+                fragment.setArguments(bundle);
+                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+            }
+        });
+
         return root;
     }
 
@@ -198,7 +218,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                     isMatch = false;
                             }
                             for (String weather2 : weather_list){
-                                if(foodfyModel.getWeather().equalsIgnoreCase(weather2))
+                                if(foodfyModel.getWeather().equalsIgnoreCase(weather2) && isMatch == true)
                                     isMatch = true;
                                 else
                                     isMatch = false;
@@ -271,6 +291,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
                         foodfyModel.setProductRestoCategory(storeCategory);
                         Log.d(TAG, foodfyModel.getProductName());
+                        Log.d(TAG, foodfyModel.getProductRestoCategory());
 
                         if (categ_list != null && weather_list != null && budget != 0) {
                             Log.d(TAG, "if (categ_list != null && weather_list != null && budget != 0) {");
@@ -282,13 +303,16 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 else
                                     isMatch = false;
                             }
+                            Log.d(TAG, "categ: " + isMatch);
                             for (String weather2 : weather_list){
-                                if(foodfyModel.getWeather().equalsIgnoreCase(weather2))
+                                if(foodfyModel.getWeather().equalsIgnoreCase(weather2) && isMatch == true)
                                     isMatch = true;
                                 else
                                     isMatch = false;
                             }
+                            Log.d(TAG, "weather: " + isMatch);
                             if(isMatch == true && foodfyModel.getProductPrice() <= budget) {
+                                Log.d(TAG, "ADD");
                                 productModelList.add(foodfyModel);
                             }
                         } else {
@@ -781,8 +805,9 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             float tempPrice = 0;
             @Override
             public void onClick(View v) {
-                float tmp = current + productModelList.get(position).getProductPrice();
-                if(tmp <= budget) {
+                current = current + (productModelList.get(position).getProductPrice() * product_count);
+                if(current <= budget || continueShop == true) {
+                    tv_current.setText("Current: P" + current);
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "tempCart.php", new Response.Listener<String>() {
                         @Override
                         public void onResponse(String result) {
@@ -830,7 +855,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                     bottomSheetDialog.dismiss();
 
                 } else {
-
+                    budgetModal();
                 }
 
             }
@@ -838,6 +863,36 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
 
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+    }
+
+    public void budgetModal(){
+        bugetDialog = new Dialog(this.getContext());
+        bugetDialog.setContentView(R.layout.budget_modal);
+        bugetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Button btn_cont_shop, btn_proceed_cart;
+
+        btn_cont_shop  = bugetDialog.findViewById(R.id.btn_cont_shopping);
+        btn_proceed_cart = bugetDialog.findViewById(R.id.btn_proceed_cart);
+
+        btn_cont_shop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                continueShop = true;
+                bugetDialog.dismiss();
+            }
+        });
+
+        btn_proceed_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CartFragment fragment = new CartFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                bugetDialog.dismiss();
+            }
+        });
+
+
+        bugetDialog.show();
     }
 
     @Override

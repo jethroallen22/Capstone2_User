@@ -427,7 +427,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         home_deals_list.add(deal);
                         for (int j =  0 ; j < food_for_you_list.size() ; j++){
                             if(food_for_you_list.get(j).getStore_idStore() == storeId){
-                                food_for_you_list.get(j).setPercentage(percentage);
+                                //food_for_you_list.get(j).setPercentage(percentage);
                             }
                         }
                     } catch (JSONException e) {
@@ -802,11 +802,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
-
-    }
-
-    @Override
-    public void onItemClickDeals(int pos) {
 
     }
 

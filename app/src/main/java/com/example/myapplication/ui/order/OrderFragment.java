@@ -1,7 +1,14 @@
 package com.example.myapplication.ui.order;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +48,10 @@ import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.ui.cart.CartFragment;
+import com.example.myapplication.ui.checkout.Checkout3Fragment;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.gson.Gson;
 
@@ -65,11 +76,17 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     TextView tv_store_name;
     TextView tv_total_price;
     Button btn_place_order;
-    WebView webPay;
     private String store_name;
     //School IP
     private static String JSON_URL;
     private IPModel ipModel;
+    RadioGroup rg_payment;
+    RadioButton radio_wallet, radio_gcash;
+    String payment_method;
+    float wallet;
+    String walletText;
+    NotificationManager manager;
+    RequestQueue requestQueueOrder;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -83,17 +100,23 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         tv_store_name = root.findViewById(R.id.tv_store_name);
         tv_total_price = root.findViewById(R.id.tv_total_price);
         btn_place_order = root.findViewById(R.id.btn_place_order);
-        webPay = root.findViewById(R.id.webPay);
+        rg_payment = root.findViewById(R.id.rg_payment);
+        radio_gcash = root.findViewById(R.id.radio_gcash);
+        radio_wallet = root.findViewById(R.id.radio_wallet);
         Bundle bundle = this.getArguments();
 
         if (bundle != null){
             orderModel = bundle.getParcelable("order");
+            wallet = bundle.getFloat("wallet");
             Log.d("ofragOILSize", String.valueOf(orderModel.getOrderItem_list().size()));
             store_name = orderModel.getStore_name();
             tv_store_name.setText(store_name);
             Log.d("StoreName",store_name);
         }
 
+        walletText = "Wallet: P" + wallet;
+        radio_wallet.setText(walletText);
+        btn_place_order.setEnabled(false);
         rv_order_items = root.findViewById(R.id.rv_order_items);
         orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),this);
         rv_order_items.setAdapter(orderItemsAdapter);
@@ -101,6 +124,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         rv_order_items.setHasFixedSize(true);
         rv_order_items.setNestedScrollingEnabled(false);
         tv_total_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
+        requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
 
         orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
             @Override
@@ -109,18 +133,169 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
+        rg_payment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton radioButton = root.findViewById(checkedId);
+                String selectedOption = radioButton.getText().toString();
+                String walletText = "Wallet: P" + wallet;
+                // Perform actions based on the selected option
+                // Perform actions based on the selected option
+                if (selectedOption.equals(walletText)) {
+                    payment_method = "wallet";
+                    btn_place_order.setEnabled(true);
+                } else if (selectedOption.equals("Gcash")) {
+                    payment_method = "gcash";
+                    btn_place_order.setEnabled(true);
+                }
+            }
+        });
+
         btn_place_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("order", orderModel);
-                CheckoutFragment fragment = new CheckoutFragment();
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                if(payment_method == "wallet") {
+                    if(Float.parseFloat(tv_total_price.getText().toString()) <= wallet){
+                        getDataFromServer();
+                    } else {
+                        Toast.makeText(getContext(), "You don't have sufficient balance in your wallet, please cash in for additional amount", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("order", orderModel);
+                    CheckoutFragment fragment = new CheckoutFragment();
+                    fragment.setArguments(bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                }
             }
         });
 
         return root;
+    }
+
+    private void getDataFromServer() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorderpost.php", new Response.Listener<String>() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onResponse(String result) {
+                Log.d("1 ", result);
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    JSONObject object = jsonArray.getJSONObject(0);
+                    int orderId = object.getInt("idOrder");
+                    orderModel.setIdOrder(orderId);
+
+                    for (int k = 0; k < orderModel.getOrderItem_list().size(); k++){
+                        orderModel.getOrderItem_list().get(k).setIdOrder(orderId);
+                    }
+
+                    RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity());
+                    StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
+
+                        @Override
+                        public void onResponse(String result) {
+                            Log.d("onResponse", result);
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                            Log.d("Catch", String.valueOf(error));
+                        }
+                    }) {
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params2 = new HashMap<>();
+                            Gson gson = new Gson();
+                            String jsonArray = gson.toJson(orderModel.getOrderItem_list());
+                            params2.put("data", jsonArray);
+                            Log.d("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getIdProduct()));
+                            Log.d("hatdog", String.valueOf(params2));
+                            return params2;
+                        }
+                    };
+                    requestQueue2.add(stringRequest2);
+
+
+                    RequestQueue requestQueue3 = Volley.newRequestQueue(getActivity());
+                    StringRequest stringRequest3 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderhistorypost.php", new Response.Listener<String>() {
+
+                        @Override
+                        public void onResponse(String result) {
+                            Log.d("response", result);
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                            Log.d("Catch", String.valueOf(error));
+                        }
+                    }) {
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params2 = new HashMap<>();
+                            Gson gson = new Gson();
+                            String jsonArray = gson.toJson(orderModel.getOrderItem_list());
+                            params2.put("data", jsonArray);
+                            Log.d("idProduct", String.valueOf(orderModel.getOrderItem_list().get(0).getIdProduct()));
+                            Log.d("hatdog", String.valueOf(params2));
+                            return params2;
+                        }
+                    };
+                    requestQueue3.add(stringRequest3);
+
+                } catch (JSONException e) {
+                    Log.d("order:", "catch");
+                    // Toast.makeText(Register.this, "Catch ",Toast.LENGTH_SHORT).show();
+                }
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), "My Notification");
+                builder.setContentTitle("Mosibus");
+                builder.setContentText("Your have successfully placed your order!");
+                builder.setSmallIcon(R.drawable.logo);
+                builder.setAutoCancel(true);
+
+                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity().getApplicationContext());
+                managerCompat.notify(1, builder.build());
+
+                NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
+                manager = (NotificationManager) getSystemService(getActivity().getApplicationContext(), NotificationManager.class);
+                manager.createNotificationChannel(channel);
+
+                Log.d("OrderIDCheckout3", String.valueOf(orderModel.getIdOrder()));
+                orderModel.setOrderStatus("pending");
+                Bundle bundle = new Bundle();
+                Log.d("orderStatus", orderModel.getOrderStatus());
+                bundle.putParcelable("order", orderModel);
+                OrderSummaryFragment fragment = new OrderSummaryFragment();
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Toast.makeText(get, "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @SuppressLint("MissingPermission")
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("orderItemTotalPrice", String.valueOf(orderModel.getOrderItemTotalPrice()));
+                params.put("orderStatus", "pending");
+                params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
+                params.put("users_id", String.valueOf(orderModel.getUsers_id()));
+
+                return params;
+            }
+
+        };
+        requestQueue.add(stringRequest);
+
+
+//
+
     }
 
     @Override

@@ -151,11 +151,12 @@ public class Home extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if(item.getItemId() == R.id.nav_home){
-//                    Bundle bundle = new Bundle();
-//                    bundle.putInt("id", id);
-//                    bundle.putString("name", name);
-//                    bundle.putString("weather", weather);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id",id);
+                    bundle.putParcelable("user", userModel);
+                    bundle.putFloat("wallet", wallet);
                     HomeFragment fragment = new HomeFragment();
+                    fragment.setArguments(bundle);
 //                    fragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
                 } else if (item.getItemId() == R.id.nav_payment) {
@@ -168,6 +169,7 @@ public class Home extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.nav_cart){
                     Bundle bundle = new Bundle();
                     bundle.putInt("userID", id);
+                    bundle.putFloat("wallet", wallet);
                     CartFragment fragment = new CartFragment();
                     fragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -235,72 +237,72 @@ public class Home extends AppCompatActivity {
 
     }
 
-    public void filterModal(){
-        filterDialog = new Dialog(this);
-        filterDialog.setContentView(R.layout.filter_modal);
-        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        SeekBar sb_budget;
-        Button btn_confirm_filter;
-        ImageView close_modal;
-        TextView tv_set_budget;
-
-//        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
-        sb_budget = filterDialog.findViewById(R.id.sb_budget);
-        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
-        close_modal = filterDialog.findViewById(R.id.close_modal);
-        int filterValue;
-
-
-        close_modal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterDialog.dismiss();
-            }
-        });
-
-        sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int filterValue;
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                filterValue = progress;
-                String budget = "₱ " + filterValue;
-                Log.d("budget", String.valueOf(filterValue));
-                Log.d("budget", budget);
-
-                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d("FilterValue", String.valueOf(filterValue));
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("budget", filterValue);
-                        FilterFragment fragment = new FilterFragment();
-                        fragment.setArguments(bundle);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-                        filterDialog.dismiss();
-                    }
-                });
-
-//                tv_set_budget.setText(budget);
-//                Log.d("budget", tv_set_budget.getText().toString());
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-
-
-        filterDialog.show();
-    }
+//    public void filterModal(){
+//        filterDialog = new Dialog(this);
+//        filterDialog.setContentView(R.layout.filter_modal);
+//        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        SeekBar sb_budget;
+//        Button btn_confirm_filter;
+//        ImageView close_modal;
+//        TextView tv_set_budget;
+//
+////        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
+//        sb_budget = filterDialog.findViewById(R.id.sb_budget);
+//        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
+//        close_modal = filterDialog.findViewById(R.id.close_modal);
+//        int filterValue;
+//
+//
+//        close_modal.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                filterDialog.dismiss();
+//            }
+//        });
+//
+//        sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            int filterValue;
+//
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                filterValue = progress;
+//                String budget = "₱ " + filterValue;
+//                Log.d("budget", String.valueOf(filterValue));
+//                Log.d("budget", budget);
+//
+//                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Log.d("FilterValue", String.valueOf(filterValue));
+//                        Bundle bundle = new Bundle();
+//                        bundle.putInt("budget", filterValue);
+//                        FilterFragment fragment = new FilterFragment();
+//                        fragment.setArguments(bundle);
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+//                        filterDialog.dismiss();
+//                    }
+//                });
+//
+////                tv_set_budget.setText(budget);
+////                Log.d("budget", tv_set_budget.getText().toString());
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+//
+//
+//
+//        filterDialog.show();
+//    }
 
     public void profile_user(){
 
@@ -360,7 +362,7 @@ public class Home extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             // Handle settings item click
-            filterModal();
+//            filterModal();
 
             return true;
         }

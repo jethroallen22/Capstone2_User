@@ -1021,4 +1021,5 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
+
 }

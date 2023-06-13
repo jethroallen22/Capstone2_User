@@ -2,6 +2,8 @@ package com.example.myapplication.ui.order;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
+import static com.example.myapplication.activities.Home.id;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -57,6 +59,7 @@ import com.example.myapplication.ui.checkout.Checkout3Fragment;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
+import com.example.myapplication.ui.payment.PaymentFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
@@ -198,6 +201,37 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     }
 
     private void getDataFromServer() {
+
+        float temp = wallet - orderModel.getOrderItemTotalPrice();
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, JSON_URL + "update_wallet.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("On Res", "inside on res");
+                        } catch (Throwable e) {
+                            Log.d("Catch", String.valueOf(e));
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> paramV = new HashMap<>();
+                Log.d("Cashin", String.valueOf(temp));
+                paramV.put("id", String.valueOf(orderModel.getUsers_id()));
+                paramV.put("wallet", String.valueOf(temp));
+                Log.d("Cashin", "success");
+                return paramV;
+            }
+        };
+        queue.add(stringRequest1);
+
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorderpost.php", new Response.Listener<String>() {
             @SuppressLint("MissingPermission")
@@ -291,6 +325,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 Bundle bundle = new Bundle();
                 Log.d("orderStatus", orderModel.getOrderStatus());
                 bundle.putParcelable("order", orderModel);
+                bundle.putFloat("wallet", temp);
                 OrderSummaryFragment fragment = new OrderSummaryFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();

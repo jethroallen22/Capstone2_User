@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.ordersummary;
 
+import static com.example.myapplication.activities.Home.id;
+
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -41,6 +43,7 @@ import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.ProductModel;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.order.OrderFragment;
+import com.example.myapplication.ui.payment.PaymentFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,7 +70,7 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     private IPModel ipModel;
     String orderStatus;
     RatingBar rb_order_rating;
-
+    float wallet;
     RequestQueue requestQueue;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -102,6 +105,8 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                 tempOrder = bundle.getParcelable("order");
             else
                 tempOrder = bundle.getParcelable("orderActivity");
+            if(bundle.getFloat("wallet") != 0)
+                wallet = bundle.getFloat("wallet");
         }
         order = tempOrder;
         iv_pending.setImageResource(R.drawable.ic_baseline_pending_actions_24);
@@ -350,6 +355,36 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
 
         queue.add(stringRequest);
 
+        float temp = order.getOrderItem_list().get(position).getTotalPrice();
+        RequestQueue queue2 = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+        StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "update_wallet.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("On Res", "inside on res");
+                        } catch (Throwable e) {
+                            Log.d("Catch", String.valueOf(e));
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> paramV = new HashMap<>();
+                wallet += temp;
+                Log.d("Cashin", String.valueOf(wallet));
+                paramV.put("id", String.valueOf(order.getUsers_id()));
+                paramV.put("wallet", String.valueOf(wallet));
+                Log.d("Cashin", "success");
+                return paramV;
+            }
+        };
+        queue2.add(stringRequest2);
     }
 
     @Override

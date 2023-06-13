@@ -805,11 +805,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
-    @Override
-    public void onItemClickDeals(int pos) {
-
-    }
-
     //Function
     //Display Product BottomSheet
 

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.OrderModel;
 
 import java.util.List;
@@ -96,8 +95,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             super(itemView);
 
             iv_cart_item_img = itemView.findViewById(R.id.iv_cart_item_img);
-            cb_cart_item = itemView.findViewById(R.id.cb_cart_item);
-            tv_cart_store_name = itemView.findViewById(R.id.tv_cart_store_name);
+            cb_cart_item = itemView.findViewById(R.id.cb_voucher);
+            tv_cart_store_name = itemView.findViewById(R.id.tv_voucher);
             tv_cart_item_info = itemView.findViewById(R.id.tv_cart_item_info);
 
             itemView.setOnClickListener(new View.OnClickListener(){

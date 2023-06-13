@@ -1020,4 +1020,9 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClickDeals(int pos) {
 
     }
+
+    @Override
+    public void onItemClickDeals(int pos) {
+
+    }
 }

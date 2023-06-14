@@ -3,12 +3,10 @@ package com.example.myapplication.ui.filter;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,22 +31,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
-import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentFilterBinding;
-import com.example.myapplication.databinding.FragmentGalleryBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.ProductModel;
-import com.example.myapplication.models.SearchModel;
-import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.ProductModel;
+import com.example.myapplication.activities.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
-import com.example.myapplication.ui.home.HomeFragment;
-import com.example.myapplication.ui.moods.NewMoodFragment;
-import com.example.myapplication.ui.weather.WeatherFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -57,11 +47,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class FilterFragment extends Fragment implements RecyclerViewInterface {

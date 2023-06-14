@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCheckoutBinding;
-import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.activities.models.OrderModel;
 
 public class CheckoutFragment extends Fragment {
 

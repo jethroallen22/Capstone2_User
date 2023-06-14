@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.activities.models.OrderModel;
 
 import java.util.List;
 

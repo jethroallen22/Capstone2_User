@@ -25,15 +25,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.ProductAdapter;
-import com.example.myapplication.databinding.FragmentMixMoodBinding;
 import com.example.myapplication.databinding.FragmentWeatherBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.ProductModel;
-import com.example.myapplication.ui.moods.MixMoodFragment;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.ProductModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -44,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class WeatherFragment extends Fragment implements RecyclerViewInterface {

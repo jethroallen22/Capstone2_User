@@ -17,13 +17,11 @@ import android.view.ViewGroup;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCheckout2Binding;
-import com.example.myapplication.databinding.FragmentCheckoutBinding;
-import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.activities.models.OrderModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Checkout2Fragment extends Fragment {
 
@@ -32,6 +30,7 @@ public class Checkout2Fragment extends Fragment {
     int[] randomNumbers;
     NotificationManager manager;
     List<Integer> randomInt;
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,

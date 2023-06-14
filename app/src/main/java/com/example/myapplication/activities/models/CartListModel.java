@@ -1,6 +1,5 @@
-package com.example.myapplication.models;
+package com.example.myapplication.activities.models;
 
-import java.sql.Time;
 import java.util.List;
 
 public class CartListModel  {

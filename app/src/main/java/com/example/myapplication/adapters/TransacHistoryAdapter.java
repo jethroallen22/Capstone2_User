@@ -12,9 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.models.TransacHistoryModel;
-
-import org.w3c.dom.Text;
+import com.example.myapplication.activities.models.TransacHistoryModel;
 
 import java.util.List;
 

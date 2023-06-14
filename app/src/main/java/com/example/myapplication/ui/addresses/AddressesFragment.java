@@ -1,7 +1,5 @@
 package com.example.myapplication.ui.addresses;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,7 +21,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapters.AddressAdapter;
 import com.example.myapplication.databinding.FragmentAddressesBinding;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.models.AddressModel;
+import com.example.myapplication.activities.models.AddressModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;

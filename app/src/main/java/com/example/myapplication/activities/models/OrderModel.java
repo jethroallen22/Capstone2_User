@@ -1,4 +1,4 @@
-package com.example.myapplication.models;
+package com.example.myapplication.activities.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +18,8 @@ public class OrderModel implements Parcelable {
     String store_image;
     String store_name;
     int users_id;
+
+    int voucher_id;
     List<OrderItemModel> orderItem_list;
 
     public OrderModel(int idOrder, float orderItemTotalPrice, String orderStatus, int store_idstore, String store_image, String store_name, int users_id, List<OrderItemModel> orderItem_list) {
@@ -145,6 +147,12 @@ public class OrderModel implements Parcelable {
 
     public void setStore_name(String store_name) {
         this.store_name = store_name;
+    }
+
+    public int getVoucher_id(){return voucher_id;}
+
+    public void setVoucher_id(int voucher_id) {
+        this.voucher_id = voucher_id;
     }
 
     public Bitmap getBitmapImage(){

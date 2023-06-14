@@ -1,10 +1,9 @@
-package com.example.myapplication.models;
+package com.example.myapplication.activities.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
-import java.sql.Time;
 import java.util.List;
 
 public class CartModel  {

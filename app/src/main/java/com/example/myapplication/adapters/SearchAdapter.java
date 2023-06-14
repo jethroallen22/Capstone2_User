@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.SearchModel;
+import com.example.myapplication.activities.models.SearchModel;
 
 import java.util.List;
 

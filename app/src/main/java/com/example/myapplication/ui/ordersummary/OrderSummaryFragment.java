@@ -1,17 +1,13 @@
 package com.example.myapplication.ui.ordersummary;
 
-import static com.example.myapplication.activities.Home.id;
-
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,18 +28,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentOrderSummaryBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.OrderItemModel;
-import com.example.myapplication.models.OrderModel;
-import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.OrderItemModel;
+import com.example.myapplication.activities.models.OrderModel;
 import com.example.myapplication.ui.home.HomeFragment;
-import com.example.myapplication.ui.order.OrderFragment;
-import com.example.myapplication.ui.payment.PaymentFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;

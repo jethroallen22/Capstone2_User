@@ -1,6 +1,8 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -27,7 +29,7 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
     @NonNull
     @Override
     public VoucherAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        return new VoucherAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.voucher_item,parent,false));
     }
 
     @Override
@@ -38,7 +40,7 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -48,7 +50,7 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tv_voucher = itemView.findViewById(R.id.tv_voucher);
+            tv_voucher = itemView.findViewById(R.id.tv_voucher2);
 
         }
     }

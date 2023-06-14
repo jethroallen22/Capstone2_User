@@ -97,10 +97,13 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     NotificationManager manager;
     RequestQueue requestQueueOrder, requestQueueVoucher;
 
+    RecyclerView rv_vouchers;
+
     TextView tv_voucher_order;
 
     List<VoucherModel> voucher_list;
-    RecyclerView rv_voucher;
+    VoucherAdapter voucherAdapter;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -111,7 +114,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
 
-        voucher_list = new ArrayList<>();
+
+        requestQueueVoucher = Singleton.getsInstance(getActivity()).getRequestQueue();
 
         tv_store_name = root.findViewById(R.id.tv_store_name);
         tv_total_price = root.findViewById(R.id.tv_total_price);
@@ -120,7 +124,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         radio_gcash = root.findViewById(R.id.radio_gcash);
         radio_wallet = root.findViewById(R.id.radio_wallet);
         tv_voucher_order = root.findViewById(R.id.tv_voucher_order);
-        rv_voucher = root.findViewById(R.id.tv_voucher);
         Bundle bundle = this.getArguments();
 
         if (bundle != null){
@@ -467,62 +470,63 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void showVoucherBottomSheet() {
-
-        OrderFragment orderFragment = this;
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.vouchers_bottom_sheet_layout, getActivity().findViewById(R.id.voucher_bottomSheet_container));
 
         BottomSheetDialog voucherDialog = new BottomSheetDialog(getActivity());
         voucherDialog.setContentView(view);
 
+        voucher_list = new ArrayList<>();
+
+
         TextView tv_voucher_status = view.findViewById(R.id.tv_voucher_status);
         Button bt_apply_voucher = view.findViewById(R.id.bt_apply_voucher);
+        rv_vouchers = view.findViewById(R.id.rv_vouchers);
+        rv_vouchers.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+        rv_vouchers.setHasFixedSize(true);
+        rv_vouchers.setNestedScrollingEnabled(false);
+
+        //JsonArrayRequest for Reading Vouchers DB
+        JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("hatdognimiggy", String.valueOf(response));
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectVoucher = response.getJSONObject(i);
+                        int voucherId = jsonObjectVoucher.getInt("voucherId");
+                        String voucherName = jsonObjectVoucher.getString("voucherName");
+                        int storeId = jsonObjectVoucher.getInt("storeId");
+                        int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
+                        int voucherMin = jsonObjectVoucher.getInt("voucherMin");
+
+                        if (orderModel.getOrderItemTotalPrice() >= voucherMin) {
+                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, storeId, voucherAmount, voucherMin);
+                            voucher_list.add(voucherModel);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d("sizelist", String.valueOf(voucher_list.size()));
+                voucherAdapter = new VoucherAdapter(getActivity(), voucher_list);
+                rv_vouchers.setAdapter(voucherAdapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueVoucher.add(jsonArrayRequestVouchers);
+        //
 
         //OnClick for Apply in Voucher Bottomsheet
         bt_apply_voucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
-                //JsonArrayRequest for Reading Vouchers DB
-                JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        for (int i=0; i < response.length(); i++){
-                            try {
-                                JSONObject jsonObjectVoucher = response.getJSONObject(i);
-                                int voucherId = jsonObjectVoucher.getInt("voucherId");
-                                String voucherName = jsonObjectVoucher.getString("voucherName");
-                                int storeId = jsonObjectVoucher.getInt("storeId");
-                                int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
-                                int voucherMin = jsonObjectVoucher.getInt("voucherMin");
-
-                                    if (orderModel.getOrderItemTotalPrice() >= voucherMin) {
-                                        VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, storeId, voucherAmount, voucherMin);
-                                        voucher_list.add(voucherModel);
-                                    }
-
-                                        //voucherDialog.dismiss();
-                                // else {
-//                                    tv_voucher_status.setText("Voucher does not exist!");
-//                                }
-
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        VoucherAdapter voucherAdapter = new VoucherAdapter(getActivity(), voucher_list);
-                       rv_voucher.setAdapter(voucherAdapter);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                });
-                requestQueueVoucher.add(jsonArrayRequestVouchers);
-                //
+                voucherDialog.dismiss();
             }
         });
 

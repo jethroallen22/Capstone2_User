@@ -20,25 +20,26 @@
             android:outlineProvider="none"
             android:padding="16dp">
 
-            <CheckBox
-                android:id="@+id/cb_voucher"
+            <TextView
+                android:id="@+id/tv_voucher2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/robotomedium"
+                android:text="McDonalds - Binondo"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/imageView9"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_voucher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/robotobold"
-                android:text="McDonalds - Binondo"
-                android:textColor="#F44336"
-                android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@+id/cb_voucher"
-                app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/imageView9"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_discount_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

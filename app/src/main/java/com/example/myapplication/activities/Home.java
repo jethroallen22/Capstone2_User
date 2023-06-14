@@ -42,6 +42,7 @@ import com.example.myapplication.ui.moods.OldMoodFragment;
 import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.notifications.NotificationsFragment;
 import com.example.myapplication.ui.payment.PaymentFragment;
+import com.example.myapplication.ui.preferences.PreferencesFragment;
 import com.example.myapplication.ui.profile.ProfileFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.snackbar.Snackbar;
@@ -181,6 +182,12 @@ public class Home extends AppCompatActivity {
                     Bundle bundle = new Bundle();
                     bundle.putInt("id", id);
                     NotificationsFragment fragment = new NotificationsFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                } else if(item.getItemId() == R.id.nav_preferences){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", id);
+                    PreferencesFragment fragment = new PreferencesFragment();
                     fragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
                 } else if (item.getItemId() == R.id.nav_logout){

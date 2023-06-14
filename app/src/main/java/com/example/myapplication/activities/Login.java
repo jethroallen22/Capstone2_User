@@ -45,6 +45,7 @@ public class Login extends AppCompatActivity {
 
     private TextView currentTV;
 
+    private RequestQueue requestQueue3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +116,7 @@ public class Login extends AppCompatActivity {
                     String name = "";
                     String image = "";
                     float wallet = 0.0F;
+                    int loginCtr = 0;
 
                     if (success.equals("1")){
                         for (int i = 0; i < jsonArray.length(); i++){
@@ -126,6 +128,7 @@ public class Login extends AppCompatActivity {
                             id = object.getInt("id");
                             image = object.getString("image");
                             wallet = Float.parseFloat(String.valueOf(object.getDouble("wallet")));
+                            loginCtr = object.getInt("loginCtr");
 
                             Toast.makeText(Login.this, "Success Login. \nYour Name : "
                                     + name + "\nYour Email : "
@@ -146,23 +149,60 @@ public class Login extends AppCompatActivity {
 //                            fragmentTransaction.add(R.id.nav_host_fragment_content_home, homeFragment).commit();
 
                         }
-                        Intent intent = new Intent(getApplicationContext(), Preferences.class);
-                        Log.d("Login", "intent");
-                        intent.putExtra("name",name);
-                        intent.putExtra("id",id);
-                        intent.putExtra("image",image);
-                        intent.putExtra("wallet", wallet);
-                        intent.putExtra("weather", weather);
-                        Log.d("NAME LOGIN: " , name);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        if(loginCtr == 0) {
+                            Intent intent = new Intent(getApplicationContext(), Preferences.class);
+                            Log.d("Login", "intent");
+                            intent.putExtra("name", name);
+                            intent.putExtra("id", id);
+                            intent.putExtra("image", image);
+                            intent.putExtra("wallet", wallet);
+                            intent.putExtra("weather", weather);
+                            Log.d("NAME LOGIN: ", name);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            loginCtr++;
+                            int finalId = id;
+                            int finalLoginCtr = loginCtr;
+                            StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "updatelogin.php", new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d("loginrespo", response);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("onError", String.valueOf(error));
+                                }
+                            }) {
+
+                                protected Map<String, String> getParams() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<>();
+
+
+                                    params.put("id", String.valueOf(finalId));
+                                    params.put("loginCtr", String.valueOf(finalLoginCtr));
+
+                                    return params;
+                                }
+                            };
+                            RequestQueue requestQueue3 = Volley.newRequestQueue(getApplicationContext());
+                            requestQueue3.add(stringRequest2);
+
+                            startActivity(intent);
+                        }
+                        else{
+                            Intent intent = new Intent(getApplicationContext(), Home.class);
+                            Log.d("Login", "intent");
+                            intent.putExtra("name", name);
+                            intent.putExtra("id", id);
+                            intent.putExtra("image", image);
+                            intent.putExtra("wallet", wallet);
+                            intent.putExtra("weather", weather);
+                            Log.d("NAME LOGIN: ", name);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+
+                        }
                     }
-
-
-
-
-
-
 
                 } catch (JSONException e) {
                     /*

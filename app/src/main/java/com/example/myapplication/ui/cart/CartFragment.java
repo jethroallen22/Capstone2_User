@@ -1,8 +1,5 @@
 package com.example.myapplication.ui.cart;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,8 +22,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.CartAdapter;
-import com.example.myapplication.adapters.HomeStorePopularAdapter;
-import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -36,17 +30,13 @@ import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.order.OrderFragment;
-import com.example.myapplication.ui.search.SearchFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 
 public class CartFragment extends Fragment implements RecyclerViewInterface {
@@ -123,7 +113,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
 
         btn_remove = root.findViewById(R.id.btn_remove);
-        cb_cart_item = root.findViewById(R.id.cb_cart_item);
+        cb_cart_item = root.findViewById(R.id.cb_voucher);
         btn_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

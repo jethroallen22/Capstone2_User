@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
@@ -42,6 +44,8 @@ import com.example.myapplication.activities.Home;
 import com.example.myapplication.activities.Login;
 import com.example.myapplication.activities.Register;
 import com.example.myapplication.adapters.OrderItemsAdapter;
+import com.example.myapplication.adapters.VoucherAdapter;
+import com.example.myapplication.adapters.WeatherAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -49,6 +53,7 @@ import com.example.myapplication.models.CartModel;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.models.VoucherModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.checkout.Checkout3Fragment;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
@@ -56,6 +61,7 @@ import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
 import com.example.myapplication.ui.payment.PaymentFragment;
 import com.example.myapplication.ui.store.StoreFragment;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -89,7 +95,15 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     float wallet;
     String walletText;
     NotificationManager manager;
-    RequestQueue requestQueueOrder;
+    RequestQueue requestQueueOrder, requestQueueVoucher;
+
+    RecyclerView rv_vouchers;
+
+    TextView tv_voucher_order;
+
+    List<VoucherModel> voucher_list;
+    VoucherAdapter voucherAdapter;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -100,12 +114,16 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
 
+
+        requestQueueVoucher = Singleton.getsInstance(getActivity()).getRequestQueue();
+
         tv_store_name = root.findViewById(R.id.tv_store_name);
         tv_total_price = root.findViewById(R.id.tv_total_price);
         btn_place_order = root.findViewById(R.id.btn_place_order);
         rg_payment = root.findViewById(R.id.rg_payment);
         radio_gcash = root.findViewById(R.id.radio_gcash);
         radio_wallet = root.findViewById(R.id.radio_wallet);
+        tv_voucher_order = root.findViewById(R.id.tv_voucher_order);
         Bundle bundle = this.getArguments();
 
         if (bundle != null){
@@ -171,6 +189,14 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                     fragment.setArguments(bundle);
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 }
+            }
+        });
+
+        tv_voucher_order.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                showVoucherBottomSheet();
             }
         });
 
@@ -442,5 +468,70 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
 
     }
+
+    public void showVoucherBottomSheet() {
+        View view = LayoutInflater.from(getActivity())
+                .inflate(R.layout.vouchers_bottom_sheet_layout, getActivity().findViewById(R.id.voucher_bottomSheet_container));
+
+        BottomSheetDialog voucherDialog = new BottomSheetDialog(getActivity());
+        voucherDialog.setContentView(view);
+
+        voucher_list = new ArrayList<>();
+
+
+        TextView tv_voucher_status = view.findViewById(R.id.tv_voucher_status);
+        Button bt_apply_voucher = view.findViewById(R.id.bt_apply_voucher);
+        rv_vouchers = view.findViewById(R.id.rv_vouchers);
+        rv_vouchers.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+        rv_vouchers.setHasFixedSize(true);
+        rv_vouchers.setNestedScrollingEnabled(false);
+
+        //JsonArrayRequest for Reading Vouchers DB
+        JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("hatdognimiggy", String.valueOf(response));
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectVoucher = response.getJSONObject(i);
+                        int voucherId = jsonObjectVoucher.getInt("voucherId");
+                        String voucherName = jsonObjectVoucher.getString("voucherName");
+                        int storeId = jsonObjectVoucher.getInt("storeId");
+                        int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
+                        int voucherMin = jsonObjectVoucher.getInt("voucherMin");
+
+                        if (orderModel.getOrderItemTotalPrice() >= voucherMin) {
+                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, storeId, voucherAmount, voucherMin);
+                            voucher_list.add(voucherModel);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d("sizelist", String.valueOf(voucher_list.size()));
+                voucherAdapter = new VoucherAdapter(getActivity(), voucher_list);
+                rv_vouchers.setAdapter(voucherAdapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueVoucher.add(jsonArrayRequestVouchers);
+        //
+
+        //OnClick for Apply in Voucher Bottomsheet
+        bt_apply_voucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                voucherDialog.dismiss();
+            }
+        });
+
+        voucherDialog.show();
+    }
+
 
 }

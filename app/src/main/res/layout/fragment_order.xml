@@ -117,6 +117,7 @@
                                 android:layout_height="wrap_content"
                                 android:drawableLeft="@drawable/ic_baseline_payments_24"
                                 android:text="Gcash" />
+
                         </RadioGroup>
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -131,6 +132,36 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingBottom="16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tv_voucher_order"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="@font/robotomedium"
+                        android:text="Apply Voucher!"
+                        android:textColor="@color/mosibusPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imageView5"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageView
+                        android:id="@+id/imageView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/voucher"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

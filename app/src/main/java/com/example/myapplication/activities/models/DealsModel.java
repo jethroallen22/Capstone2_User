@@ -17,8 +17,10 @@ public class DealsModel implements Parcelable {
     String storeImage;
     String storeName;
 
+    String storeCategory;
+
     public DealsModel(int dealsId, int storeId, String type, int percentage,
-                      String convFee, String storeImage, String storeName){
+                      String convFee, String storeImage, String storeName, String storeCategory){
         this.dealsId = dealsId;
         this.storeId = storeId;
         this.type = type;
@@ -26,6 +28,7 @@ public class DealsModel implements Parcelable {
         this.convFee = convFee;
         this.storeImage = storeImage;
         this.storeName = storeName;
+        this.storeCategory = storeCategory;
     }
 
     protected DealsModel(Parcel in) {
@@ -36,6 +39,7 @@ public class DealsModel implements Parcelable {
         convFee = in.readString();
         storeImage = in.readString();
         storeName = in.readString();
+        storeCategory = in.readString();
     }
 
     public static final Creator<DealsModel> CREATOR = new Creator<DealsModel>() {
@@ -103,6 +107,14 @@ public class DealsModel implements Parcelable {
         return bitmap;
     };
 
+    public String getStoreCategory() {
+        return storeCategory;
+    }
+
+    public void setStoreCategory(String storeCategory) {
+        this.storeCategory = storeCategory;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -117,6 +129,7 @@ public class DealsModel implements Parcelable {
         dest.writeString(convFee);
         dest.writeString(storeImage);
         dest.writeString(storeName);
+        dest.writeString(storeCategory);
     }
 }
 

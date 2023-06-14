@@ -1,11 +1,10 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.activities.models.VoucherModel;
+import com.example.myapplication.models.ChooseModel;
+import com.example.myapplication.models.VoucherModel;
 
 import java.util.List;
 
@@ -23,20 +23,7 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
     Context context;
     List<VoucherModel> list;
 
-
     private final RecyclerViewInterface recyclerViewInterface;
-
-    private OnItemClickListener listener;
-
-    public interface OnItemClickListener{
-        void onItemClick(int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener clickListener){
-        listener = clickListener;
-    }
-
-
 
     public VoucherAdapter(Context context, List<VoucherModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
@@ -64,30 +51,13 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tv_voucher;
-
         LinearLayout ll_voucher;
-
-        Button bt_claim;
 
         public ViewHolder(@NonNull View itemView,RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             tv_voucher = itemView.findViewById(R.id.tv_voucher2);
             ll_voucher = itemView.findViewById(R.id.ll_voucher);
-            bt_claim = itemView.findViewById(R.id.bt_claim);
-
-            bt_claim.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null){
-                        int pos = getAdapterPosition();
-
-                        if (pos != RecyclerView.NO_POSITION){
-                            listener.onItemClick(pos);
-                        }
-                    }
-                }
-            });
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

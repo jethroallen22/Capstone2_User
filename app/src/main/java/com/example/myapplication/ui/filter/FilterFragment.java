@@ -3,6 +3,7 @@ package com.example.myapplication.ui.filter;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,8 +19,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,8 +92,9 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     String TAG = "filter";
     LinearLayout ll_no_result;
     float current = 0;
-    Dialog bugetDialog;
+    Dialog bugetDialog, filterDialog;
     boolean continueShop = false;
+    ImageView btn_edit_budget;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -129,7 +133,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
         tv_budget = root.findViewById(R.id.tv_budget);
         tv_current = root.findViewById(R.id.tv_current);
         rv_filter = root.findViewById(R.id.rv_filter);
-        tv_budget.setText("Budget: P" + budget);
+        btn_edit_budget = root.findViewById(R.id.btn_edit_budget);
+        if(budget == 0 ){
+            budget = 999999;
+            tv_budget.setText("Budget: ∞");
+        } else {
+            tv_budget.setText("Budget: P" + budget);
+        }
         productModelList = new ArrayList<>();
         rv_filter.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv_filter.setHasFixedSize(true);
@@ -176,6 +186,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
+        btn_edit_budget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterModal();
+            }
+        });
+
         return root;
     }
 
@@ -207,37 +224,48 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         foodfyModel.setProductRestoCategory(storeCategory);
                         Log.d(TAG, foodfyModel.toString());
 
-                        if (categ_list != null && weather_list != null && budget != 0) {
+                        if (categ_list.size() != 0 && weather_list.size() != 0 && budget != 0) {
                             Log.d(TAG, "if (categ_list != null && weather_list != null && budget != 0) {");
                             // If all three lists have values
-                            boolean isMatch = true;
+                            boolean isMatch = false, tmp = false;
                             for(String categ : categ_list){
                                 if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ))
                                     isMatch = true;
-                                else
-                                    isMatch = false;
+//                                else
+//                                    isMatch = false;
                             }
+                            Log.d(TAG, "categ: " + isMatch);
                             for (String weather2 : weather_list){
                                 if(foodfyModel.getWeather().equalsIgnoreCase(weather2) && isMatch == true)
-                                    isMatch = true;
-                                else
-                                    isMatch = false;
+                                    tmp = true;
+//                                else
+//                                    isMatch = false;
                             }
-                            if(isMatch == true && foodfyModel.getProductPrice() <= budget) {
+                            isMatch = tmp;
+                            Log.d(TAG, "weather: " + isMatch);
+                            if(isMatch && foodfyModel.getProductPrice() <= budget) {
+                                Log.d(TAG, "ADD");
                                 productModelList.add(foodfyModel);
                             }
                         } else {
-                            boolean isMatch = true;
-                            if (categ_list != null) {
-                                isMatch = isMatch && categ_list.contains(foodfyModel.getProductRestoCategory());
+                            boolean isMatch = false;
+                            if (categ_list.size() != 0) {
+                                for (String categ : categ_list) {
+                                    if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+                                        isMatch = true;
+//                                        break;
+                                    }
+                                }
                             }
-                            if (weather_list != null) {
-                                isMatch = isMatch && weather_list.contains(foodfyModel.getWeather());
+                            if (weather_list.size() != 0) {
+                                for (String weather2 : weather_list) {
+                                    if (foodfyModel.getWeather().equalsIgnoreCase(weather2)) {
+                                        isMatch = true;
+//                                        break;
+                                    }
+                                }
                             }
-                            if (budget != 0) {
-                                isMatch = isMatch && foodfyModel.getProductPrice() <= budget;
-                            }
-                            if (isMatch) {
+                            if (isMatch && foodfyModel.getProductPrice() <= budget) {
                                 productModelList.add(foodfyModel);
                             }
                         }
@@ -293,40 +321,48 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         Log.d(TAG, foodfyModel.getProductName());
                         Log.d(TAG, foodfyModel.getProductRestoCategory());
 
-                        if (categ_list != null && weather_list != null && budget != 0) {
+                        if (categ_list.size() != 0 && weather_list.size() != 0 && budget != 0) {
                             Log.d(TAG, "if (categ_list != null && weather_list != null && budget != 0) {");
                             // If all three lists have values
-                            boolean isMatch = true;
+                            boolean isMatch = false, tmp = false;
                             for(String categ : categ_list){
                                 if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ))
                                     isMatch = true;
-                                else
-                                    isMatch = false;
+//                                else
+//                                    isMatch = false;
                             }
                             Log.d(TAG, "categ: " + isMatch);
                             for (String weather2 : weather_list){
                                 if(foodfyModel.getWeather().equalsIgnoreCase(weather2) && isMatch == true)
-                                    isMatch = true;
-                                else
-                                    isMatch = false;
+                                    tmp = true;
+//                                else
+//                                    isMatch = false;
                             }
+                            isMatch = tmp;
                             Log.d(TAG, "weather: " + isMatch);
-                            if(isMatch == true && foodfyModel.getProductPrice() <= budget) {
+                            if(isMatch && foodfyModel.getProductPrice() <= budget) {
                                 Log.d(TAG, "ADD");
                                 productModelList.add(foodfyModel);
                             }
                         } else {
-                            boolean isMatch = true;
-                            if (categ_list != null) {
-                                isMatch = isMatch && categ_list.contains(foodfyModel.getProductRestoCategory());
+                            boolean isMatch = false;
+                            if (categ_list.size() != 0) {
+                                for (String categ : categ_list) {
+                                    if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+                                        isMatch = true;
+//                                        break;
+                                    }
+                                }
                             }
-                            if (weather_list != null) {
-                                isMatch = isMatch && weather_list.contains(foodfyModel.getWeather());
+                            if (weather_list.size() != 0) {
+                                for (String weather2 : weather_list) {
+                                    if (foodfyModel.getWeather().equalsIgnoreCase(weather2)) {
+                                        isMatch = true;
+//                                        break;
+                                    }
+                                }
                             }
-                            if (budget != 0) {
-                                isMatch = isMatch && foodfyModel.getProductPrice() <= budget;
-                            }
-                            if (isMatch) {
+                            if (isMatch && foodfyModel.getProductPrice() <= budget) {
                                 productModelList.add(foodfyModel);
                             }
                         }
@@ -404,41 +440,43 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
 
                                 if (!productExistsInOrderItems) {
                                     if (categ_list.size() != 0 && weather_list.size() != 0 && budget != 0) {
+                                        Log.d(TAG, "if (categ_list != null && weather_list != null && budget != 0) {");
                                         // If all three lists have values
-                                        boolean isMatch = true;
-                                        for (String categ : categ_list) {
-                                            if (!foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                isMatch = false;
-                                                break;
-                                            }
+                                        boolean isMatch = false, tmp = false;
+                                        for(String categ : categ_list){
+                                            if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ))
+                                                isMatch = true;
+//                                else
+//                                    isMatch = false;
                                         }
-                                        if (isMatch) {
-                                            for (String weather : weather_list) {
-                                                if (!foodfyModel.getWeather().equalsIgnoreCase(weather)) {
-                                                    isMatch = false;
-                                                    break;
-                                                }
-                                            }
+                                        Log.d(TAG, "categ: " + isMatch);
+                                        for (String weather2 : weather_list){
+                                            if(foodfyModel.getWeather().equalsIgnoreCase(weather2) && isMatch == true)
+                                                tmp = true;
+//                                else
+//                                    isMatch = false;
                                         }
-
-                                        if (isMatch && foodfyModel.getProductPrice() <= budget) {
+                                        isMatch = tmp;
+                                        Log.d(TAG, "weather: " + isMatch);
+                                        if(isMatch && foodfyModel.getProductPrice() <= budget) {
+                                            Log.d(TAG, "ADD");
                                             productModelList.add(foodfyModel);
                                         }
                                     } else {
-                                        boolean isMatch = true;
+                                        boolean isMatch = false;
                                         if (categ_list.size() != 0) {
                                             for (String categ : categ_list) {
-                                                if (!foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                    isMatch = false;
-                                                    break;
+                                                if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+                                                    isMatch = true;
+//                                        break;
                                                 }
                                             }
                                         }
                                         if (weather_list.size() != 0) {
-                                            for (String weather : weather_list) {
-                                                if (!foodfyModel.getWeather().equalsIgnoreCase(weather)) {
-                                                    isMatch = false;
-                                                    break;
+                                            for (String weather2 : weather_list) {
+                                                if (foodfyModel.getWeather().equalsIgnoreCase(weather2)) {
+                                                    isMatch = true;
+//                                        break;
                                                 }
                                             }
                                         }
@@ -535,41 +573,43 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
 
                                 if (productExistsInOrderItems) {
                                     if (categ_list.size() != 0 && weather_list.size() != 0 && budget != 0) {
+                                        Log.d(TAG, "if (categ_list != null && weather_list != null && budget != 0) {");
                                         // If all three lists have values
-                                        boolean isMatch = true;
-                                        for (String categ : categ_list) {
-                                            if (!foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                isMatch = false;
-                                                break;
-                                            }
+                                        boolean isMatch = false, tmp = false;
+                                        for(String categ : categ_list){
+                                            if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ))
+                                                isMatch = true;
+//                                else
+//                                    isMatch = false;
                                         }
-                                        if (isMatch) {
-                                            for (String weather : weather_list) {
-                                                if (!foodfyModel.getWeather().equalsIgnoreCase(weather)) {
-                                                    isMatch = false;
-                                                    break;
-                                                }
-                                            }
+                                        Log.d(TAG, "categ: " + isMatch);
+                                        for (String weather2 : weather_list){
+                                            if(foodfyModel.getWeather().equalsIgnoreCase(weather2) && isMatch == true)
+                                                tmp = true;
+//                                else
+//                                    isMatch = false;
                                         }
-
-                                        if (isMatch && foodfyModel.getProductPrice() <= budget) {
+                                        isMatch = tmp;
+                                        Log.d(TAG, "weather: " + isMatch);
+                                        if(isMatch && foodfyModel.getProductPrice() <= budget) {
+                                            Log.d(TAG, "ADD");
                                             productModelList.add(foodfyModel);
                                         }
                                     } else {
-                                        boolean isMatch = true;
+                                        boolean isMatch = false;
                                         if (categ_list.size() != 0) {
                                             for (String categ : categ_list) {
-                                                if (!foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                    isMatch = false;
-                                                    break;
+                                                if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+                                                    isMatch = true;
+//                                        break;
                                                 }
                                             }
                                         }
                                         if (weather_list.size() != 0) {
-                                            for (String weather : weather_list) {
-                                                if (!foodfyModel.getWeather().equalsIgnoreCase(weather)) {
-                                                    isMatch = false;
-                                                    break;
+                                            for (String weather2 : weather_list) {
+                                                if (foodfyModel.getWeather().equalsIgnoreCase(weather2)) {
+                                                    isMatch = true;
+//                                        break;
                                                 }
                                             }
                                         }
@@ -665,41 +705,43 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
 
                                 if (productExistsInOrderItems) {
                                     if (categ_list.size() != 0 && weather_list.size() != 0 && budget != 0) {
+                                        Log.d(TAG, "if (categ_list != null && weather_list != null && budget != 0) {");
                                         // If all three lists have values
-                                        boolean isMatch = true;
-                                        for (String categ : categ_list) {
-                                            if (!foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                isMatch = false;
-                                                break;
-                                            }
+                                        boolean isMatch = false, tmp = false;
+                                        for(String categ : categ_list){
+                                            if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ))
+                                                isMatch = true;
+//                                else
+//                                    isMatch = false;
                                         }
-                                        if (isMatch) {
-                                            for (String weather : weather_list) {
-                                                if (!foodfyModel.getWeather().equalsIgnoreCase(weather)) {
-                                                    isMatch = false;
-                                                    break;
-                                                }
-                                            }
+                                        Log.d(TAG, "categ: " + isMatch);
+                                        for (String weather2 : weather_list){
+                                            if(foodfyModel.getWeather().equalsIgnoreCase(weather2) && isMatch == true)
+                                                tmp = true;
+//                                else
+//                                    isMatch = false;
                                         }
-
-                                        if (isMatch && foodfyModel.getProductPrice() <= budget) {
+                                        isMatch = tmp;
+                                        Log.d(TAG, "weather: " + isMatch);
+                                        if(isMatch && foodfyModel.getProductPrice() <= budget) {
+                                            Log.d(TAG, "ADD");
                                             productModelList.add(foodfyModel);
                                         }
                                     } else {
-                                        boolean isMatch = true;
+                                        boolean isMatch = false;
                                         if (categ_list.size() != 0) {
                                             for (String categ : categ_list) {
-                                                if (!foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                    isMatch = false;
-                                                    break;
+                                                if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+                                                    isMatch = true;
+//                                        break;
                                                 }
                                             }
                                         }
                                         if (weather_list.size() != 0) {
-                                            for (String weather : weather_list) {
-                                                if (!foodfyModel.getWeather().equalsIgnoreCase(weather)) {
-                                                    isMatch = false;
-                                                    break;
+                                            for (String weather2 : weather_list) {
+                                                if (foodfyModel.getWeather().equalsIgnoreCase(weather2)) {
+                                                    isMatch = true;
+//                                        break;
                                                 }
                                             }
                                         }
@@ -895,6 +937,39 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
         bugetDialog.show();
     }
 
+    public void filterModal(){
+        filterDialog = new Dialog(this.getContext());
+        filterDialog.setContentView(R.layout.filter_modal);
+        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        EditText et_budget;
+        Button btn_confirm_filter;
+        ImageView close_modal;
+
+        et_budget = filterDialog.findViewById(R.id.et_budget);
+        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter3);
+        close_modal = filterDialog.findViewById(R.id.close_modal);
+        int filterValue;
+
+
+        close_modal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterDialog.dismiss();
+            }
+        });
+
+        btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                budget = Integer.parseInt(String.valueOf(et_budget.getText()));
+                tv_budget.setText("Budget: P" + budget);
+                filterDialog.dismiss();
+            }
+        });
+
+        filterDialog.show();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -945,4 +1020,6 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClickDeals(int pos) {
 
     }
+
+
 }

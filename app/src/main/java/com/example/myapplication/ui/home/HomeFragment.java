@@ -147,7 +147,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     //Filter Bottomsheet
 
-
     Chip chip_categ, chip_weather, chip_mood;
     ImageView close_btn;
     SeekBar sb_budget;
@@ -155,8 +154,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     Button btn_confirm_filter;
     List<String> chp_category_list, chp_mood_list, chp_weather_list, chp_budget;
     ImageView btn_filter;
-
-
 
     //Category
     List<StoreModel> tempStoreList;
@@ -178,6 +175,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     ImageView iv_hot, iv_cold, iv_old, iv_new, iv_mix, iv_trend;
 
     ChipGroup chip_group;
+
+    float wallet;
+
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -193,11 +193,16 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             userName = intent.getStringExtra("name");
             userId = intent.getIntExtra("id", 0);
             weather = intent.getStringExtra("weather");
+            wallet = intent.getFloatExtra("wallet",0);
             Log.d("HOME FRAG name", userName + userId + " Weather: " + weather);
             Log.d("HOMEuserID", String.valueOf(userId));
             Log.d("weatherHomeFrag", weather);
         } else {
             Log.d("HOME FRAG name", "FAIL");
+        }
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            wallet = bundle.getFloat("wallet");
         }
         moodModal();
         order_item_temp_list = new ArrayList<>();
@@ -314,6 +319,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 CartFragment fragment = new CartFragment();
                 bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
                 bundle.putInt("userID", userId);
+                bundle.putFloat("wallet", wallet);
                 fragment.setArguments(bundle);
                 Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
@@ -421,7 +427,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         home_deals_list.add(deal);
                         for (int j =  0 ; j < food_for_you_list.size() ; j++){
                             if(food_for_you_list.get(j).getStore_idStore() == storeId){
-                                food_for_you_list.get(j).setPercentage(percentage);
+                                //food_for_you_list.get(j).setPercentage(percentage);
                             }
                         }
                     } catch (JSONException e) {

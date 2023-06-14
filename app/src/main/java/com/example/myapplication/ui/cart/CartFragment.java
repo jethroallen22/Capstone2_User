@@ -62,6 +62,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     List<OrderItemModel> order_item_list;
     RequestQueue requestQueueCart, requestQueueStore;
     int userID = 0;
+    float wallet;
 
     //School IP
     private static String JSON_URL;
@@ -83,6 +84,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         if(bundle != null) {
 //            temp_store_list = (List<StoreModel>) bundle.getSerializable("storeList");
             userID = bundle.getInt("userID");
+            wallet = bundle.getFloat("wallet");
             Log.d("USERID", String.valueOf(userID));
         }
 
@@ -176,6 +178,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         }
         order_list.get(position).setOrderItemTotalPrice(tempTotal);
         bundle.putParcelable("order", order_list.get(position));
+        bundle.putFloat("wallet", wallet);
 
         OrderFragment fragment = new OrderFragment();
         fragment.setArguments(bundle);

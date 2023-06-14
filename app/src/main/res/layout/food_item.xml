@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="2dp"
-    android:orientation="vertical">
+    android:background="@color/mosibusOffWhite"
+    android:orientation="vertical"
+    android:paddingBottom="3dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
 
         <androidx.cardview.widget.CardView
             android:layout_width="100dp"
@@ -20,7 +22,7 @@
             app:cardCornerRadius="5dp">
 
             <TextView
-                android:id="@+id/textView31"
+                android:id="@+id/tv_deal_percentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="21dp"
@@ -47,8 +49,9 @@
                     android:fontFamily="@font/robotobold"
                     android:text="P 123"
                     android:textSize="16sp"
-                    tools:layout_editor_absoluteX="338dp"
-                    tools:layout_editor_absoluteY="35dp" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="338dp" />
 
                 <ImageView
                     android:id="@+id/iv_product_image"
@@ -61,20 +64,22 @@
                     android:id="@+id/tv_product_cal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:fontFamily="@font/robotomedium"
                     android:text="360cal"
                     android:textSize="12sp"
-                    tools:layout_editor_absoluteX="116dp"
-                    tools:layout_editor_absoluteY="38dp" />
+                    app:layout_constraintStart_toStartOf="@+id/tv_product_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_product_name" />
 
                 <TextView
                     android:id="@+id/tv_product_name"
-                    android:layout_width="0dp"
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:fontFamily="@font/robotobold"
                     android:text="TextView"
                     android:textSize="20sp"
-                    tools:layout_editor_absoluteX="116dp" />
+                    app:layout_constraintStart_toEndOf="@+id/iv_product_image" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

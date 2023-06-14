@@ -10,37 +10,36 @@
     android:clickable="true"
     app:cardCornerRadius="15dp">
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-5dp"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="#F1493D"
+        app:cardCornerRadius="5dp">
+
+        <TextView
+            android:id="@+id/tv_deal_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="21dp"
+            android:fontFamily="@font/robotoregular"
+            android:text="Discount"
+            android:textColor="#F3E4E4" />
+    </androidx.cardview.widget.CardView>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
 
-        <FrameLayout
+        <ImageView
+            android:id="@+id/iv_deal_store"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/iv_deal_store"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/ad_banner" />
-
-            <TextView
-                android:id="@+id/tv_deal_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:background="#F44336"
-                android:fontFamily="@font/robotoregular"
-                android:text="Lorem ipsum dolor amet"
-                android:textAlignment="viewStart"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp" />
-
-        </FrameLayout>
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ad_banner" />
 
         <TextView
             android:id="@+id/tv_deal_store_name"
@@ -55,6 +54,17 @@
             android:text="Testi"
             android:textAlignment="viewStart"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_deal_store_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/robotoregular"
+            android:text="Lorem ipsum dolor amet"
+            android:textAlignment="viewStart"
+            android:textSize="12sp" />
 
     </LinearLayout>
 

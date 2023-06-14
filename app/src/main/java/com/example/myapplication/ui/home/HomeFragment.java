@@ -79,11 +79,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
@@ -405,11 +411,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void extractDeals(){
-        JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apideals.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d("DealsResponse", String.valueOf(response));
-                for (int i=0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
                         int dealId = jsonObject.getInt("dealsId");
@@ -419,32 +425,54 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String convFee = jsonObject.getString("convFee");
                         String storeImage = jsonObject.getString("storeImage");
                         String storeName = jsonObject.getString("storeName");
+                        String storeCategory = jsonObject.getString("storeCategory");
+                        String startDate = jsonObject.getString("startDate");
+                        String endDate = jsonObject.getString("endDate");
 
-                        Log.d("Dealings", String.valueOf(dealId));
+                        Log.d("DealId", String.valueOf(dealId));
 
-                        DealsModel deal = new DealsModel(dealId,storeId,type,percentage,convFee,
-                                storeImage, storeName);
-                        home_deals_list.add(deal);
-                        for (int j =  0 ; j < food_for_you_list.size() ; j++){
-                            if(food_for_you_list.get(j).getStore_idStore() == storeId){
-                                //food_for_you_list.get(j).setPercentage(percentage);
+                        DealsModel deal = new DealsModel(dealId, storeId, type, percentage, convFee,
+                                storeImage, storeName, storeCategory);
+
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        Date currentDate = new Date(); // Current date
+
+                        try {
+                            Date startDateTemp = dateFormat.parse(startDate);
+                            Date endDateTemp = dateFormat.parse(endDate);
+
+                            if (currentDate.after(startDateTemp)) {
+                                if (currentDate.before(endDateTemp)) {
+                                    Log.d("ValidDeal", deal.getStoreName());
+                                    home_deals_list.add(deal);
+                                } else {
+                                    Log.d("InvalidDeal", deal.getStoreName() + ": Date is after end date");
+                                }
+                            } else {
+                                Log.d("InvalidDeal", deal.getStoreName() + ": Date is before start date");
                             }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            Log.d("ParseException", e.getMessage());
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.d("JSONException", e.getMessage());
                     }
                 }
                 Log.d("DealList", String.valueOf(home_deals_list.size()));
 
-                homeDealsAdapter = new HomeDealsAdapter(getActivity(),home_deals_list,homeFragment);
+                homeDealsAdapter = new HomeDealsAdapter(getActivity(), home_deals_list, homeFragment);
                 rv_deals.setAdapter(homeDealsAdapter);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("VolleyError", error.getMessage());
             }
         });
         requestQueueDeals.add(jsonArrayRequestDeals);
+
     }
 
     //Store Recommendation for RecView 1 and 2 Function

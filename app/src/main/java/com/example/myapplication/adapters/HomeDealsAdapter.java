@@ -45,7 +45,8 @@ public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.View
     public void onBindViewHolder(@NonNull HomeDealsAdapter.ViewHolder holder, int position) {
         holder.iv_deal_store.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_deal_store_name.setText(list.get(position).getStoreName());
-        holder.tv_deal_description.setText(list.get(position).getPercentage() + "%" + " off on all items!");
+        holder.tv_deal_description.setText(list.get(position).getStoreCategory());
+        holder.tv_deal_percentage.setText(list.get(position).getPercentage() + "% off");
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -53,13 +54,15 @@ public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.View
         ImageView iv_deal_store;
         TextView tv_deal_store_name;
         TextView tv_deal_description;
+        TextView tv_deal_percentage;
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             iv_deal_store = itemView.findViewById(R.id.iv_deal_store);
             tv_deal_store_name = itemView.findViewById(R.id.tv_deal_store_name);
-            tv_deal_description = itemView.findViewById(R.id.tv_deal_description);
+            tv_deal_description = itemView.findViewById(R.id.tv_deal_store_category);
+            tv_deal_percentage = itemView.findViewById(R.id.tv_deal_percentage);
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

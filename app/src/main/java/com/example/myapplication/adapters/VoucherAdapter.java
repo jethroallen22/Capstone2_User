@@ -23,6 +23,7 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
     Context context;
     List<VoucherModel> list;
 
+    int selectedItem = RecyclerView.NO_POSITION;
     private final RecyclerViewInterface recyclerViewInterface;
 
     public VoucherAdapter(Context context, List<VoucherModel> list, RecyclerViewInterface recyclerViewInterface) {
@@ -41,6 +42,15 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
     public void onBindViewHolder(@NonNull VoucherAdapter.ViewHolder holder, int position) {
         holder.tv_voucher.setText("Get " + list.get(position).getVoucherAmount() +" Php Discount, for a Minimum Purchase of " + list.get(position).getVoucherMin() +
                 " Php!");
+
+        // Set the item view state based on the selected state
+        if (holder.isSelected(position)) {
+            holder.itemView.setEnabled(true);
+            holder.itemView.setAlpha(1.0f);
+        } else {
+            holder.itemView.setEnabled(false);
+            holder.itemView.setAlpha(0.5f);
+        }
     }
 
     @Override
@@ -66,12 +76,25 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
                         int pos = getAdapterPosition();
 
                         if (pos != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClickVoucher(pos);
+                            setSelectedItem(pos);
+                            notifyDataSetChanged();
+
+                            if (recyclerViewInterface != null) {
+                                recyclerViewInterface.onItemClickVoucher(pos);
+                            }
                         }
                     }
                 }
             });
 
+        }
+
+        public boolean isSelected(int position) {
+            return position == selectedItem;
+        }
+
+        private void setSelectedItem(int position) {
+            selectedItem = position;
         }
 
     }

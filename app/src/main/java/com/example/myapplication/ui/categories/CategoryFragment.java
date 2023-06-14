@@ -148,4 +148,9 @@ public class CategoryFragment extends Fragment implements RecyclerViewInterface{
     public void onItemClickDeals(int pos) {
 
     }
+
+    @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
 }

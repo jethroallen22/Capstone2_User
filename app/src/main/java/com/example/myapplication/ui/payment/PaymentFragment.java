@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,8 @@ public class PaymentFragment extends Fragment {
     WalletModel walletModel;
     List<WalletModel> walletModelList;
     private boolean stopExecution = false;
+    private Handler handler;
+    private Runnable myRunnable;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -102,20 +105,30 @@ public class PaymentFragment extends Fragment {
         requestQueueBalance = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
         getTransacHistory();
-        root.postDelayed(new Runnable() {
+        handler = new Handler();
+        myRunnable = new Runnable() {
             @Override
             public void run() {
-                if(!stopExecution) {
-                    getAvailBalance();
-                    root.postDelayed(this, 3000);
-                }
+                getAvailBalance();
             }
-        }, 3000);
+        };
+        handler.postDelayed(myRunnable, 1000);
+
+//        root.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                if(!stopExecution) {
+//                    getAvailBalance();
+//                    root.postDelayed(this, 3000);
+//                }
+//            }
+//        }, 3000);
 
         binding.btnCashIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopExecution = true;
+//                stopExecution = true;
+                handler.removeCallbacks(myRunnable);
                 String fullString = binding.tvBalanceAvail.getText().toString();
                 int startIndex = 2;
                 double wallet = Double.parseDouble(fullString.substring(startIndex));

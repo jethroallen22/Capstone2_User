@@ -2,10 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_voucher"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="2dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="2dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

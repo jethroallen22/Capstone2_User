@@ -149,6 +149,11 @@ public class MixMoodFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
+    @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
+
     public void showBottomSheet(int position){
         String TAG = "Bottomsheet";
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);

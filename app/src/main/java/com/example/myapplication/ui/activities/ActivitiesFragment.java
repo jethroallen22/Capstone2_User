@@ -360,4 +360,9 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
     public void onItemClickDeals(int pos) {
 
     }
+
+    @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
 }

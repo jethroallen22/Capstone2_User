@@ -12,4 +12,6 @@ public interface RecyclerViewInterface {
     void onItemClickCategory(int position);
 
     void onItemClickDeals(int pos);
+
+    void onItemClickVoucher(int pos);
 }

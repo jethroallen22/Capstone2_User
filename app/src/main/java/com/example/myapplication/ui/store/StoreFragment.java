@@ -399,6 +399,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
+
+    @Override
     public void onItemClickSearch(int pos)
 
 

@@ -1021,5 +1021,10 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
+    @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
+
 
 }

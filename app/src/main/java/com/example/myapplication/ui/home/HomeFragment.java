@@ -770,6 +770,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
+
+    @Override
     public void onItemClickStoreRec2(int position) {
         Bundle bundle = new Bundle();
         StoreModel storeModel = home_store_rec_list2.get(position);

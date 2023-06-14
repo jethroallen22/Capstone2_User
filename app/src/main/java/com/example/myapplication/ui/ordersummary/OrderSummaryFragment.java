@@ -431,4 +431,9 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
     public void onItemClickDeals(int pos) {
 
     }
+
+    @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
 }

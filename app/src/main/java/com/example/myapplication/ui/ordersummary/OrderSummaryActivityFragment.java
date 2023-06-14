@@ -186,4 +186,9 @@ public class OrderSummaryActivityFragment extends Fragment implements RecyclerVi
     public void onItemClickDeals(int pos) {
 
     }
+
+    @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
 }

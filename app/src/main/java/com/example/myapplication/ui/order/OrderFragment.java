@@ -401,6 +401,11 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
+    public void onItemClickVoucher(int pos) {
+        Log.d("tiwtiwtiw", voucher_list.get(pos).getVoucherName());
+    }
+
+    @Override
     public void onItemClickSearch(int pos) {
 
     }
@@ -470,6 +475,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void showVoucherBottomSheet() {
+
+
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.vouchers_bottom_sheet_layout, getActivity().findViewById(R.id.voucher_bottomSheet_container));
 
@@ -490,7 +497,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Log.d("hatdognimiggy", String.valueOf(response));
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectVoucher = response.getJSONObject(i);
@@ -509,7 +515,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                     }
                 }
                 Log.d("sizelist", String.valueOf(voucher_list.size()));
-                voucherAdapter = new VoucherAdapter(getActivity(), voucher_list);
+                voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);
                 rv_vouchers.setAdapter(voucherAdapter);
             }
         }, new Response.ErrorListener() {

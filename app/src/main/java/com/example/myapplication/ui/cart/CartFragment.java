@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +64,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     RequestQueue requestQueueCart, requestQueueStore;
     int userID = 0;
     float wallet;
+    private Handler handler;
+    private Runnable myRunnable;
 
     //School IP
     private static String JSON_URL;
@@ -93,7 +96,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         requestQueueStore = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractStoreCartItem();
 
-        root.postDelayed(new Runnable() {
+        handler = new Handler();
+        myRunnable = new Runnable() {
             @Override
             public void run() {
                 order_list = new ArrayList<>();
@@ -102,7 +106,19 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                 //Log.d("OrderStatus", order.getOrderStatus());
                 root.postDelayed(this, 1000);
             }
-        }, 1000);
+        };
+        handler.postDelayed(myRunnable, 1000);
+
+//        root.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                order_list = new ArrayList<>();
+//                order_item_list = new ArrayList<>();
+//                extractStoreCartItem();
+//                //Log.d("OrderStatus", order.getOrderStatus());
+//                root.postDelayed(this, 1000);
+//            }
+//        }, 1000);
 
 
 
@@ -171,6 +187,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClick(int position) {
+        handler.removeCallbacks(myRunnable);
         Bundle bundle = new Bundle();
         float tempTotal = 0;
         for(int i = 0 ; i < order_list.get(position).getOrderItem_list().size() ; i++){

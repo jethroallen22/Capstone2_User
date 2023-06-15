@@ -176,7 +176,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onClick(View v) {
                 if(payment_method == "wallet") {
-                    if(Float.parseFloat(tv_total_price.getText().toString()) <= wallet){
+                    if(orderModel.getOrderItemTotalPrice() <= wallet){
                         getDataFromServer();
                     } else {
                         Toast.makeText(getContext(), "You don't have sufficient balance in your wallet, please cash in for additional amount", Toast.LENGTH_SHORT).show();

@@ -30,9 +30,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.models.VoucherModel;
+import com.example.myapplication.adapters.HomeDealsAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.adapters.ProductCategAdapter;
+import com.example.myapplication.adapters.VoucherAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -45,6 +48,7 @@ import com.example.myapplication.activities.models.ProductModel;
 import com.example.myapplication.activities.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.order.OrderFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -52,9 +56,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class StoreFragment extends Fragment implements RecyclerViewInterface {
@@ -109,6 +117,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     String userName = "";
     Context context;
     int categPos;
+
+    RequestQueue requestQueueDeals, requestQueueProducts;
 
 
 
@@ -623,6 +633,93 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         });
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+    }
+
+    private void readProductDealsDb(){
+        JsonArrayRequest jsonArrayRequestProducts = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiprod.php", null, new Response.Listener<JSONArray>() {
+            boolean dealsExist = false;
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectProductDeals = response.getJSONObject(i);
+                        int idProduct = jsonObjectProductDeals.getInt("idProduct");
+                        int idStore = jsonObjectProductDeals.getInt("idStore");
+                        String productName = jsonObjectProductDeals.getString("productName");
+                        String productDescription = jsonObjectProductDeals.getString("productDescription");
+                        float productPrice = (float) jsonObjectProductDeals.getDouble("productPrice");
+                        String productImage = jsonObjectProductDeals.getString("productImage");
+                        String productServingSize = jsonObjectProductDeals.getString("productServingSize");
+                        String productTag = jsonObjectProductDeals.getString("productTag");
+                        int productPrepTime = jsonObjectProductDeals.getInt("productPrepTime");
+                        String storeName = jsonObjectProductDeals.getString("storeName");
+                        String storeImage = jsonObjectProductDeals.getString("storeImage");
+                        String weather = jsonObjectProductDeals.getString("weather");
+
+                        if(idStore == stor_id){
+                            Log.d("storeid", String.valueOf(idStore));
+
+                            ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
+                                    productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                            //products_list.add(productModel);
+                            JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    Log.d("DealsResponse", String.valueOf(response));
+                                    for (int i = 0; i < response.length(); i++) {
+                                        try {
+                                            JSONObject jsonObject = response.getJSONObject(i);
+                                            int dealId = jsonObject.getInt("dealsId");
+                                            int storeId = jsonObject.getInt("storeId");
+                                            String type = jsonObject.getString("type");
+                                            int percentage = jsonObject.getInt("percentage");
+                                            String convFee = jsonObject.getString("convFee");
+                                            String storeImage = jsonObject.getString("storeImage");
+                                            String storeName = jsonObject.getString("storeName");
+                                            String storeCategory = jsonObject.getString("storeCategory");
+                                            String startDate = jsonObject.getString("startDate");
+                                            String endDate = jsonObject.getString("endDate");
+
+                                            Log.d("DealId", String.valueOf(dealId));
+
+                                            if()
+                                                productModel.setPercentage(percentage);
+                                                products_list.add(productModel);
+
+
+
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                            Log.d("JSONException", e.getMessage());
+                                        }
+                                    }
+
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("VolleyError", error.getMessage());
+                                }
+                            });
+                            requestQueueDeals.add(jsonArrayRequestDeals);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueueProducts.add(jsonArrayRequestProducts);
+        //
+
     }
 
 }

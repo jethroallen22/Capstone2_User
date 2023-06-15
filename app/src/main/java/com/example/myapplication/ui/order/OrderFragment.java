@@ -160,8 +160,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onClick(View v) {
                 if(payment_method == "wallet") {
-                    if(Float.parseFloat(tv_total_price.getText().toString()) <= wallet){
+                    if(orderModel.getOrderItemTotalPrice() <= wallet){
                         getDataFromServer();
+                        sendtoAvailVoucherDb(orderModel.getUsers_id(), orderModel.getVoucher_id());
                     } else {
                         Toast.makeText(getContext(), "You don't have sufficient balance in your wallet, please cash in for additional amount", Toast.LENGTH_SHORT).show();
                     }
@@ -569,6 +570,37 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 //        });
 
         voucherDialog.show();
+    }
+
+    private void sendtoAvailVoucherDb(int userId,int voucherId){
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, JSON_URL + "apiavailvoucher.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("On Res", "inside on res");
+                        } catch (Throwable e) {
+                            Log.d("Catch", String.valueOf(e));
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> paramV = new HashMap<>();
+                paramV.put("userId", String.valueOf(userId));
+                paramV.put("voucherId", String.valueOf(voucherId));
+                return paramV;
+            }
+        };
+        queue.add(stringRequest1);
+
+
     }
 
 

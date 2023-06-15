@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -41,6 +42,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.tv_product_name.setText(productModel.getProductName());
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
         holder.tv_product_cal.setText(productModel.getProductTag());
+        holder.cv_banner.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -54,6 +56,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         TextView tv_product_name;
         TextView tv_product_price;
         TextView tv_product_cal;
+
+        CardView cv_banner;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -61,6 +65,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tv_product_name = itemView.findViewById(R.id.tv_product_name);
             tv_product_price = itemView.findViewById(R.id.tv_product_price);
             tv_product_cal = itemView.findViewById(R.id.tv_product_cal);
+            cv_banner = itemView.findViewById(R.id.cv_banner);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

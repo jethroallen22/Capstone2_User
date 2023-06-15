@@ -328,6 +328,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         Log.d("storeid", String.valueOf(stor_id));
                         if(idStore == stor_id){
                             Log.d("storeid", String.valueOf(idStore));
+
                             ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
                                                             productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
                             products_list.add(productModel);

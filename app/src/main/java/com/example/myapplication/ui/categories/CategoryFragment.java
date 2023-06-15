@@ -1,7 +1,5 @@
 package com.example.myapplication.ui.categories;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,14 +15,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
-import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentCategoryBinding;
-import com.example.myapplication.databinding.FragmentSearchBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.SearchModel;
-import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.activities.models.StoreModel;
 import com.example.myapplication.ui.store.StoreFragment;
 
 import java.util.ArrayList;

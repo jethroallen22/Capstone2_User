@@ -6,13 +6,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,9 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCashInBinding;
-import com.example.myapplication.databinding.FragmentMessagesBinding;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.activities.models.IPModel;
 
 import java.util.HashMap;
 import java.util.Map;

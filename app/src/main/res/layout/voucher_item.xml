@@ -5,13 +5,17 @@
     android:id="@+id/ll_voucher"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/mosibusOffWhite"
     android:orientation="vertical"
-    android:paddingBottom="2dp">
+    android:outlineSpotShadowColor="#00000000"
+    android:paddingBottom="3dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:outlineAmbientShadowColor="#494747">
+        android:background="@color/white"
+        android:outlineAmbientShadowColor="#494747"
+        app:cardBackgroundColor="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -19,18 +23,20 @@
             android:layout_marginBottom="2dp"
             android:background="@color/white"
             android:outlineProvider="none"
-            android:padding="16dp">
+            android:outlineSpotShadowColor="#0E0D0D"
+            android:padding="16dp"
+            android:paddingRight="16dp">
 
             <TextView
                 android:id="@+id/tv_voucher2"
-                android:layout_width="wrap_content"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/robotomedium"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/robotoregular"
                 android:text="McDonalds - Binondo"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView9"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,9 +44,21 @@
                 android:id="@+id/imageView9"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/baseline_discount_24" />
+
+            <Button
+                android:id="@+id/bt_claim"
+                android:layout_width="75dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/mosibusPrimary"
+                android:text="Claim"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

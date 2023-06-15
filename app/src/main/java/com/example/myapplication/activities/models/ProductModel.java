@@ -1,4 +1,4 @@
-package com.example.myapplication.models;
+package com.example.myapplication.activities.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +23,7 @@ public class ProductModel implements Parcelable {
     String productRestoImage;
     String productRestoCategory;
     String weather;
+    int percentage;
 
 
 
@@ -194,6 +195,10 @@ public class ProductModel implements Parcelable {
     public void setWeather(String weather) {
         this.weather = weather;
     }
+
+    public int getPercentage(){return percentage;}
+
+    public void setPercentage(int percentage){ this.percentage = percentage;}
 
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(productImage, Base64.DEFAULT);

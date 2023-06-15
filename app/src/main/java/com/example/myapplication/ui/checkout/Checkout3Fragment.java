@@ -1,19 +1,15 @@
 package com.example.myapplication.ui.checkout;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
@@ -23,26 +19,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.Home;
-import com.example.myapplication.adapters.HomeStorePopularAdapter;
+import com.example.myapplication.activities.Login;
+import com.example.myapplication.activities.Preferences;
 import com.example.myapplication.databinding.FragmentCheckout3Binding;
-import com.example.myapplication.databinding.FragmentCheckoutBinding;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.interfaces.VolleyCallback;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.OrderModel;
-import com.example.myapplication.models.StoreModel;
-import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.OrderModel;
 import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
 import com.google.gson.Gson;
 
@@ -50,9 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +89,7 @@ public class Checkout3Fragment extends Fragment{
             @Override
             public void onClick(View v) {
                 getDataFromServer();
+                sendtoAvailVoucherDb(orderModel.getUsers_id(), orderModel.getVoucher_id());
             }
         });
 
@@ -232,6 +224,37 @@ public class Checkout3Fragment extends Fragment{
 
 
 //
+
+    }
+
+    private void sendtoAvailVoucherDb(int userId,int voucherId){
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, JSON_URL + "apiavailvoucher.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("On Res", "inside on res");
+                        } catch (Throwable e) {
+                            Log.d("Catch", String.valueOf(e));
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> paramV = new HashMap<>();
+                paramV.put("userId", String.valueOf(userId));
+                paramV.put("voucherId", String.valueOf(voucherId));
+                return paramV;
+            }
+        };
+        queue.add(stringRequest1);
+
 
     }
 

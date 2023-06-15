@@ -10,9 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.models.AddonModel;
-
-import org.w3c.dom.Text;
+import com.example.myapplication.activities.models.AddonModel;
 
 import java.util.List;
 

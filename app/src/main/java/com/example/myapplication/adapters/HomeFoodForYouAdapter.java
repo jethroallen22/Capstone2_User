@@ -10,13 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.HomeFoodForYouModel;
-import com.example.myapplication.models.ProductModel;
-
-import org.w3c.dom.Text;
+import com.example.myapplication.activities.models.ProductModel;
 
 import java.util.List;
 

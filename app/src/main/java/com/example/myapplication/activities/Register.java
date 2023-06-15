@@ -17,15 +17,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.adapters.HomeStoreRecAdapter;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.StoreModel;
-import com.example.myapplication.models.UserFirebaseModel;
-import com.example.myapplication.models.UserModel;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.UserFirebaseModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -35,7 +31,6 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -25,10 +25,10 @@ import com.example.myapplication.adapters.CartAdapter;
 import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.OrderItemModel;
-import com.example.myapplication.models.OrderModel;
-import com.example.myapplication.models.StoreModel;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.OrderItemModel;
+import com.example.myapplication.activities.models.OrderModel;
+import com.example.myapplication.activities.models.StoreModel;
 import com.example.myapplication.ui.order.OrderFragment;
 
 import org.json.JSONArray;

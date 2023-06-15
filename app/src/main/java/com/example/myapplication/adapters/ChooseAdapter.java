@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.models.ChooseModel;
+import com.example.myapplication.activities.models.ChooseModel;
 
 import java.util.List;
 

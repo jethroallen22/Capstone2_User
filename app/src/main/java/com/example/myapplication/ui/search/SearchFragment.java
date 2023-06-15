@@ -2,7 +2,6 @@ package com.example.myapplication.ui.search;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
@@ -28,18 +27,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.Store;
 import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentSearchBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.ProductModel;
-import com.example.myapplication.models.SearchModel;
-import com.example.myapplication.models.StoreModel;
-import com.example.myapplication.ui.messages.MessagesFragment;
-import com.example.myapplication.ui.product.ProductFragment;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.ProductModel;
+import com.example.myapplication.activities.models.SearchModel;
+import com.example.myapplication.activities.models.StoreModel;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -47,11 +42,9 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /*

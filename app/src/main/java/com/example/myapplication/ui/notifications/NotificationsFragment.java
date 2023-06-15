@@ -1,11 +1,8 @@
 package com.example.myapplication.ui.notifications;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,21 +19,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.NotificationAdapter;
-import com.example.myapplication.adapters.TransacHistoryAdapter;
 import com.example.myapplication.databinding.FragmentNotificationsBinding;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.NotificationModel;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.NotificationModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-
-import com.example.myapplication.models.WalletModel;
-import com.example.myapplication.ui.payment.PaymentFragment;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;

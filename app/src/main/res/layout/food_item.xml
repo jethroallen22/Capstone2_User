@@ -14,6 +14,7 @@
         android:background="#FFFFFF">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cv_banner"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="-5dp"

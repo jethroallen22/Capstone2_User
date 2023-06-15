@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.models.MethodModel;
+import com.example.myapplication.activities.models.MethodModel;
 
 import java.util.List;
 

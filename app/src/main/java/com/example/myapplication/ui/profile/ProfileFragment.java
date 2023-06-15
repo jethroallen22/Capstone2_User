@@ -6,7 +6,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.content.Context;
@@ -38,24 +37,16 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.RealPathUtil;
-import com.example.myapplication.activities.Home;
-import com.example.myapplication.activities.Login;
 import com.example.myapplication.databinding.FragmentProfileBinding;
-import com.example.myapplication.models.IPModel;
-import com.example.myapplication.models.OrderItemModel;
-import com.example.myapplication.models.UserModel;
+import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.activities.models.UserModel;
 import com.example.myapplication.ui.home.HomeFragment;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class ProfileFragment extends Fragment {

@@ -1,4 +1,4 @@
-package com.example.myapplication.models;
+package com.example.myapplication.activities.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,8 +7,6 @@ import android.os.Parcelable;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
-
-import com.example.myapplication.activities.Store;
 
 public class StoreModel implements Parcelable {
     int store_id;

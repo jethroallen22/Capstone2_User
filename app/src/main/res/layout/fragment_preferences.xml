@@ -25,14 +25,15 @@
             android:paddingRight="16dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="378dp"
-                android:layout_height="654dp"
+                android:layout_width="390dp"
+                android:layout_height="713dp"
                 android:foregroundGravity="center_vertical|center|center_horizontal"
                 android:padding="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.482"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintHorizontal_bias="0.476"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/imageView3"
@@ -53,15 +54,15 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="28dp"
                     android:fontFamily="@font/robotoregular"
-                    android:text="Preferences"
+                    android:text="Food Preferences"
                     android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/cg_preferences2"
-                    android:layout_width="346dp"
-                    android:layout_height="338dp"
+                    android:layout_width="347dp"
+                    android:layout_height="352dp"
                     android:orientation="horizontal"
                     android:padding="10dp"
                     app:chipSpacing="2dp"
@@ -75,15 +76,17 @@
 
                 <Button
                     android:id="@+id/btn_confirmpref"
-                    android:layout_width="match_parent"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:backgroundTint="@color/mosibusPrimary"
                     android:text="Confirm"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/cg_preferences2"
-                    tools:layout_editor_absoluteX="16dp" />
+                    app:layout_constraintVertical_bias="0.521" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

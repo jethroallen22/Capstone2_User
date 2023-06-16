@@ -113,6 +113,57 @@ public class PreferencesFragment extends Fragment {
                 JsonArrayRequest jsonArrayRequesttags = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitags.php", null, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+                        Chip chipAll = new Chip(getActivity());
+                        chipAll.setText("Select All");
+                        chipAll.setChipBackgroundColorResource(R.color.gray);
+
+                        if(tags.size() == preferences.size())
+                        {
+                            chipAll.setSelected(true);
+                            chipAll.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chipAll.setChipStrokeColorResource(R.color.teal_700);
+                            chipAll.setTextColor(getResources().getColor(R.color.white));
+                        }
+
+                        chipAll.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                String value = chipAll.getText().toString();
+                                if (chipAll.isSelected()) {
+                                    chipAll.setSelected(false);
+                                    chipAll.setTextColor(Color.BLACK);
+                                    chipAll.setChipBackgroundColorResource(R.color.gray);
+
+                                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                                        Chip chip = (Chip) chipGroup.getChildAt(i);
+                                        chip.setSelected(false);
+                                        chip.setTextColor(Color.BLACK);
+                                        chip.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(chip.getText().toString());
+                                    }
+
+                                } else {
+                                    chipAll.setSelected(true);
+                                    chipAll.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chipAll.setChipStrokeColorResource(R.color.teal_700);
+                                    chipAll.setTextColor(getResources().getColor(R.color.white));
+
+                                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                                        Chip chip = (Chip) chipGroup.getChildAt(i);
+                                        chip.setSelected(true);
+                                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chip.setChipStrokeColorResource(R.color.teal_700);
+                                        chip.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(chip.getText().toString());
+                                    }
+
+                                }//else
+                            } //onClick
+                        }); //chipAll.setOnClickListener
+
+                        chipGroup.addView(chipAll);
+                        chipGroup.setVisibility(View.VISIBLE);
+                        chipGroup.getLayoutParams();
+
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 JSONObject jsonObject2 = response.getJSONObject(i);
@@ -125,24 +176,21 @@ public class PreferencesFragment extends Fragment {
                                 chip.setText(tags.get(i));
                                 String value = chip.getText().toString();
 
-//                                for(int j = 0; j < tags.size(); j++)
-//                                {
-                                    boolean isPresent = preferences.contains(tags.get(i));
-                                    if(isPresent == true){
-                                        chip.setSelected(true);
-                                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                        chip.setChipStrokeColorResource(R.color.teal_700);
-                                        chip.setTextColor(getResources().getColor(R.color.white));
-                                        chips.add(value);
-                                        Log.d("TAG SIZE called present", String.valueOf(chips.size()));
-                                    }
-                                    else{
-                                        chip.setSelected(false);
-                                        chip.setTextColor(Color.BLACK);
-                                        chip.setChipBackgroundColorResource(R.color.gray);
-                                        chips.remove(value);
-                                    }
-//                                }
+                                boolean isPresent = preferences.contains(tags.get(i));
+                                if(isPresent == true){
+                                    chip.setSelected(true);
+                                    chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chip.setChipStrokeColorResource(R.color.teal_700);
+                                    chip.setTextColor(getResources().getColor(R.color.white));
+                                    chips.add(value);
+                                    Log.d("TAG SIZE called present", String.valueOf(chips.size()));
+                                }
+                                else{
+                                    chip.setSelected(false);
+                                    chip.setTextColor(Color.BLACK);
+                                    chip.setChipBackgroundColorResource(R.color.gray);
+                                    chips.remove(value);
+                                }
 
                                 chip.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -156,10 +204,10 @@ public class PreferencesFragment extends Fragment {
                                         } else {
                                             Log.d("TAG SIZE clicked chip", value);
                                             chip.setSelected(true);
-                                                chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                                chip.setChipStrokeColorResource(R.color.teal_700);
-                                                chip.setTextColor(getResources().getColor(R.color.white));
-                                                chips.add(value);
+                                            chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                            chip.setChipStrokeColorResource(R.color.teal_700);
+                                            chip.setTextColor(getResources().getColor(R.color.white));
+                                            chips.add(value);
                                             Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
 
                                         }
@@ -171,8 +219,6 @@ public class PreferencesFragment extends Fragment {
                                 chipGroup.getLayoutParams();
 
 
-
-
                             } //list.add(productName);
 
                             catch (JSONException e) {
@@ -180,8 +226,11 @@ public class PreferencesFragment extends Fragment {
                             }
 
                         }
+
+
                         Log.d("TAG SIZE after chip kinda", String.valueOf(tags.size()));
                     }
+
 
                 }, new Response.ErrorListener() {
                     @Override
@@ -192,6 +241,9 @@ public class PreferencesFragment extends Fragment {
                 requestQueuetags.add(jsonArrayRequesttags);
 
             }
+
+
+
 
         }, new Response.ErrorListener() {
             @Override
@@ -252,6 +304,6 @@ public class PreferencesFragment extends Fragment {
             }
         });
 
-            return root;
-        }
+        return root;
+    }
 }

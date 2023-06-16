@@ -29,6 +29,7 @@ import com.cometchat.pro.exceptions.CometChatException;
 import com.example.myapplication.R;
 
 
+import com.example.myapplication.activities.models.CoordModel;
 import com.example.myapplication.activities.models.WeatherModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -50,7 +51,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     double curLat;
 
     WeatherModel weatherModel;
+    CoordModel coordModel;
     private String weather;
+    Location location;
 
 
 
@@ -165,18 +168,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void requestWeather(){
         String tempWeatherURL = weatherURL + "?lat=" + curLat + "&lon=" + curLong + "&appid=" + appId;
 
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, tempWeatherURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
+                    Log.d("weather", response);
                     Gson gson = new Gson();
                     String jsonString = jsonObject.getString("main");
+                    String jsonCoord = jsonObject.getString("coord");
                     weatherModel = gson.fromJson(jsonString, WeatherModel.class);
+                    coordModel = gson.fromJson(jsonCoord, CoordModel.class);
                     Log.d("weather", String.valueOf(weatherModel.getTemp()));
                     weather(weatherModel);
                     Intent intent = new Intent(getApplicationContext(), Login.class);
                     intent.putExtra("weather",weather);
+                    intent.putExtra("lat",coordModel.getLat());
+                    intent.putExtra("long",coordModel.getLon());
+                    Log.d("weatherLat", String.valueOf(coordModel.getLat()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     MainActivity.this.startActivity(intent);
 

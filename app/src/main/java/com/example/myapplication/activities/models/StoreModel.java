@@ -19,6 +19,8 @@ public class StoreModel implements Parcelable {
     String store_open;
     String store_closing;
 
+    float distance;
+
     public StoreModel(int store_id, String store_image, String store_name, String store_description,
                       String store_location, String store_category, Float store_rating,String store_open,
                       String store_closing) {
@@ -127,6 +129,14 @@ public class StoreModel implements Parcelable {
 
     public void setStore_closing(String store_closing) {
         this.store_closing = store_closing;
+    }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
     }
 
     public Bitmap getBitmapImage(){

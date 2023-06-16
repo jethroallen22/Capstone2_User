@@ -42,7 +42,7 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
         holder.iv_store_image.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_store_name.setText(list.get(position).getStore_name());
         holder.tv_store_category.setText(list.get(position).getStore_category());
-
+        holder.tv_distance.setText(list.get(position).getDistance() + "km away");
 
     }
 
@@ -57,6 +57,8 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
         TextView tv_store_category;
         CardView card_view;
 
+        TextView tv_distance;
+
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
@@ -64,6 +66,7 @@ public class HomeStorePopularAdapter extends RecyclerView.Adapter<HomeStorePopul
             tv_store_name = itemView.findViewById(R.id.tv_pop_store_name);
             tv_store_category = itemView.findViewById(R.id.tv_pop_store_category);
             card_view = itemView.findViewById(R.id.card_view);
+            tv_distance = itemView.findViewById(R.id.tv_distance);
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

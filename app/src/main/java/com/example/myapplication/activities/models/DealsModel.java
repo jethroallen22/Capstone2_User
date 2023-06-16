@@ -19,6 +19,8 @@ public class DealsModel implements Parcelable {
 
     String storeCategory;
 
+    float distance;
+
     public DealsModel(int dealsId, int storeId, String type, int percentage,
                       String convFee, String storeImage, String storeName, String storeCategory){
         this.dealsId = dealsId;
@@ -100,6 +102,16 @@ public class DealsModel implements Parcelable {
     public void setStoreName(String storeName) {
         this.storeName = storeName;
     }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+
 
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(storeImage, Base64.DEFAULT);

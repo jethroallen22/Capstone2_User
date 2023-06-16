@@ -27,6 +27,7 @@ public class ProductModel implements Parcelable {
 
 
 
+
 //    public ProductModel(Long product_id, String product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
 //        this.product_id = product_id;
 //        this.product_image = product_image;

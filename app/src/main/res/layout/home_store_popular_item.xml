@@ -46,6 +46,16 @@
             android:textAlignment="viewStart"
             android:textSize="12sp" />
 
+        <TextView
+            android:id="@+id/tv_distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/robotoregular"
+            android:textAlignment="viewStart"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

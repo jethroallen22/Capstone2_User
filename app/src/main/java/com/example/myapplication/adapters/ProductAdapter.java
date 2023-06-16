@@ -1,6 +1,7 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.tv_product_name.setText(productModel.getProductName());
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
         holder.tv_product_cal.setText(productModel.getProductTag());
-        holder.cv_banner.setVisibility(View.INVISIBLE);
+        Log.d("witwiw", productModel.getPercentage() + "%");
+        if(productModel.getPercentage() != 0) {
+            holder.cv_banner.setVisibility(View.VISIBLE);
+            holder.tv_deal_percentage.setText(productModel.getPercentage() + "% off");
+        } else
+            holder.cv_banner.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -57,6 +63,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         TextView tv_product_price;
         TextView tv_product_cal;
 
+        TextView tv_deal_percentage;
+
         CardView cv_banner;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +74,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tv_product_price = itemView.findViewById(R.id.tv_product_price);
             tv_product_cal = itemView.findViewById(R.id.tv_product_cal);
             cv_banner = itemView.findViewById(R.id.cv_banner);
+            tv_deal_percentage = itemView.findViewById(R.id.tv_deal_percentage);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -30,9 +30,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.models.VoucherModel;
+import com.example.myapplication.adapters.HomeDealsAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.adapters.ProductCategAdapter;
+import com.example.myapplication.adapters.VoucherAdapter;
 import com.example.myapplication.databinding.FragmentStoreBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -45,6 +48,7 @@ import com.example.myapplication.activities.models.ProductModel;
 import com.example.myapplication.activities.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.order.OrderFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -52,9 +56,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class StoreFragment extends Fragment implements RecyclerViewInterface {
@@ -110,6 +118,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     Context context;
     int categPos;
 
+    RequestQueue requestQueueDeals, requestQueueProducts;
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -157,7 +167,10 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
-        extractFoodforyou();
+//        extractFoodforyou();
+        requestQueueDeals = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueProducts = Singleton.getsInstance(getActivity()).getRequestQueue();
+        readProductDealsDb();
 
 
         final String TAG = "Testing";
@@ -169,6 +182,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
         requestQueueProd = Singleton.getsInstance(getActivity()).getRequestQueue();
         SendtoDb(stor_id);
+
 
         binding.fabBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -623,6 +637,138 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         });
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
+    }
+
+    private void readProductDealsDb(){
+        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                        int idStore = jsonObjectFoodforyou.getInt("idStore");
+                        String productName = jsonObjectFoodforyou.getString("productName");
+                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                        String productImage = jsonObjectFoodforyou.getString("productImage");
+                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                        String productTag = jsonObjectFoodforyou.getString("productTag");
+                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                        String storeName = jsonObjectFoodforyou.getString("storeName");
+                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                        String weather = jsonObjectFoodforyou.getString("weather");
+
+                        if(idStore == stor_id) {
+                            Log.d("storeid", String.valueOf(idStore));
+
+                            ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
+                                    productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                            //products_list.add(productModel);
+                            JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
+                                boolean dealsExist = false;
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    Log.d("DealsResponse", String.valueOf(response));
+                                    for (int i = 0; i < response.length(); i++) {
+                                        try {
+                                            JSONObject jsonObject = response.getJSONObject(i);
+                                            int dealId = jsonObject.getInt("dealsId");
+                                            int storeId = jsonObject.getInt("storeId");
+                                            String type = jsonObject.getString("type");
+                                            int percentage = jsonObject.getInt("percentage");
+                                            String convFee = jsonObject.getString("convFee");
+                                            String storeImage = jsonObject.getString("storeImage");
+                                            String storeName = jsonObject.getString("storeName");
+                                            String storeCategory = jsonObject.getString("storeCategory");
+                                            String startDate = jsonObject.getString("startDate");
+                                            String endDate = jsonObject.getString("endDate");
+
+                                            Log.d("DealId", String.valueOf(dealId));
+
+                                            if(productModel.getStore_idStore() == storeId) {
+//                                                dealsExist = true;
+                                                productModel.setPercentage(percentage);
+                                                food_for_you_list.add(productModel);
+                                                Log.d("witwiwStore", productModel.getPercentage()+ "%");
+
+                                            }else
+                                                food_for_you_list.add(productModel);
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                            Log.d("JSONException", e.getMessage());
+                                        }
+                                    }
+                                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
+                                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                                    int temp_not = 0;
+                                    for(int j = 0 ; j < food_for_you_list.size() ; j++){
+                                        if(product_categ_list.isEmpty()){
+                                            //Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
+                                            temp_product_list = new ArrayList<>();
+                                            temp_product_list.add(food_for_you_list.get(j));
+                                            product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getProductTag(), temp_product_list));
+                                        }else{
+                                            for (int h = 0; h < product_categ_list.size(); h++) {
+                                                //Log.d("Inside for", String.valueOf(order_list.size()));
+                                                //Check if Order already exist in CartList
+                                                if (product_categ_list.get(h).getCateg().toLowerCase().compareTo(food_for_you_list.get(j).getProductTag()) == 0) {
+                                                    // Check if order item already exist
+                                                    product_categ_list.get(h).getList().add(food_for_you_list.get(j));
+                                                } else {// if(order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 1){
+                                                    Log.d("NEWORDER", "INSIDE NOT MATCH");
+                                                    temp_not++;
+                                                    if(temp_not == product_categ_list.size()) {
+                                                        //Log.d("NEWORDER", String.valueOf(order_list.size()));
+                                                        float totalTotal = 0;
+                                                        temp_product_list = new ArrayList<>();
+                                                        temp_product_list.add(food_for_you_list.get(j));
+                                                        product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getProductTag(), temp_product_list));
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Log.d("CategSize", String.valueOf(product_categ_list.size()));
+                                    productCategAdapter = new ProductCategAdapter(getActivity(), product_categ_list, StoreFragment.this);
+                                    rv_products.setAdapter(productCategAdapter);
+                                    rv_products.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+                                    rv_products.setHasFixedSize(true);
+                                    rv_products.setNestedScrollingEnabled(false);
+                                    Log.d("productCategSize", String.valueOf(product_categ_list.size()));
+                                    for(int i = 0 ; i < product_categ_list.size() ; i++){
+                                        Log.d("categ", product_categ_list.get(i).getCateg());
+                                        for(int j = 0 ; j < product_categ_list.get(i).getList().size() ; j++)
+                                            Log.d("product", product_categ_list.get(i).getList().get(j).getProductName());
+                                    }
+
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("VolleyError", error.getMessage());
+                                }
+                            });
+                            requestQueueDeals.add(jsonArrayRequestDeals);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        requestQueueProducts.add(jsonArrayRequestFoodforyou);
+        //
+
     }
 
 }

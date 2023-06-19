@@ -41,6 +41,7 @@ public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapte
         holder.tv_store_location.setText(list.get(position).getStore_location());
         holder.tv_store_category.setText(list.get(position).getStore_category());
         holder.tv_store_rating.setText(list.get(position).getStore_rating().toString());
+        holder.tv_distance2.setText(list.get(position).getDistance() + "km away");
     }
 
     @Override
@@ -55,6 +56,7 @@ public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapte
         TextView tv_store_location;
         TextView tv_store_category;
         TextView tv_store_rating;
+        TextView tv_distance2;
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
@@ -64,6 +66,7 @@ public class HomeStoreRecAdapter extends RecyclerView.Adapter<HomeStoreRecAdapte
             tv_store_location = itemView.findViewById(R.id.tv_food_price);
             tv_store_category = itemView.findViewById(R.id.tv_store_category);
             tv_store_rating = itemView.findViewById(R.id.tv_store_rating);
+            tv_distance2 = itemView.findViewById(R.id.tv_distance2);
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

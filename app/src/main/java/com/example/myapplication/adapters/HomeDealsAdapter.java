@@ -23,6 +23,7 @@ public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.View
     Context context;
     List<DealsModel> list;
 
+
     public HomeDealsAdapter(Context context, List<DealsModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
@@ -46,6 +47,7 @@ public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.View
         holder.tv_deal_store_name.setText(list.get(position).getStoreName());
         holder.tv_deal_description.setText(list.get(position).getStoreCategory());
         holder.tv_deal_percentage.setText(list.get(position).getPercentage() + "% off");
+        holder.tv_distance3.setText(list.get(position).getDistance() + "km away");
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,6 +57,8 @@ public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.View
         TextView tv_deal_description;
         TextView tv_deal_percentage;
 
+        TextView tv_distance3;
+
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
@@ -62,6 +66,7 @@ public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.View
             tv_deal_store_name = itemView.findViewById(R.id.tv_deal_store_name);
             tv_deal_description = itemView.findViewById(R.id.tv_deal_store_category);
             tv_deal_percentage = itemView.findViewById(R.id.tv_deal_percentage);
+            tv_distance3 = itemView.findViewById(R.id.tv_distance3);
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

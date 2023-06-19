@@ -37,6 +37,7 @@ public class Login extends AppCompatActivity {
     private static String JSON_URL;
     private IPModel ipModel;
     String weather;
+    double curLat, curLong;
 
     private TextView currentTV;
 
@@ -53,7 +54,11 @@ public class Login extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null) {
             weather = intent.getStringExtra("weather");
-//            Log.d("weatherLogin", weather);
+            curLat = intent.getDoubleExtra("lat",0);
+            curLong = intent.getDoubleExtra("long",0);
+
+
+            Log.d("loginLat", String.valueOf(curLat));
         }
 
         init();
@@ -152,6 +157,8 @@ public class Login extends AppCompatActivity {
                             intent.putExtra("image", image);
                             intent.putExtra("wallet", wallet);
                             intent.putExtra("weather", weather);
+                            intent.putExtra("lat",curLat);
+                            intent.putExtra("long",curLong);
                             Log.d("NAME LOGIN: ", name);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             loginCtr++;
@@ -192,6 +199,8 @@ public class Login extends AppCompatActivity {
                             intent.putExtra("image", image);
                             intent.putExtra("wallet", wallet);
                             intent.putExtra("weather", weather);
+                            intent.putExtra("lat",curLat);
+                            intent.putExtra("long",curLong);
                             Log.d("NAME LOGIN: ", name);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);

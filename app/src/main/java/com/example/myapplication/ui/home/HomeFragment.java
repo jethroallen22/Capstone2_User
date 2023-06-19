@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,8 +25,10 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -36,16 +39,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.adapters.HomeCategoryAdapter;
-import com.example.myapplication.adapters.HomeDealsAdapter;
-import com.example.myapplication.adapters.HomeFoodForYouAdapter;
-import com.example.myapplication.adapters.HomeStorePopularAdapter;
-import com.example.myapplication.adapters.HomeStoreRecAdapter;
-import com.example.myapplication.adapters.HomeStoreRecAdapter2;
-import com.example.myapplication.adapters.WeatherAdapter;
-import com.example.myapplication.databinding.FragmentHomeBinding;
-import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.interfaces.Singleton;
+import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.activities.models.DealsModel;
 import com.example.myapplication.activities.models.HomeCategoryModel;
 import com.example.myapplication.activities.models.IPModel;
@@ -54,6 +48,17 @@ import com.example.myapplication.activities.models.OrderModel;
 import com.example.myapplication.activities.models.ProductModel;
 import com.example.myapplication.activities.models.SearchModel;
 import com.example.myapplication.activities.models.StoreModel;
+import com.example.myapplication.adapters.HomeCategoryAdapter;
+import com.example.myapplication.adapters.HomeDealsAdapter;
+import com.example.myapplication.adapters.HomeFoodForYouAdapter;
+import com.example.myapplication.adapters.HomeStorePopularAdapter;
+import com.example.myapplication.adapters.HomeStoreRecAdapter;
+import com.example.myapplication.adapters.HomeStoreRecAdapter2;
+import com.example.myapplication.adapters.TabFragmentAdapter;
+import com.example.myapplication.adapters.WeatherAdapter;
+import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.interfaces.RecyclerViewInterface;
+import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.categories.CategoryFragment;
 import com.example.myapplication.ui.filter.FilterFragment;
@@ -68,6 +73,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.tabs.TabLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -75,12 +81,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -180,6 +185,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     float wallet;
 
+    private static final int EARTH_RADIUS = 6371; // Radius of the Earth in kilometers
+
+    double curLat, curLong;
+
+
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -190,20 +200,27 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
 
+
+
         Intent intent = getActivity().getIntent();
         if (intent.getStringExtra("name") != null) {
             userName = intent.getStringExtra("name");
             userId = intent.getIntExtra("id", 0);
             weather = intent.getStringExtra("weather");
-            wallet = intent.getFloatExtra("wallet",0);
+            wallet = intent.getFloatExtra("wallet", 0);
+            curLat = intent.getDoubleExtra("lat",0);
+            curLong = intent.getDoubleExtra("long",0);
+
             Log.d("HOME FRAG name", userName + userId + " Weather: " + weather);
             Log.d("HOMEuserID", String.valueOf(userId));
             Log.d("weatherHomeFrag", weather);
+            Log.d("curLatHome", String.valueOf(curLat));
+
         } else {
             Log.d("HOME FRAG name", "FAIL");
         }
         Bundle bundle = getArguments();
-        if(bundle != null){
+        if (bundle != null) {
             wallet = bundle.getFloat("wallet");
         }
         moodModal();
@@ -231,7 +248,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         rv_weather = root.findViewById(R.id.rv_weather);
         rv_weather.setHasFixedSize(true);
-        rv_weather.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
+        rv_weather.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_weather.setNestedScrollingEnabled(false);
         weather_list = new ArrayList<>();
         requestQueueFood2 = Singleton.getsInstance(getActivity()).getRequestQueue();
@@ -245,7 +262,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_deals.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_deals.setHasFixedSize(true);
         rv_deals.setNestedScrollingEnabled(false);
-        extractDeals();
+        extractDeals(curLat,curLong);
 
         //STORE REC 1
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
@@ -254,7 +271,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_home_store_rec.setNestedScrollingEnabled(false);
         home_store_rec_list = new ArrayList<>();
         requestQueueRec1 = Singleton.getsInstance(getActivity()).getRequestQueue();
-        extractDataRec1();
+        extractDataRec1(curLat,curLong);
 
 
         //STORE REC 2
@@ -265,7 +282,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
         requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
         home_store_rec_list2 = new ArrayList<>();
-        extractDataRec2();
+        extractDataRec2(curLat,curLong);
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
@@ -328,18 +345,20 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
+
+
         final TextView textView = binding.textHome;
         return root;
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         Log.d("Start", "Start");
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         Log.d("Resume", "Resume");
     }
@@ -356,12 +375,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d("Stop", "Stop");
     }
 
-    public void extractWeather(){
+    public void extractWeather() {
         HomeFragment homeFragment = this;
-        JsonArrayRequest jsonArrayRequest7= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest7 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                for (int i=0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject jsonObject7 = response.getJSONObject(i);
                         int idProduct = jsonObject7.getInt("idProduct");
@@ -377,7 +396,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String storeImage = jsonObject7.getString("storeImage");
                         String weather2 = jsonObject7.getString("weather");
 
-                        if(weather.toLowerCase().compareTo(weather2.toLowerCase()) == 0) {
+                        if (weather.toLowerCase().compareTo(weather2.toLowerCase()) == 0) {
                             Log.d("Weather", weather);
                             Log.d("WeatherRead", weather2);
                             ProductModel weatherModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
@@ -390,11 +409,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     }
                 }
                 Log.d("WeatherListSize", String.valueOf(weather_list.size()));
-                for (int i = 0 ; i < weather_list.size() ; i++){
+                for (int i = 0; i < weather_list.size(); i++) {
                     Log.d("WeatherModel", weather_list.get(i).getProductName());
                 }
                 Collections.shuffle(weather_list);
-                weatherAdapter = new WeatherAdapter(getActivity(),weather_list,homeFragment);
+                weatherAdapter = new WeatherAdapter(getActivity(), weather_list, homeFragment);
                 rv_weather.setAdapter(weatherAdapter);
             }
         }, new Response.ErrorListener() {
@@ -406,7 +425,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueueFood2.add(jsonArrayRequest7);
     }
 
-    public void extractDeals(){
+    public void extractDeals(double lati, double longi) {
         JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -424,6 +443,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String storeCategory = jsonObject.getString("storeCategory");
                         String startDate = jsonObject.getString("startDate");
                         String endDate = jsonObject.getString("endDate");
+                        double latitude = jsonObject.getDouble("latitude");
+                        double longitude = jsonObject.getDouble("longitude");
+
+                        double distance = calculateDistance(lati, longi,latitude, longitude);
 
                         Log.d("DealId", String.valueOf(dealId));
 
@@ -440,7 +463,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                             if (currentDate.after(startDateTemp)) {
                                 if (currentDate.before(endDateTemp)) {
                                     Log.d("ValidDeal", deal.getStoreName());
-                                    home_deals_list.add(deal);
+                                    if(distance <= 1.5) {
+                                        deal.setDistance((float) distance);
+                                        home_deals_list.add(deal);
+                                    }
                                 } else {
                                     Log.d("InvalidDeal", deal.getStoreName() + ": Date is after end date");
                                 }
@@ -472,12 +498,15 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }
 
     //Store Recommendation for RecView 1 and 2 Function
-    public void extractDataRec1(){
-        JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"api.php", null, new Response.Listener<JSONArray>() {
+    public void extractDataRec1(double lati, double longi) {
+
+
+        JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "api.php", null, new Response.Listener<JSONArray>() {
+
             @Override
             public void onResponse(JSONArray response) {
                 Log.d("StoreResponse", String.valueOf(response));
-                for (int i=0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject jsonObjectRec1 = response.getJSONObject(i);
                         int r_id = jsonObjectRec1.getInt("idStore");
@@ -489,32 +518,41 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         float r_rating = (float) jsonObjectRec1.getDouble("storeRating");
                         String r_open = jsonObjectRec1.getString("storeStartTime");
                         String r_close = jsonObjectRec1.getString("storeEndTime");
+                        double latitude = jsonObjectRec1.getDouble("latitude");
+                        double longitude = jsonObjectRec1.getDouble("longitude");
 
-                        StoreModel rec = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_open, r_close);
-                        SearchModel searchModel = new SearchModel(r_image, r_name, r_category);
-                        searchModelList.add(searchModel);
-                        home_store_rec_list.add(rec);
-                        //list.add(r_name);
+                        double distance = calculateDistance(lati, longi,latitude, longitude);
+                        Log.d("curLat", String.valueOf(lati));
+                        Log.d("curLong", String.valueOf(longi));
+                        Log.d("distance", String.valueOf(distance));
 
-
-
+                        if(distance <= 1.5) {
+                            StoreModel rec = new StoreModel(r_id, r_image, r_name, r_description, r_location, r_category,
+                                    (float) r_rating, r_open, r_close);
+                            rec.setDistance((float) distance);
+                            SearchModel searchModel = new SearchModel(r_image, r_name, r_category);
+                            searchModelList.add(searchModel);
+                            home_store_rec_list.add(rec);
+                            //list.add(r_name);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     Log.d("StoreSize", String.valueOf(home_store_rec_list.size()));
                 }
-                JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistorepopu.php", null, new Response.Listener<JSONArray>() {
+                JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apistorepopu.php", null, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("ResponseJson", String.valueOf(response));
-                        for (int i=0; i < response.length(); i++){
+                        for (int i = 0; i < response.length(); i++) {
                             Log.d("PopuLength", String.valueOf(response.length()));
                             try {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 int store_idStore = jsonObject.getInt("store_idStore");
-                                for (int j = 0 ; j < home_store_rec_list.size() ; j++){
-                                    if(home_store_rec_list.get(j).getStore_id() == store_idStore) {
+
+
+                                for (int j = 0; j < home_store_rec_list.size(); j++) {
+                                    if (home_store_rec_list.get(j).getStore_id() == store_idStore) {
                                         Log.d("StorePopuMatch", "Match");
                                         home_pop_store_list.add(home_store_rec_list.get(j));
                                     }
@@ -525,7 +563,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
 
-                            homeStorePopularAdapter = new HomeStorePopularAdapter( home_pop_store_list,getActivity(), homeFragment);
+                            homeStorePopularAdapter = new HomeStorePopularAdapter(home_pop_store_list, getActivity(), homeFragment);
                             rv_home_pop_store.setAdapter(homeStorePopularAdapter);
                         }
                     }
@@ -537,7 +575,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 });
                 requestQueuePopu.add(jsonArrayRequest3);
                 Collections.shuffle(home_store_rec_list);
-                homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(),home_store_rec_list, homeFragment);
+                homeStoreRecAdapter = new HomeStoreRecAdapter(getActivity(), home_store_rec_list, homeFragment);
                 rv_home_store_rec.setAdapter(homeStoreRecAdapter);
 
             }
@@ -550,11 +588,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         requestQueueRec1.add(jsonArrayRequestRec1);
     }
 
-    public void extractDataRec2(){
-        JsonArrayRequest jsonArrayRequestRec2 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"api.php", null, new Response.Listener<JSONArray>() {
+    public void extractDataRec2(double lati, double longi) {
+        JsonArrayRequest jsonArrayRequestRec2 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "api.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                for (int i=0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
                         int r_id = jsonObject.getInt("idStore");
@@ -566,28 +604,35 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         float r_rating = (float) jsonObject.getDouble("storeRating");
                         String r_open = jsonObject.getString("storeStartTime");
                         String r_close = jsonObject.getString("storeEndTime");
+                        double latitude = jsonObject.getDouble("latitude");
+                        double longitude = jsonObject.getDouble("longitude");
 
-                        StoreModel store2 = new StoreModel(r_id,r_image,r_name,r_description,r_location,r_category,
-                                (float) r_rating, r_open, r_close);
-                        home_store_rec_list2.add(store2);
 
+                        double distance = calculateDistance(lati, longi,latitude, longitude);
+
+                        if(distance <= 1.5) {
+                            StoreModel store2 = new StoreModel(r_id, r_image, r_name, r_description, r_location, r_category,
+                                    (float) r_rating, r_open, r_close);
+                            store2.setDistance((float) distance);
+                            home_store_rec_list2.add(store2);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
                 Log.d("list2Size", String.valueOf(home_store_rec_list2.size()));
                 Collections.shuffle(home_store_rec_list2);
-                for(int j = 0 ; j < 3 ; j++){
-                    for(int k = 0 ; k < home_store_rec_list2.size() ; k++){
-                        if(home_store_rec_list.get(j).getStore_id() == home_store_rec_list2.get(k).getStore_id())
+                for (int j = 0; j < 3; j++) {
+                    for (int k = 0; k < home_store_rec_list2.size(); k++) {
+                        if (home_store_rec_list.get(j).getStore_id() == home_store_rec_list2.get(k).getStore_id())
                             home_store_rec_list2.remove(k);
                     }
                 }
-                for (int l = 0 ; l < home_store_rec_list2.size() ; l++)
-                    Log.d("StoreTest",  "Pos: " + l + " " + home_store_rec_list2.get(l).getStore_name());
+                for (int l = 0; l < home_store_rec_list2.size(); l++)
+                    Log.d("StoreTest", "Pos: " + l + " " + home_store_rec_list2.get(l).getStore_name());
                 Log.d("list2Size", String.valueOf(home_store_rec_list2.size()));
 
-                homeStoreRecAdapter2 = new HomeStoreRecAdapter2(getActivity(),home_store_rec_list2, homeFragment);
+                homeStoreRecAdapter2 = new HomeStoreRecAdapter2(getActivity(), home_store_rec_list2, homeFragment);
                 rv_home_store_rec2.setAdapter(homeStoreRecAdapter2);
             }
         }, new Response.ErrorListener() {
@@ -599,7 +644,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }
 
     //Popular Recommendation Function
-    public void extractPopular(){
+    public void extractPopular() {
 //        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistorepopu.php", null, new Response.Listener<JSONArray>() {
 //            @Override
 //            public void onResponse(JSONArray response) {
@@ -668,13 +713,13 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }*/
 
     //Food For You
-    public void extractFoodforyou(){
+    public void extractFoodforyou() {
         HomeFragment homeFragment = this;
-        JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifood.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequestFoodforyou = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d("FoodResponseLength", String.valueOf(response.length()));
-                for (int i=0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
                         int idProduct = jsonObjectFoodforyou.getInt("idProduct");
@@ -690,8 +735,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
                         String weather = jsonObjectFoodforyou.getString("weather");
 
-                        ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,
-                                productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
                         Log.d("FoodModel", String.valueOf(foodfyModel));
                         food_for_you_list.add(foodfyModel);
                         Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
@@ -704,7 +749,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     }
                     Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
                     Collections.shuffle(food_for_you_list);
-                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,homeFragment);
+                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
                     rv_food_for_you.setAdapter(homeFoodForYouAdapter);
                 }
             }
@@ -724,7 +769,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }
 
 
-
     @Override
     public void onItemClickStorePopular(int position) {
         Log.d("CLICKPOPU", "Success");
@@ -740,7 +784,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putInt("user", userId);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
 
     }
 
@@ -764,7 +808,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putInt("user", userId);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
     }
 
     @Override
@@ -780,15 +824,15 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         DealsModel dealsModel = home_deals_list.get(position);
         bundle.putParcelable("DealsClass", dealsModel);
 
-        for(int i = 0 ; i < home_store_rec_list.size() ; i++){
-            if(home_store_rec_list.get(i).getStore_id() == home_deals_list.get(position).getStoreId()){
+        for (int i = 0; i < home_store_rec_list.size(); i++) {
+            if (home_store_rec_list.get(i).getStore_id() == home_deals_list.get(position).getStoreId()) {
                 StoreModel storeModel = home_store_rec_list.get(i);
                 bundle.putParcelable("StoreClass", storeModel);
                 bundle.putParcelable("deals", home_deals_list.get(position));
                 bundle.putInt("user", userId);
                 StoreFragment fragment = new StoreFragment();
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         }
     }
@@ -806,7 +850,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bundle.putInt("user", userId);
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
     }
 
     @Override
@@ -826,18 +870,18 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         Log.d("Result: ", "Success");
         Bundle bundle = new Bundle();
         CategoryFragment fragment = new CategoryFragment();
-        bundle.putString("categoryString",category);
+        bundle.putString("categoryString", category);
         bundle.putInt("user", userId);
         bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
 
     }
 
     //Function
     //Display Product BottomSheet
 
-    public void showBottomSheet(int position){
+    public void showBottomSheet(int position) {
         String TAG = "Bottomsheet";
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
         Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
@@ -846,7 +890,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         R.layout.product_bottom_sheet_layout,
                         getActivity().findViewById(R.id.product_bottomSheet_container)
                 );
-        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        Log.d(TAG, "bottomSheetView = LayoutInflater.from");
         product_image = bottomSheetView.findViewById(R.id.iv_product_imagee2);
         product_name = bottomSheetView.findViewById(R.id.tv_product_namee2);
         product_resto = bottomSheetView.findViewById(R.id.tv_product_restos);
@@ -862,7 +906,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         product_name.setText(food_for_you_list.get(position).getProductName());
         product_resto.setText(food_for_you_list.get(position).getProductRestoName());
         product_description.setText(food_for_you_list.get(position).getProductDescription());
-        product_price.setText("P"+food_for_you_list.get(position).getProductPrice());
+        product_price.setText("P" + food_for_you_list.get(position).getProductPrice());
         tv_counter.setText(Integer.toString(product_count));
         btn_add_to_cart.setEnabled(false);
 
@@ -870,10 +914,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (product_count >= 0 ){
+                if (product_count >= 0) {
                     cl_product_minus.setClickable(true);
                     btn_add_to_cart.setEnabled(true);
-                    product_count +=1;
+                    product_count += 1;
                     tv_counter.setText(Integer.toString(product_count));
                 }
             }
@@ -883,11 +927,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(product_count == 0){
+                if (product_count == 0) {
                     cl_product_minus.setClickable(false);
                     btn_add_to_cart.setEnabled(false);
-                }else{
-                    product_count -=1;
+                } else {
+                    product_count -= 1;
                     tv_counter.setText(Integer.toString(product_count));
                 }
             }
@@ -896,32 +940,33 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             int temp_count = 0;
             float tempPrice = 0;
+
             @Override
             public void onClick(View v) {
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "tempCart.php", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String result) {
-                        Log.d("1 ", result );
+                        Log.d("1 ", result);
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             String success = jsonObject.getString("success");
 
-                            if (success.equals("1")){
+                            if (success.equals("1")) {
                                 Log.d("TEMP CART INSERT", "success");
                             } else {
-                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
-                            Log.d("TEMP CART", "catch" );
-                            Toast.makeText(getActivity().getApplicationContext(), "Catch ",Toast.LENGTH_SHORT).show();
+                            Log.d("TEMP CART", "catch");
+                            Toast.makeText(getActivity().getApplicationContext(), "Catch ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error! " + error.toString(), Toast.LENGTH_SHORT).show();
                     }
-                }){
+                }) {
                     @Nullable
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
@@ -951,7 +996,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.show();
     }
 
-    public void showWeatherBottomSheet(int position){
+    public void showWeatherBottomSheet(int position) {
         String TAG = "Bottomsheet";
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
         Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
@@ -960,7 +1005,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         R.layout.product_bottom_sheet_layout,
                         getActivity().findViewById(R.id.product_bottomSheet_container)
                 );
-        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        Log.d(TAG, "bottomSheetView = LayoutInflater.from");
         product_image = bottomSheetView.findViewById(R.id.iv_product_imagee2);
         product_name = bottomSheetView.findViewById(R.id.tv_product_namee2);
         product_resto = bottomSheetView.findViewById(R.id.tv_product_restos);
@@ -975,7 +1020,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         product_name.setText(weather_list.get(position).getProductName());
         product_resto.setText(weather_list.get(position).getProductRestoName());
         product_description.setText(weather_list.get(position).getProductDescription());
-        product_price.setText("P"+weather_list.get(position).getProductPrice());
+        product_price.setText("P" + weather_list.get(position).getProductPrice());
         tv_counter.setText(Integer.toString(product_count));
         btn_add_to_cart.setEnabled(false);
 
@@ -983,10 +1028,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (product_count >= 0 ){
+                if (product_count >= 0) {
                     cl_product_minus.setClickable(true);
                     btn_add_to_cart.setEnabled(true);
-                    product_count +=1;
+                    product_count += 1;
                     tv_counter.setText(Integer.toString(product_count));
                 }
             }
@@ -996,11 +1041,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         cl_product_minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(product_count == 0){
+                if (product_count == 0) {
                     cl_product_minus.setClickable(false);
                     btn_add_to_cart.setEnabled(false);
-                }else{
-                    product_count -=1;
+                } else {
+                    product_count -= 1;
                     tv_counter.setText(Integer.toString(product_count));
                 }
             }
@@ -1009,32 +1054,33 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             int temp_count = 0;
             float tempPrice = 0;
+
             @Override
             public void onClick(View v) {
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"tempCart.php", new Response.Listener<String>() {
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "tempCart.php", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String result) {
-                        Log.d("1 ", result );
+                        Log.d("1 ", result);
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             String success = jsonObject.getString("success");
 
-                            if (success.equals("1")){
+                            if (success.equals("1")) {
                                 Log.d("TEMP CART INSERT", "success");
                             } else {
-                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
-                            Log.d("TEMP CART", "catch" );
-                            Toast.makeText(getActivity().getApplicationContext(), "Catch ",Toast.LENGTH_SHORT).show();
+                            Log.d("TEMP CART", "catch");
+                            Toast.makeText(getActivity().getApplicationContext(), "Catch ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "Error! "+ error.toString(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error! " + error.toString(), Toast.LENGTH_SHORT).show();
                     }
-                }){
+                }) {
                     @Nullable
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
@@ -1064,16 +1110,16 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.show();
     }
 
-    public void showFilterBottomSheet(){
+    public void showFilterBottomSheet() {
         String TAG = "Bottomsheet";
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
         Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
         View bottomSheetView = getLayoutInflater().inflate(R.layout.filter_bottom_sheet_layout,
-                        getActivity().findViewById(R.id.filter_bottomSheet_container)
-                );
+                getActivity().findViewById(R.id.filter_bottomSheet_container)
+        );
         ChipGroup cg_category, cg_mood, cg_weather, cg_budget;
         int budget;
-        Log.d(TAG,"bottomSheetView = LayoutInflater.from");
+        Log.d(TAG, "bottomSheetView = LayoutInflater.from");
         cg_category = bottomSheetView.findViewById(R.id.cg_category);
         cg_weather = bottomSheetView.findViewById(R.id.cg_weather);
         cg_mood = bottomSheetView.findViewById(R.id.cg_mood);
@@ -1085,7 +1131,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         chp_mood_list = new ArrayList<>();
         chp_mood_list = new ArrayList<>();
 
-        for(int i = 0; i < home_categ_list.size();  i++){
+        for (int i = 0; i < home_categ_list.size(); i++) {
             chp_category_list.add(home_categ_list.get(i).getCateg_name());
         }
         chp_mood_list = Arrays.asList("Old", "New", "Mix", "Trend");
@@ -1099,7 +1145,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         weather_list = new ArrayList<>();
         String mood;
 
-        for(int i = 0 ; i < chp_category_list.size() ; i++){
+        for (int i = 0; i < chp_category_list.size(); i++) {
             Chip chip = new Chip(this.getContext());
             chip.setText(chp_category_list.get(i));
             chip.setChipBackgroundColorResource(R.color.gray);
@@ -1107,7 +1153,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 @Override
                 public void onClick(View v) {
                     String value = chip.getText().toString();
-                    if(chip.isSelected()){
+                    if (chip.isSelected()) {
                         chip.setSelected(false);
                         chip.setTextColor(Color.BLACK);
                         chip.setChipBackgroundColorResource(R.color.gray);
@@ -1124,7 +1170,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             cg_category.addView(chip);
         }
 
-        for(int i = 0 ; i < chp_mood_list.size() ; i++){
+        for (int i = 0; i < chp_mood_list.size(); i++) {
             Chip chip = new Chip(this.getContext());
             chip.setText(chp_mood_list.get(i));
             chip.setChipBackgroundColorResource(R.color.gray);
@@ -1133,7 +1179,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 public void onClick(View v) {
                     String value = chip.getText().toString();
                     mood_list.add("");
-                    if(chip.isSelected()){
+                    if (chip.isSelected()) {
                         for (int i = 0; i < cg_mood.getChildCount(); i++) {
                             Chip chip = (Chip) cg_mood.getChildAt(i);
                             if (chip.getText() != value) {
@@ -1159,7 +1205,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         mood_list.set(0, value);
                     }
                 }
-            });            cg_mood.addView(chip);
+            });
+            cg_mood.addView(chip);
         }
 
         cg_mood.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
@@ -1174,7 +1221,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
-        for (int i = 0 ; i < chp_weather_list.size() ; i++){
+        for (int i = 0; i < chp_weather_list.size(); i++) {
             Chip chip = new Chip(this.getContext());
             chip.setText(chp_weather_list.get(i));
             chip.setChipBackgroundColorResource(R.color.gray);
@@ -1182,7 +1229,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 @Override
                 public void onClick(View v) {
                     String value = chip.getText().toString();
-                    if(chip.isSelected()){
+                    if (chip.isSelected()) {
                         chip.setSelected(false);
                         chip.setTextColor(Color.BLACK);
                         chip.setChipBackgroundColorResource(R.color.gray);
@@ -1200,7 +1247,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
             cg_weather.addView(chip);
         }
 
-        for(int i = 0 ; i < chp_budget.size() ; i++){
+        for (int i = 0; i < chp_budget.size(); i++) {
             Chip chip = new Chip(this.getContext());
             chip.setText(chp_budget.get(i));
             chip.setChipBackgroundColorResource(R.color.gray);
@@ -1209,7 +1256,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 public void onClick(View v) {
                     String value = chip.getText().toString();
                     budget_list.add("");
-                    if(chip.isSelected()){
+                    if (chip.isSelected()) {
                         for (int i = 0; i < cg_budget.getChildCount(); i++) {
                             Chip chip = (Chip) cg_budget.getChildAt(i);
                             if (chip.getText() != value) {
@@ -1235,7 +1282,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         budget_list.set(0, value);
                     }
                 }
-            });            cg_budget.addView(chip);
+            });
+            cg_budget.addView(chip);
         }
 
         cg_budget.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
@@ -1260,14 +1308,15 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 FilterFragment fragment = new FilterFragment();
                 bundle.putInt("userId", userId);
                 bundle.putSerializable("categlist", (Serializable) category_list);
-                if(mood_list.size() != 0) {
+                if (mood_list.size() != 0) {
                     bundle.putString("mood", mood_list.get(0));
-                } if(budget_list.size() != 0) {
-                    if(budget_list.get(0).equals("₱₱"))
+                }
+                if (budget_list.size() != 0) {
+                    if (budget_list.get(0).equals("₱₱"))
                         budget = 99;
-                    else if(budget_list.get(0).equals("₱₱₱"))
+                    else if (budget_list.get(0).equals("₱₱₱"))
                         budget = 999;
-                    else if(budget_list.get(0).equals("₱₱₱₱"))
+                    else if (budget_list.get(0).equals("₱₱₱₱"))
                         budget = 9999;
 
                     bundle.putInt("budget", budget);
@@ -1287,14 +1336,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.show();
     }
 
-    public void moodModal(){
+    public void moodModal() {
         moodDialog = new Dialog(this.getContext());
         moodDialog.setContentView(R.layout.mood_modal);
         moodDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         CardView moodOld, moodNew, moodMix, moodTrend;
         ImageView btnClose;
 
-        moodOld  = moodDialog.findViewById(R.id.cv_mood_old);
+        moodOld = moodDialog.findViewById(R.id.cv_mood_old);
         moodNew = moodDialog.findViewById(R.id.cv_mood_new);
         moodMix = moodDialog.findViewById(R.id.cv_mood_mix);
         moodTrend = moodDialog.findViewById(R.id.cv_mood_trend);
@@ -1372,14 +1421,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         moodDialog.show();
     }
 
-    public void weatherModal(){
+    public void weatherModal() {
         weatherDialog = new Dialog(this.getContext());
         weatherDialog.setContentView(R.layout.weather_modal);
         weatherDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         CardView weatherHot, weatherCold;
         ImageView btnClose;
 
-        weatherHot  = weatherDialog.findViewById(R.id.cv_weather_hot);
+        weatherHot = weatherDialog.findViewById(R.id.cv_weather_hot);
         weatherCold = weatherDialog.findViewById(R.id.cv_weather_cold);
         iv_hot = weatherDialog.findViewById(R.id.iv_hot);
         iv_cold = weatherDialog.findViewById(R.id.iv_cold);
@@ -1426,5 +1475,79 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         weatherDialog.show();
     }
 
+    // Constants
 
+
+    public static double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+        // Convert latitude and longitude to radians
+        double startLatitudeRad = Math.toRadians(startLatitude);
+        double startLongitudeRad = Math.toRadians(startLongitude);
+        double endLatitudeRad = Math.toRadians(endLatitude);
+        double endLongitudeRad = Math.toRadians(endLongitude);
+
+        // Calculate the difference between latitudes and longitudes
+        double latitudeDiff = endLatitudeRad - startLatitudeRad;
+        double longitudeDiff = endLongitudeRad - startLongitudeRad;
+
+        // Calculate the distance using Haversine formula
+        double a = Math.sin(latitudeDiff / 2) * Math.sin(latitudeDiff / 2)
+                + Math.cos(startLatitudeRad) * Math.cos(endLatitudeRad)
+                * Math.sin(longitudeDiff / 2) * Math.sin(longitudeDiff / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        DecimalFormat df = new DecimalFormat(".#");
+        double distance = Double.parseDouble(df.format(EARTH_RADIUS * c));
+
+        return distance;
+    }
 }
+
+////
+//import android.location.Location;
+//
+//public class DistanceCalculator {
+//    // Constants
+//    private static final int EARTH_RADIUS = 6371; // Radius of the Earth in kilometers
+//
+//    public static double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+//        // Convert latitude and longitude to radians
+//        double startLatitudeRad = Math.toRadians(startLatitude);
+//        double startLongitudeRad = Math.toRadians(startLongitude);
+//        double endLatitudeRad = Math.toRadians(endLatitude);
+//        double endLongitudeRad = Math.toRadians(endLongitude);
+//
+//        // Calculate the difference between latitudes and longitudes
+//        double latitudeDiff = endLatitudeRad - startLatitudeRad;
+//        double longitudeDiff = endLongitudeRad - startLongitudeRad;
+//
+//        // Calculate the distance using Haversine formula
+//        double a = Math.sin(latitudeDiff / 2) * Math.sin(latitudeDiff / 2)
+//                + Math.cos(startLatitudeRad) * Math.cos(endLatitudeRad)
+//                * Math.sin(longitudeDiff / 2) * Math.sin(longitudeDiff / 2);
+//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//        double distance = EARTH_RADIUS * c;
+//
+//        return distance;
+//    }
+//
+//    public static void main(String[] args) {
+//        // Current location
+//        double currentLatitude = 37.7749;
+//        double currentLongitude = -122.4194;
+//
+//        // Destination location
+//        double destinationLatitude = 37.7833;
+//        double destinationLongitude = -122.4167;
+//
+//        // Calculate the distance
+//        double distance = calculateDistance(currentLatitude, currentLongitude, destinationLatitude, destinationLongitude);
+//
+//        // Check if the distance is within 3 km
+//        if (distance <= 3) {
+//            System.out.println("The current location is within 3 km of the destination.");
+//        } else {
+//            System.out.println("The current location is more than 3 km away from the destination.");
+//        }
+//    }
+//}
+//
+////

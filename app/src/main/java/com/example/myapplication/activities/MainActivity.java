@@ -3,6 +3,9 @@ package com.example.myapplication.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.tabs.TabLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -29,9 +32,12 @@ import com.cometchat.pro.exceptions.CometChatException;
 import com.example.myapplication.R;
 
 
+import com.example.myapplication.activities.models.CoordModel;
 import com.example.myapplication.activities.models.WeatherModel;
+import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.onesignal.OneSignal;
@@ -50,19 +56,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     double curLat;
 
     WeatherModel weatherModel;
+    CoordModel coordModel;
     private String weather;
+    Location location;
 
 
 
     private final String weatherURL = "https://api.openweathermap.org/data/2.5/weather";
     private final String appId = "d7484fc39538bf509fe729a4bbb0a90f";
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
-
 
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -165,18 +173,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void requestWeather(){
         String tempWeatherURL = weatherURL + "?lat=" + curLat + "&lon=" + curLong + "&appid=" + appId;
 
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, tempWeatherURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
+                    Log.d("weather", response);
                     Gson gson = new Gson();
                     String jsonString = jsonObject.getString("main");
+                    String jsonCoord = jsonObject.getString("coord");
                     weatherModel = gson.fromJson(jsonString, WeatherModel.class);
+                    coordModel = gson.fromJson(jsonCoord, CoordModel.class);
                     Log.d("weather", String.valueOf(weatherModel.getTemp()));
                     weather(weatherModel);
                     Intent intent = new Intent(getApplicationContext(), Login.class);
                     intent.putExtra("weather",weather);
+                    intent.putExtra("lat",coordModel.getLat());
+                    intent.putExtra("long",coordModel.getLon());
+                    Log.d("weatherLat", String.valueOf(coordModel.getLat()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     MainActivity.this.startActivity(intent);
 

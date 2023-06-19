@@ -8,56 +8,105 @@
     android:orientation="vertical"
     tools:context=".activities.Preferences">
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="250dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="36dp"
-        android:foregroundGravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logohorizontal" />
-
-    <TextView
-        android:id="@+id/textViewPref"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="8dp"
-        android:padding="10dp"
-        android:fontFamily="@font/robotomedium"
-        android:text="Kindly choose your food preferences"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/cg_preferences"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:chipSpacing="2dp"
-        app:chipSpacingHorizontal="6dp"
-        app:chipSpacingVertical="0dp" />
-
-    <Button
-        android:id="@+id/done_btn"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="88dp"
-        android:backgroundTint="@color/mosibusPrimary"
-        android:text="Done"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cg_preferences" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="377dp"
+                android:layout_height="706dp"
+                android:foregroundGravity="center_vertical|center|center_horizontal"
+                android:padding="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.482"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="250dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:foregroundGravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.496"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/logohorizontal" />
+
+                <TextView
+                    android:id="@+id/textViewPref"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/robotomedium"
+                    android:padding="10dp"
+                    android:text="Kindly choose your food preferences"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cg_preferences"
+                    android:layout_width="354dp"
+                    android:layout_height="319dp"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    app:chipSpacing="2dp"
+                    app:chipSpacingHorizontal="6dp"
+                    app:chipSpacingVertical="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewPref"
+                    app:layout_constraintVertical_bias="0.139" />
+
+                <TextView
+                    android:id="@+id/texView_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|center_horizontal"
+                    android:fontFamily="@font/robotomedium"
+                    android:foregroundGravity="center_vertical|center|center_horizontal"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:padding="10dp"
+                    android:text="Note: You can edit your preferences at any time. To do so, click on the 'Preferences' tab and make the desired changes. Click 'Save' to save your changes."
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toTopOf="@+id/done_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cg_preferences"
+                    app:layout_constraintVertical_bias="0.722" />
+
+                <Button
+                    android:id="@+id/done_btn"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="68dp"
+                    android:backgroundTint="@color/mosibusPrimary"
+                    android:text="Done"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.493"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cg_preferences" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </LinearLayout>

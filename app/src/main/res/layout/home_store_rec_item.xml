@@ -59,6 +59,18 @@
             app:layout_constraintStart_toEndOf="@+id/iv_food_image"
             app:layout_constraintTop_toBottomOf="@+id/tv_food_price" />
 
+        <TextView
+            android:id="@+id/tv_distance2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/robotoregular"
+            android:textAlignment="viewStart"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/iv_food_image"
+            app:layout_constraintTop_toBottomOf="@+id/tv_store_category" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

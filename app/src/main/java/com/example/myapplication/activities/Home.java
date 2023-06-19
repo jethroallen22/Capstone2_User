@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
+import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.activities.models.IPModel;
 import com.example.myapplication.activities.models.UserModel;
@@ -40,8 +41,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.myapplication.databinding.ActivityHomeBinding;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,6 +73,10 @@ public class Home extends AppCompatActivity {
     Handler root;
     Dialog filterDialog;
     float wallet;
+
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager2;
+    private TabFragmentAdapter adapter;
 
 
     @Override
@@ -126,6 +133,42 @@ public class Home extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putInt("userId", id);
         paymentItem.setIntent(new Intent().putExtras(bundle));
+
+
+        //tablayout
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager2 = findViewById(R.id.viewPager2);
+
+        tabLayout.addTab(tabLayout.newTab().setText("For You"));
+        tabLayout.addTab(tabLayout.newTab().setText("Home"));
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        adapter = new TabFragmentAdapter(fragmentManager , getLifecycle());
+        viewPager2.setAdapter(adapter);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+            }
+        });
 
 
         // Handle the click event of the MenuItem

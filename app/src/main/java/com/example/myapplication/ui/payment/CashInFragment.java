@@ -53,40 +53,41 @@ public class CashInFragment extends Fragment {
         binding.btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                temp = Float.parseFloat(String.valueOf(binding.etAmount.getText()));
-                RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+//                temp = Float.parseFloat(String.valueOf(binding.etAmount.getText()));
+//                RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "update_wallet.php",
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                try {
-                                    Log.d("On Res", "inside on res");
-                                } catch (Throwable e) {
-                                    Log.d("Catch", String.valueOf(e));
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-                    protected Map<String, String> getParams() {
-                        Map<String, String> paramV = new HashMap<>();
-                        wallet += temp;
-                        Log.d("Cashin", String.valueOf(wallet));
-                        paramV.put("id", String.valueOf(userId));
-                        paramV.put("wallet", String.valueOf(wallet));
-                        Log.d("Cashin", "success");
-                        return paramV;
-                    }
-                };
-                queue.add(stringRequest);
+//                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "update_wallet.php",
+//                        new Response.Listener<String>() {
+//                            @Override
+//                            public void onResponse(String response) {
+//                                try {
+//                                    Log.d("On Res", "inside on res");
+//                                } catch (Throwable e) {
+//                                    Log.d("Catch", String.valueOf(e));
+//                                }
+//                            }
+//                        }, new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+////                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                }) {
+//                    protected Map<String, String> getParams() {
+//                        Map<String, String> paramV = new HashMap<>();
+//                        wallet += temp;
+//                        Log.d("Cashin", String.valueOf(wallet));
+//                        paramV.put("id", String.valueOf(userId));
+//                        paramV.put("wallet", String.valueOf(wallet));
+//                        Log.d("Cashin", "success");
+//                        return paramV;
+//                    }
+//                };
+//                queue.add(stringRequest);
                 Bundle bundle = new Bundle();
+                bundle.putFloat("amount", Float.parseFloat(String.valueOf(binding.etAmount.getText())));
                 bundle.putInt("id", id);
                 bundle.putDouble("wallet", wallet);
-                PaymentFragment fragment = new PaymentFragment();
+                GcashLoginFragment fragment = new GcashLoginFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }

@@ -32,6 +32,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.adapters.FilterAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentFilterBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
@@ -62,6 +63,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     List<ProductModel> productModelList;
     int budget;
     ProductAdapter productAdapter;
+    FilterAdapter filterAdapter;
     RequestQueue requestQueue, requestQueueInner, requestQueueOuter;
     TextView tv_budget, tv_current;
     //For Product Bottomsheet
@@ -267,8 +269,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         e.printStackTrace();
                     }
                     Log.d("ListSize", String.valueOf(productModelList.size()));
-                    productAdapter = new ProductAdapter(getActivity(),productModelList,FilterFragment.this);
-                    rv_filter.setAdapter(productAdapter);
+                    filterAdapter = new FilterAdapter(getActivity(),productModelList,FilterFragment.this);
+                    rv_filter.setAdapter(filterAdapter);
                 }
             }
         }, new Response.ErrorListener() {
@@ -364,8 +366,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         e.printStackTrace();
                     }
                     Log.d("ListSize", String.valueOf(productModelList.size()));
-                    productAdapter = new ProductAdapter(getActivity(),productModelList,FilterFragment.this);
-                    rv_filter.setAdapter(productAdapter);
+                    filterAdapter = new FilterAdapter(getActivity(),productModelList,FilterFragment.this);
+                    rv_filter.setAdapter(filterAdapter);
                 }
             }
         }, new Response.ErrorListener() {
@@ -480,8 +482,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                     ll_no_result.setVisibility(View.GONE);
                                 }
 
-                                productAdapter = new ProductAdapter(getActivity(), productModelList, FilterFragment.this);
-                                rv_filter.setAdapter(productAdapter);
+                                filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
+                                rv_filter.setAdapter(filterAdapter);
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -613,8 +615,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                     ll_no_result.setVisibility(View.GONE);
                                 }
 
-                                productAdapter = new ProductAdapter(getActivity(), productModelList, FilterFragment.this);
-                                rv_filter.setAdapter(productAdapter);
+                                filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
+                                rv_filter.setAdapter(filterAdapter);
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -745,8 +747,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                     ll_no_result.setVisibility(View.GONE);
                                 }
 
-                                productAdapter = new ProductAdapter(getActivity(), productModelList, FilterFragment.this);
-                                rv_filter.setAdapter(productAdapter);
+                                filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
+                                rv_filter.setAdapter(filterAdapter);
                             }
                         }, new Response.ErrorListener() {
                             @Override

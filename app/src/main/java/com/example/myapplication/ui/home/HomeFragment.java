@@ -385,6 +385,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
 
     public void extractWeather() {
+        weather_list.clear();
         HomeFragment homeFragment = this;
         JsonArrayRequest jsonArrayRequest7 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -405,7 +406,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String storeImage = jsonObject7.getString("storeImage");
                         String weather2 = jsonObject7.getString("weather");
 
-                        if (weather.toLowerCase().compareTo(weather2.toLowerCase()) == 0) {
+                        if (weather.equalsIgnoreCase(weather2)) {
                             Log.d("Weather", weather);
                             Log.d("WeatherRead", weather2);
                             ProductModel weatherModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
@@ -750,10 +751,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         foodfyModel.setTags_list(tag_list);
 
                         Log.d("FoodModel", String.valueOf(foodfyModel));
-//                        food_for_you_list.add(foodfyModel);
-                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
                         SearchModel searchModel = new SearchModel(productImage, productName, productTag);
-//                        searchModelList.add(searchModel);
                         JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
@@ -774,16 +772,21 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                                         e.printStackTrace();
                                     }
                                 }
-                                food_for_you_list.add(foodfyModel);
-//                                Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-//                                Collections.shuffle(food_for_you_list);
-//                                homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
-//                                rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                                // Check if this is the last iteration of the loop
+                                if (food_for_you_list.size() == response.length() - 1) {
+                                    food_for_you_list.add(foodfyModel);
+                                    // Shuffle the list
+                                    Collections.shuffle(food_for_you_list);
+                                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
+                                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                                } else {
+                                    food_for_you_list.add(foodfyModel);
+                                }
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-
+                                // Handle the error
                             }
                         });
                         requestTag.add(jsonArrayRequestTag);
@@ -792,19 +795,16 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-//                    Collections.shuffle(food_for_you_list);
-//                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
-//                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                // Handle the error
             }
         });
         requestQueueFood.add(jsonArrayRequestFoodforyou);
+
     }
 
 

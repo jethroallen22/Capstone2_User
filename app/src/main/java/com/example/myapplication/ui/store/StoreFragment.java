@@ -327,9 +327,9 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d("FoodResponseLength", String.valueOf(response.length()));
-                for (int i = 0; i < response.length(); i++) {
+                for (int k = 0; k < response.length(); k++) {
                     try {
-                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                        JSONObject jsonObjectFoodforyou = response.getJSONObject(k);
                         int idProduct = jsonObjectFoodforyou.getInt("idProduct");
                         int idStore = jsonObjectFoodforyou.getInt("idStore");
                         String productName = jsonObjectFoodforyou.getString("productName");
@@ -386,61 +386,62 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
                                 }
                             });
+                            if(dealsModel != null) {
+                                for (int i = 0; i < food_for_you_list.size(); i++) {
+                                    food_for_you_list.get(i).setPercentage(dealsModel.getPercentage());
+                                    food_for_you_list.get(i).setProductPrice((food_for_you_list.get(i).getProductPrice() * (100 - dealsModel.getPercentage())) / 100);
+                                }
+                            }
+                            homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
+                            rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                            int temp_not = 0;
+                            for(int j = 0 ; j < food_for_you_list.size() ; j++){
+                                if(product_categ_list.isEmpty()){
+                                    //Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
+                                    temp_product_list = new ArrayList<>();
+                                    temp_product_list.add(food_for_you_list.get(j));
+                                    product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getTags_list().get(0), temp_product_list));
+                                }else{
+                                    for (int h = 0; h < product_categ_list.size(); h++) {
+                                        //Log.d("Inside for", String.valueOf(order_list.size()));
+                                        //Check if Order already exist in CartList
+                                        if (product_categ_list.get(h).getCateg().toLowerCase().compareTo(food_for_you_list.get(j).getTags_list().get(0)) == 0) {
+                                            // Check if order item already exist
+                                            product_categ_list.get(h).getList().add(food_for_you_list.get(j));
+                                        } else {// if(order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 1){
+                                            Log.d("NEWORDER", "INSIDE NOT MATCH");
+                                            temp_not++;
+                                            if(temp_not == product_categ_list.size()) {
+                                                //Log.d("NEWORDER", String.valueOf(order_list.size()));
+                                                float totalTotal = 0;
+                                                temp_product_list = new ArrayList<>();
+                                                temp_product_list.add(food_for_you_list.get(j));
+                                                product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getTags_list().get(0), temp_product_list));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Log.d("CategSize", String.valueOf(product_categ_list.size()));
+                            productCategAdapter = new ProductCategAdapter(getActivity(), product_categ_list, StoreFragment.this);
+                            rv_products.setAdapter(productCategAdapter);
+                            rv_products.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+                            rv_products.setHasFixedSize(true);
+                            rv_products.setNestedScrollingEnabled(false);
+                            Log.d("productCategSize", String.valueOf(product_categ_list.size()));
+                            for(int i = 0 ; i < product_categ_list.size() ; i++){
+                                Log.d("categ", product_categ_list.get(i).getCateg());
+                                for(int j = 0 ; j < product_categ_list.get(i).getList().size() ; j++)
+                                    Log.d("product", product_categ_list.get(i).getList().get(j).getProductName());
+                            }
                             requestTag.add(jsonArrayRequestTag);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-                if(dealsModel != null) {
-                    for (int i = 0; i < food_for_you_list.size(); i++) {
-                        food_for_you_list.get(i).setPercentage(dealsModel.getPercentage());
-                        food_for_you_list.get(i).setProductPrice((food_for_you_list.get(i).getProductPrice() * (100 - dealsModel.getPercentage())) / 100);
-                    }
-                }
-                homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
-                rv_food_for_you.setAdapter(homeFoodForYouAdapter);
-                int temp_not = 0;
-                for(int j = 0 ; j < food_for_you_list.size() ; j++){
-                    if(product_categ_list.isEmpty()){
-                        //Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
-                        temp_product_list = new ArrayList<>();
-                        temp_product_list.add(food_for_you_list.get(j));
-                        product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getTags_list().get(0), temp_product_list));
-                    }else{
-                        for (int h = 0; h < product_categ_list.size(); h++) {
-                            //Log.d("Inside for", String.valueOf(order_list.size()));
-                            //Check if Order already exist in CartList
-                            if (product_categ_list.get(h).getCateg().toLowerCase().compareTo(food_for_you_list.get(j).getTags_list().get(0)) == 0) {
-                                // Check if order item already exist
-                                product_categ_list.get(h).getList().add(food_for_you_list.get(j));
-                            } else {// if(order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 1){
-                                Log.d("NEWORDER", "INSIDE NOT MATCH");
-                                temp_not++;
-                                if(temp_not == product_categ_list.size()) {
-                                    //Log.d("NEWORDER", String.valueOf(order_list.size()));
-                                    float totalTotal = 0;
-                                    temp_product_list = new ArrayList<>();
-                                    temp_product_list.add(food_for_you_list.get(j));
-                                    product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getTags_list().get(0), temp_product_list));
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                Log.d("CategSize", String.valueOf(product_categ_list.size()));
-                productCategAdapter = new ProductCategAdapter(getActivity(), product_categ_list, StoreFragment.this);
-                rv_products.setAdapter(productCategAdapter);
-                rv_products.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-                rv_products.setHasFixedSize(true);
-                rv_products.setNestedScrollingEnabled(false);
-                Log.d("productCategSize", String.valueOf(product_categ_list.size()));
-                for(int i = 0 ; i < product_categ_list.size() ; i++){
-                    Log.d("categ", product_categ_list.get(i).getCateg());
-                    for(int j = 0 ; j < product_categ_list.get(i).getList().size() ; j++)
-                        Log.d("product", product_categ_list.get(i).getList().get(j).getProductName());
-                }
+
             }
         }, new Response.ErrorListener() {
             @Override

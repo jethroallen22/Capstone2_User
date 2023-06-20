@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.models.ProductModel;
+import com.example.myapplication.activities.models.TagModel;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -53,17 +54,31 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
             holder.tv_deal_percentage.setText(productModel.getPercentage() + "% off");
         } else
             holder.cv_banner.setVisibility(View.INVISIBLE);
-
-        List<String> tags_list;
-        tags_list = Arrays.asList("Test", "Test", "Test", "Test", "Test", "Test");
-        for(int i = 0 ; i < tags_list.size() ; i++){
-            Chip chip = new Chip(context);
-            chip.setText(tags_list.get(i));
-            chip.setEnabled(false);
-            chip.setHeight(35);
-            chip.setTextSize(12);
-            chip.setChipBackgroundColorResource(R.color.gray);
-            holder.cg_tags.addView(chip);
+        if (list.get(position).getTags_list() == null){
+            holder.cg_tags.setVisibility(View.INVISIBLE);
+        } else {
+            holder.cg_tags.setVisibility(View.VISIBLE);
+            for (TagModel tagModel : list.get(position).getTags_list()) {
+                if(tagModel.isMatch()){
+                    Chip chip = new Chip(context);
+                    chip.setText(tagModel.getTagname());
+                    chip.setEnabled(false);
+                    chip.setHeight(35);
+                    chip.setTextSize(12);
+                    chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                    chip.setTextColor(Color.BLACK);
+                    holder.cg_tags.addView(chip);
+                }else {
+                    Chip chip = new Chip(context);
+                    chip.setText(tagModel.getTagname());
+                    chip.setEnabled(false);
+                    chip.setHeight(35);
+                    chip.setTextSize(12);
+                    chip.setChipBackgroundColorResource(R.color.gray);
+                    chip.setTextColor(Color.BLACK);
+                    holder.cg_tags.addView(chip);
+                }
+            }
         }
 
     }

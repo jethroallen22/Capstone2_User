@@ -180,6 +180,16 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <CheckBox
+                android:id="@+id/cb_apply_pref"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/robotoregular"
+                android:text="Apply Preferences"
+                android:textSize="16sp" />
+
             <Button
                 android:id="@+id/btn_confirm_filter"
                 android:layout_width="match_parent"

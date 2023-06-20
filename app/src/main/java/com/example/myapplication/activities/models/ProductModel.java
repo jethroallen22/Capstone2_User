@@ -2,6 +2,7 @@ package com.example.myapplication.activities.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.nfc.Tag;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
@@ -28,7 +29,7 @@ public class ProductModel implements Parcelable {
     String productTag;
     int percentage;
 
-    List<String> tags_list;
+    List<TagModel> tags_list;
 
 
 
@@ -66,7 +67,7 @@ public class ProductModel implements Parcelable {
     this.weather = weather;
 }
 
-    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, int productPrepTime, String productRestoName, String productRestoImage, String weather, List<String> tags_list) {
+    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, int productPrepTime, String productRestoName, String productRestoImage, String weather, List<TagModel> tags_list) {
         this.idProduct = idProduct;
         this.store_idStore = store_idStore;
         this.productName = productName;
@@ -97,7 +98,7 @@ public class ProductModel implements Parcelable {
         productRestoImage = in.readString();
         productRestoCategory = in.readString();
         weather = in.readString();
-        tags_list = in.createStringArrayList();
+        tags_list = in.createTypedArrayList(TagModel.CREATOR);
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -212,11 +213,11 @@ public class ProductModel implements Parcelable {
 
     public void setPercentage(int percentage){ this.percentage = percentage;}
 
-    public List<String> getTags_list() {
+    public List<TagModel> getTags_list() {
         return tags_list;
     }
 
-    public void setTags_list(List<String> tags_list) {
+    public void setTags_list(List<TagModel> tags_list) {
         this.tags_list = tags_list;
     }
 
@@ -258,6 +259,6 @@ public class ProductModel implements Parcelable {
         parcel.writeString(productRestoImage);
         parcel.writeString(productRestoCategory);
         parcel.writeString(weather);
-        parcel.writeStringList(tags_list);
+        parcel.writeTypedList(tags_list);
     }
 }

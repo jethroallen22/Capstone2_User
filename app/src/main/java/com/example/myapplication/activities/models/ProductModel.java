@@ -64,7 +64,20 @@ public class ProductModel implements Parcelable {
         this.productRestoImage = productRestoImage;
         this.weather = weather;
         this.tags_list = tags_list;
+    }
 
+    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
+        this.idProduct = idProduct;
+        this.store_idStore = store_idStore;
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.productPrice = productPrice;
+        this.productImage = productImage;
+        this.productServingSize = productServingSize;
+        this.productPrepTime = productPrepTime;
+        this.productRestoName = productRestoName;
+        this.productRestoImage = productRestoImage;
+        this.weather = weather;
     }
 
     public ProductModel(){}

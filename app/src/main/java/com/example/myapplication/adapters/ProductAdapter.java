@@ -42,7 +42,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.iv_product_image.setImageBitmap(productModel.getBitmapImage());
         holder.tv_product_name.setText(productModel.getProductName());
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
-        holder.tv_product_cal.setText(productModel.getProductTag());
+        //holder.tv_product_cal.setText(productModel.getProductTag());
         Log.d("witwiw", productModel.getPercentage() + "%");
         if(productModel.getPercentage() != 0) {
             holder.cv_banner.setVisibility(View.VISIBLE);

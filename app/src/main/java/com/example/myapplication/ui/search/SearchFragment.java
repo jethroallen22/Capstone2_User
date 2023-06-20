@@ -116,11 +116,11 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
         /////////////////////////////////////
         if (getSearchQuery.length()>0){
             for (int i = 0 ; i < productModelList.size() ; i++){
-                if (productModelList.get(i).getProductName().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
-                        productModelList.get(i).getProductTag().toLowerCase().contains(getSearchQuery.toLowerCase())){
-                    SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
-                    tempSearchModelList.add(searchModel);
-                }
+//                if (productModelList.get(i).getProductName().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
+//                        productModelList.get(i).getProductTag().toLowerCase().contains(getSearchQuery.toLowerCase())){
+//                    SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
+//                    tempSearchModelList.add(searchModel);
+//                }
             }
             for (int i = 0 ; i < storeModelList.size() ; i++){
                 if (storeModelList.get(i).getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
@@ -159,11 +159,11 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
 //                        }
 //                    }
                     for (int i = 0 ; i < productModelList.size() ; i++){
-                        if (productModelList.get(i).getProductName().toLowerCase().contains(newText.toLowerCase()) ||
-                                productModelList.get(i).getProductTag().toLowerCase().contains(newText.toLowerCase())){
-                            SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
-                            tempSearchModelList.add(searchModel);
-                        }
+//                        if (productModelList.get(i).getProductName().toLowerCase().contains(newText.toLowerCase()) ||
+//                                productModelList.get(i).getProductTag().toLowerCase().contains(newText.toLowerCase())){
+//                            SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
+//                            tempSearchModelList.add(searchModel);
+//                        }
                     }
                     for (int i = 0 ; i < storeModelList.size() ; i++){
                         if (storeModelList.get(i).getStore_name().toLowerCase().contains(newText.toLowerCase()) ||

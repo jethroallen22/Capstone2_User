@@ -40,7 +40,7 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
         holder.iv_product_image.setImageBitmap(productModel.getBitmapImage());
         holder.tv_product_name.setText(productModel.getProductName());
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
-        holder.tv_product_cal.setText(productModel.getProductTag());
+        //holder.tv_product_cal.setText(productModel.getProductTag());
     }
 
     @Override

@@ -210,7 +210,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                productServingSize, productPrepTime, storeName, storeImage, weather);
                         foodfyModel.setProductRestoCategory(storeCategory);
                         Log.d(TAG, foodfyModel.toString());
 
@@ -306,7 +306,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                productServingSize, productPrepTime, storeName, storeImage, weather);
                         foodfyModel.setProductRestoCategory(storeCategory);
                         Log.d(TAG, foodfyModel.getProductName());
                         Log.d(TAG, foodfyModel.getProductRestoCategory());
@@ -404,7 +404,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,
-                                productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                                productServingSize, productPrepTime,storeName,storeImage, weather);
                         foodfyModel.setProductRestoCategory(storeCategory);
 
                         JsonArrayRequest jsonArrayRequestInner = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistoryget.php", null, new Response.Listener<JSONArray>() {
@@ -537,7 +537,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,
-                                productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                                productServingSize, productPrepTime,storeName,storeImage, weather);
                         foodfyModel.setProductRestoCategory(storeCategory);
 
                         JsonArrayRequest jsonArrayRequestInner = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistoryget.php", null, new Response.Listener<JSONArray>() {
@@ -669,7 +669,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                         String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,productImage,
-                                productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                                productServingSize, productPrepTime,storeName,storeImage, weather);
                         foodfyModel.setProductRestoCategory(storeCategory);
 
                         JsonArrayRequest jsonArrayRequestInner = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiorderhistorygetpopu.php", null, new Response.Listener<JSONArray>() {

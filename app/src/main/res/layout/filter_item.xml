@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/mosibusOffWhite"
+    android:orientation="vertical"
+    android:paddingBottom="3dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_banner"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-5dp"
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="#F1493D"
+            app:cardCornerRadius="5dp">
+
+            <TextView
+                android:id="@+id/tv_deal_percentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="21dp"
+                android:fontFamily="@font/robotoregular"
+                android:text="Discount"
+                android:textColor="#F3E4E4" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteX="36dp"
+                tools:layout_editor_absoluteY="16dp">
+
+                <TextView
+                    android:id="@+id/tv_product_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/robotomedium"
+                    android:text="P 123"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_product_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_product_name" />
+
+                <ImageView
+                    android:id="@+id/iv_product_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/bg_white_round" />
+
+                <TextView
+                    android:id="@+id/tv_product_name"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/robotobold"
+                    android:text="TextView"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toEndOf="@+id/iv_product_image" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cg_tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    app:chipSpacingHorizontal="5dp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_product_price"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_product_price" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

@@ -3,6 +3,9 @@ package com.example.myapplication.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.tabs.TabLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -31,8 +34,10 @@ import com.example.myapplication.R;
 
 import com.example.myapplication.activities.models.CoordModel;
 import com.example.myapplication.activities.models.WeatherModel;
+import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.onesignal.OneSignal;
@@ -60,12 +65,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private final String weatherURL = "https://api.openweathermap.org/data/2.5/weather";
     private final String appId = "d7484fc39538bf509fe729a4bbb0a90f";
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
-
 
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);

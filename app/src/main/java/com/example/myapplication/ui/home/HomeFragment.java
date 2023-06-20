@@ -26,8 +26,10 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -53,6 +55,7 @@ import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter2;
+import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.example.myapplication.adapters.WeatherAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
@@ -71,6 +74,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.tabs.TabLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -198,6 +202,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
+
+
 
         Intent intent = getActivity().getIntent();
         if (intent.getStringExtra("name") != null) {
@@ -344,6 +350,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         });
+
+
 
         final TextView textView = binding.textHome;
         return root;

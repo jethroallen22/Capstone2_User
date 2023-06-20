@@ -119,6 +119,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     int categPos;
 
     RequestQueue requestQueueDeals, requestQueueProducts;
+    DealsModel dealsModel;
 
 
 
@@ -155,6 +156,8 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                 store_description.setText(stor_description);
 
             }
+            if  (bundle.getParcelable("deals") != null)
+                dealsModel = bundle.getParcelable("deals");
         }
 
         order_item_temp_list = new ArrayList<>();
@@ -167,10 +170,10 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
-//        extractFoodforyou();
+        extractFoodforyou();
         requestQueueDeals = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueProducts = Singleton.getsInstance(getActivity()).getRequestQueue();
-        readProductDealsDb();
+//        readProductDealsDb();
 
 
         final String TAG = "Testing";
@@ -259,10 +262,10 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                     }
                 }
 
-                if  (bundle.getParcelable("deals") != null){
-                    DealsModel dealsModel = bundle.getParcelable("deals");
-                    for (int i = 0;i < food_for_you_list.size();i++){
-                        food_for_you_list.get(i).setProductPrice((food_for_you_list.get(i).getProductPrice() * (100 - dealsModel.getPercentage())) /100);
+                if(dealsModel != null) {
+                    for (int i = 0; i < food_for_you_list.size(); i++) {
+                        food_for_you_list.get(i).setPercentage(dealsModel.getPercentage());
+                        food_for_you_list.get(i).setProductPrice((food_for_you_list.get(i).getProductPrice() * (100 - dealsModel.getPercentage())) / 100);
                     }
                 }
                 homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
@@ -703,24 +706,33 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                                     homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(),food_for_you_list,StoreFragment.this);
                                     rv_food_for_you.setAdapter(homeFoodForYouAdapter);
                                     int temp_not = 0;
+                                    String TAG = "wew";
+                                    Log.d(TAG, productName + " " + productTag);
                                     for(int j = 0 ; j < food_for_you_list.size() ; j++){
+                                        Log.d(TAG, "for(int j = 0 ; j < food_for_you_list.size() ; j++){");
                                         if(product_categ_list.isEmpty()){
-                                            //Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
+                                            Log.d(TAG, "if(product_categ_list.isEmpty()){");
+                                            Log.d("STOREMATCH", productName + " Empty " + storeName);
                                             temp_product_list = new ArrayList<>();
                                             temp_product_list.add(food_for_you_list.get(j));
                                             product_categ_list.add(new ProductCategModel(food_for_you_list.get(j).getProductTag(), temp_product_list));
                                         }else{
+                                            Log.d(TAG, "}else{");
                                             for (int h = 0; h < product_categ_list.size(); h++) {
-                                                //Log.d("Inside for", String.valueOf(order_list.size()));
+                                                Log.d(TAG, "for (int h = 0; h < product_categ_list.size(); h++) {");
+                                                Log.d("Inside for", String.valueOf("productCategList: " + product_categ_list.size()));
                                                 //Check if Order already exist in CartList
                                                 if (product_categ_list.get(h).getCateg().toLowerCase().compareTo(food_for_you_list.get(j).getProductTag()) == 0) {
+                                                    Log.d(TAG, "if (product_categ_list.get(h).getCateg().toLowerCase().compareTo(food_for_you_list.get(j).getProductTag()) == 0) {");
                                                     // Check if order item already exist
                                                     product_categ_list.get(h).getList().add(food_for_you_list.get(j));
                                                 } else {// if(order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 1){
+                                                    Log.d(TAG, "}else{");
                                                     Log.d("NEWORDER", "INSIDE NOT MATCH");
                                                     temp_not++;
                                                     if(temp_not == product_categ_list.size()) {
-                                                        //Log.d("NEWORDER", String.valueOf(order_list.size()));
+                                                        Log.d(TAG, "if(temp_not == product_categ_list.size()) {");
+                                                        Log.d("NEWORDER", String.valueOf(product_categ_list.size()));
                                                         float totalTotal = 0;
                                                         temp_product_list = new ArrayList<>();
                                                         temp_product_list.add(food_for_you_list.get(j));
@@ -735,7 +747,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                                     productCategAdapter = new ProductCategAdapter(getActivity(), product_categ_list, StoreFragment.this);
                                     rv_products.setAdapter(productCategAdapter);
                                     rv_products.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-                                    rv_products.setHasFixedSize(true);
+                                    rv_products.setHasFixedSize(false);
                                     rv_products.setNestedScrollingEnabled(false);
                                     Log.d("productCategSize", String.valueOf(product_categ_list.size()));
                                     for(int i = 0 ; i < product_categ_list.size() ; i++){

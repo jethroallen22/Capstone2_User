@@ -66,7 +66,6 @@ public class SearchModel implements Parcelable {
         Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
         return bitmap;
     };
-
     @Override
     public int describeContents() {
         return 0;

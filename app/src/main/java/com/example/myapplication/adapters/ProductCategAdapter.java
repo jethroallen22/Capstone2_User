@@ -1,6 +1,7 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class ProductCategAdapter extends RecyclerView.Adapter<ProductCategAdapte
         ProductCategModel productCategModel = list.get(position);
         holder.tv_categ.setText(productCategModel.getCateg());
 
+        Log.d("wiw", String.valueOf(list.size()));
         ProductAdapter productAdapter = new ProductAdapter(context,productCategModel.getList(),recyclerViewInterface);
         holder.rv_product.setAdapter(productAdapter);
     }

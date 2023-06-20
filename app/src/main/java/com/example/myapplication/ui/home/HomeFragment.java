@@ -3,6 +3,7 @@ package com.example.myapplication.ui.home;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -184,11 +185,13 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     private static final int EARTH_RADIUS = 6371; // Radius of the Earth in kilometers
 
     double curLat, curLong;
+    private static int moodCtr;
 
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -217,7 +220,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         if (bundle != null) {
             wallet = bundle.getFloat("wallet");
         }
-        moodModal();
+        if(moodCtr == 0){
+            moodModal();
+        }
+        moodCtr = 1;
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
         searchModelList = new ArrayList<>();
@@ -347,6 +353,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     public void onStart() {
         super.onStart();
         Log.d("Start", "Start");
+        //moodDialog.dismiss();
     }
 
     @Override
@@ -366,6 +373,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         super.onStop();
         Log.d("Stop", "Stop");
     }
+
 
     public void extractWeather() {
         HomeFragment homeFragment = this;
@@ -1103,6 +1111,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void showFilterBottomSheet() {
+
         String TAG = "Bottomsheet";
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
         Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");

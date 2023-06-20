@@ -8,6 +8,8 @@ import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+
 public class ProductModel implements Parcelable {
 
     int idProduct;
@@ -17,13 +19,14 @@ public class ProductModel implements Parcelable {
     float productPrice;
     String productImage;
     String productServingSize;
-    String productTag;
     int productPrepTime;
     String productRestoName;
     String productRestoImage;
     String productRestoCategory;
     String weather;
     int percentage;
+
+    List<String> tags_list;
 
 
 
@@ -48,7 +51,7 @@ public class ProductModel implements Parcelable {
 //    }
 
 
-    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
+    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, int productPrepTime, String productRestoName, String productRestoImage, String weather, List<String> tags_list) {
         this.idProduct = idProduct;
         this.store_idStore = store_idStore;
         this.productName = productName;
@@ -56,11 +59,12 @@ public class ProductModel implements Parcelable {
         this.productPrice = productPrice;
         this.productImage = productImage;
         this.productServingSize = productServingSize;
-        this.productTag = productTag;
         this.productPrepTime = productPrepTime;
         this.productRestoName = productRestoName;
         this.productRestoImage = productRestoImage;
         this.weather = weather;
+        this.tags_list = tags_list;
+
     }
 
     public ProductModel(){}
@@ -73,12 +77,12 @@ public class ProductModel implements Parcelable {
         productPrice = in.readFloat();
         productImage = in.readString();
         productServingSize = in.readString();
-        productTag = in.readString();
         productPrepTime = in.readInt();
         productRestoName = in.readString();
         productRestoImage = in.readString();
         productRestoCategory = in.readString();
         weather = in.readString();
+        tags_list = in.createStringArrayList();
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -149,14 +153,6 @@ public class ProductModel implements Parcelable {
         this.productServingSize = productServingSize;
     }
 
-    public String getProductTag() {
-        return productTag;
-    }
-
-    public void setProductTag(String productTag) {
-        this.productTag = productTag;
-    }
-
     public int getProductPrepTime() {
         return productPrepTime;
     }
@@ -201,6 +197,14 @@ public class ProductModel implements Parcelable {
 
     public void setPercentage(int percentage){ this.percentage = percentage;}
 
+    public List<String> getTags_list() {
+        return tags_list;
+    }
+
+    public void setTags_list(List<String> tags_list) {
+        this.tags_list = tags_list;
+    }
+
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(productImage, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
@@ -221,11 +225,11 @@ public class ProductModel implements Parcelable {
         parcel.writeFloat(productPrice);
         parcel.writeString(productImage);
         parcel.writeString(productServingSize);
-        parcel.writeString(productTag);
         parcel.writeInt(productPrepTime);
         parcel.writeString(productRestoName);
         parcel.writeString(productRestoImage);
         parcel.writeString(productRestoCategory);
         parcel.writeString(weather);
+        parcel.writeStringList(tags_list);
     }
 }

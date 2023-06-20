@@ -97,7 +97,7 @@ import java.util.Map;
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomeBinding binding;
-    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2, requestQueueDeals, requestTag;
+    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2, requestQueueDeals;
 
     private static String JSON_URL;
     private IPModel ipModel;
@@ -304,7 +304,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
-        requestTag = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractFoodforyou();
 
         //Search List
@@ -385,7 +384,6 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
 
     public void extractWeather() {
-        weather_list.clear();
         HomeFragment homeFragment = this;
         JsonArrayRequest jsonArrayRequest7 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -406,11 +404,11 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String storeImage = jsonObject7.getString("storeImage");
                         String weather2 = jsonObject7.getString("weather");
 
-                        if (weather.equalsIgnoreCase(weather2)) {
+                        if (weather.toLowerCase().compareTo(weather2.toLowerCase()) == 0) {
                             Log.d("Weather", weather);
                             Log.d("WeatherRead", weather2);
                             ProductModel weatherModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-                                    productServingSize, productPrepTime, storeName, storeImage, weather2);
+                                    productServingSize, productTag, productPrepTime, storeName, storeImage, weather2);
                             weather_list.add(weatherModel);
                         }//list.add(productName);
 
@@ -500,7 +498,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //Log.d("VolleyError", error.getMessage());
+                Log.d("VolleyError", error.getMessage());
             }
         });
         requestQueueDeals.add(jsonArrayRequestDeals);
@@ -746,65 +744,30 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                         String weather = jsonObjectFoodforyou.getString("weather");
 
                         ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-                                productServingSize, productPrepTime, storeName, storeImage, weather);
-                        List<String> tag_list = new ArrayList<>();
-                        foodfyModel.setTags_list(tag_list);
-
+                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
                         Log.d("FoodModel", String.valueOf(foodfyModel));
+                        food_for_you_list.add(foodfyModel);
+                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
                         SearchModel searchModel = new SearchModel(productImage, productName, productTag);
-                        JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
-                            @Override
-                            public void onResponse(JSONArray response) {
-                                Log.d("FoodResponseLength", String.valueOf(response.length()));
-                                for (int i = 0; i < response.length(); i++) {
-                                    try {
-                                        JSONObject jsonObjectInside = response.getJSONObject(i);
-                                        int idTag = jsonObjectInside.getInt("idTag");
-                                        int idProduct = jsonObjectInside.getInt("idProduct");
-                                        int idStore = jsonObjectInside.getInt("idStore");
-                                        String tagname = jsonObjectInside.getString("tagname");
-
-                                        if(foodfyModel.getIdProduct() == idProduct){
-                                            foodfyModel.getTags_list().add(tagname);
-                                        }
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                // Check if this is the last iteration of the loop
-                                if (food_for_you_list.size() == response.length() - 1) {
-                                    food_for_you_list.add(foodfyModel);
-                                    // Shuffle the list
-                                    Collections.shuffle(food_for_you_list);
-                                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
-                                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
-                                } else {
-                                    food_for_you_list.add(foodfyModel);
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                // Handle the error
-                            }
-                        });
-                        requestTag.add(jsonArrayRequestTag);
+                        searchModelList.add(searchModel);
                         //list.add(productName);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
+                    Collections.shuffle(food_for_you_list);
+                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
+                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // Handle the error
+
             }
         });
         requestQueueFood.add(jsonArrayRequestFoodforyou);
-
     }
 
 

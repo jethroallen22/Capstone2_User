@@ -24,6 +24,8 @@ public class ProductModel implements Parcelable {
     String productRestoImage;
     String productRestoCategory;
     String weather;
+
+    String productTag;
     int percentage;
 
     List<String> tags_list;
@@ -49,7 +51,20 @@ public class ProductModel implements Parcelable {
 //        this.product_price = product_price;
 //        this.product_calories = product_calories;
 //    }
-
+    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
+    this.idProduct = idProduct;
+    this.store_idStore = store_idStore;
+    this.productName = productName;
+    this.productDescription = productDescription;
+    this.productPrice = productPrice;
+    this.productImage = productImage;
+    this.productServingSize = productServingSize;
+    this.productTag = productTag;
+    this.productPrepTime = productPrepTime;
+    this.productRestoName = productRestoName;
+    this.productRestoImage = productRestoImage;
+    this.weather = weather;
+}
 
     public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, int productPrepTime, String productRestoName, String productRestoImage, String weather, List<String> tags_list) {
         this.idProduct = idProduct;
@@ -66,20 +81,6 @@ public class ProductModel implements Parcelable {
         this.tags_list = tags_list;
     }
 
-    public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
-        this.idProduct = idProduct;
-        this.store_idStore = store_idStore;
-        this.productName = productName;
-        this.productDescription = productDescription;
-        this.productPrice = productPrice;
-        this.productImage = productImage;
-        this.productServingSize = productServingSize;
-        this.productPrepTime = productPrepTime;
-        this.productRestoName = productRestoName;
-        this.productRestoImage = productRestoImage;
-        this.weather = weather;
-    }
-
     public ProductModel(){}
 
     protected ProductModel(Parcel in) {
@@ -90,6 +91,7 @@ public class ProductModel implements Parcelable {
         productPrice = in.readFloat();
         productImage = in.readString();
         productServingSize = in.readString();
+        productTag = in.readString();
         productPrepTime = in.readInt();
         productRestoName = in.readString();
         productRestoImage = in.readString();
@@ -218,6 +220,18 @@ public class ProductModel implements Parcelable {
         this.tags_list = tags_list;
     }
 
+    public void setProductPrice(float productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public String getProductTag() {
+        return productTag;
+    }
+
+    public void setProductTag(String productTag) {
+        this.productTag = productTag;
+    }
+
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(productImage, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.length);
@@ -238,6 +252,7 @@ public class ProductModel implements Parcelable {
         parcel.writeFloat(productPrice);
         parcel.writeString(productImage);
         parcel.writeString(productServingSize);
+        parcel.writeString(productTag);
         parcel.writeInt(productPrepTime);
         parcel.writeString(productRestoName);
         parcel.writeString(productRestoImage);

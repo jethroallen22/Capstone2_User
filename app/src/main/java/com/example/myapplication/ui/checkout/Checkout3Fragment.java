@@ -216,6 +216,11 @@ public class Checkout3Fragment extends Fragment{
                 params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
                 params.put("users_id", String.valueOf(orderModel.getUsers_id()));
 
+                params.put("iduser", String.valueOf(orderModel.getUsers_id()));
+                params.put("type", "order");
+                params.put("title", "Your order from " + orderModel.getStore_name() + " has been placed!");
+                params.put("description", "Your order from " + orderModel.getStore_name() + " has successfully been placed. Please standby for further update as we prepare your order.");
+
                 return params;
             }
 

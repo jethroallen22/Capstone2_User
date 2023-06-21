@@ -1347,10 +1347,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                                     chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
                                     chip.setChipStrokeColorResource(R.color.teal_700);
                                     chip.setTextColor(getResources().getColor(R.color.white));
+                                    category_list.add(value);
                                 } else {
                                     chip.setSelected(false);
                                     chip.setTextColor(Color.BLACK);
                                     chip.setChipBackgroundColorResource(R.color.gray);
+                                    category_list.remove(value);
                                 }
                             }
                             for (int i = 0; i < cg_weather.getChildCount(); i++) {
@@ -1361,10 +1363,12 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                                     chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
                                     chip.setChipStrokeColorResource(R.color.teal_700);
                                     chip.setTextColor(getResources().getColor(R.color.white));
+                                    weather_list.add(value);
                                 } else {
                                     chip.setSelected(false);
                                     chip.setTextColor(Color.BLACK);
                                     chip.setChipBackgroundColorResource(R.color.gray);
+                                    weather_list.remove(value);
                                 }
                             }
                         } else {
@@ -1374,12 +1378,14 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                                 chip.setSelected(false);
                                 chip.setTextColor(Color.BLACK);
                                 chip.setChipBackgroundColorResource(R.color.gray);
+                                category_list.remove(chip.getText());
                             }
                             for (int i = 0; i < cg_weather.getChildCount(); i++) {
                                 Chip chip = (Chip) cg_weather.getChildAt(i);
                                 chip.setSelected(false);
                                 chip.setTextColor(Color.BLACK);
                                 chip.setChipBackgroundColorResource(R.color.gray);
+                                weather_list.remove(chip.getText());
                             }
                         }
                     }
@@ -1597,54 +1603,3 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         return distance;
     }
 }
-
-////
-//import android.location.Location;
-//
-//public class DistanceCalculator {
-//    // Constants
-//    private static final int EARTH_RADIUS = 6371; // Radius of the Earth in kilometers
-//
-//    public static double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
-//        // Convert latitude and longitude to radians
-//        double startLatitudeRad = Math.toRadians(startLatitude);
-//        double startLongitudeRad = Math.toRadians(startLongitude);
-//        double endLatitudeRad = Math.toRadians(endLatitude);
-//        double endLongitudeRad = Math.toRadians(endLongitude);
-//
-//        // Calculate the difference between latitudes and longitudes
-//        double latitudeDiff = endLatitudeRad - startLatitudeRad;
-//        double longitudeDiff = endLongitudeRad - startLongitudeRad;
-//
-//        // Calculate the distance using Haversine formula
-//        double a = Math.sin(latitudeDiff / 2) * Math.sin(latitudeDiff / 2)
-//                + Math.cos(startLatitudeRad) * Math.cos(endLatitudeRad)
-//                * Math.sin(longitudeDiff / 2) * Math.sin(longitudeDiff / 2);
-//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-//        double distance = EARTH_RADIUS * c;
-//
-//        return distance;
-//    }
-//
-//    public static void main(String[] args) {
-//        // Current location
-//        double currentLatitude = 37.7749;
-//        double currentLongitude = -122.4194;
-//
-//        // Destination location
-//        double destinationLatitude = 37.7833;
-//        double destinationLongitude = -122.4167;
-//
-//        // Calculate the distance
-//        double distance = calculateDistance(currentLatitude, currentLongitude, destinationLatitude, destinationLongitude);
-//
-//        // Check if the distance is within 3 km
-//        if (distance <= 3) {
-//            System.out.println("The current location is within 3 km of the destination.");
-//        } else {
-//            System.out.println("The current location is more than 3 km away from the destination.");
-//        }
-//    }
-//}
-//
-////

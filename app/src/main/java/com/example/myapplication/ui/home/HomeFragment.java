@@ -229,10 +229,7 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         if (bundle != null) {
             wallet = bundle.getFloat("wallet");
         }
-        if(moodCtr == 0){
-            moodModal();
-        }
-        moodCtr = 1;
+
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
         searchModelList = new ArrayList<>();
@@ -762,6 +759,10 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
                     Collections.shuffle(food_for_you_list);
                     homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
                     rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                    if(moodCtr == 0){
+                        moodModal();
+                    }
+                    moodCtr = 1;
                 }
             }
         }, new Response.ErrorListener() {

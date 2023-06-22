@@ -137,7 +137,10 @@ public class Home extends AppCompatActivity {
 
         //tablayout
         tabLayout = findViewById(R.id.tabLayout);
+        //tabLayout.disableSwipe();
+
         viewPager2 = findViewById(R.id.viewPager2);
+        viewPager2.setUserInputEnabled(false);
 
         tabLayout.addTab(tabLayout.newTab().setText("For You"));
         tabLayout.addTab(tabLayout.newTab().setText("Home"));
@@ -154,12 +157,10 @@ public class Home extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 

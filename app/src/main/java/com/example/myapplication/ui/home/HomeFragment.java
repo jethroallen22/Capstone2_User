@@ -108,7 +108,6 @@ public class HomeFragment extends Fragment {
     String userName = "", weather;
     HomeFragment homeFragment = this;
 
-    List<StoreModel> home_store_rec_list;
 
     float wallet;
 
@@ -156,7 +155,6 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 CartFragment fragment = new CartFragment();
-                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
                 bundle.putInt("userID", userId);
                 bundle.putFloat("wallet", wallet);
                 fragment.setArguments(bundle);

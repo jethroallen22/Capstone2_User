@@ -1,28 +1,37 @@
 package com.example.myapplication.ui.foryou;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -33,6 +42,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.activities.models.DealsModel;
 import com.example.myapplication.activities.models.HomeCategoryModel;
 import com.example.myapplication.activities.models.IPModel;
@@ -41,25 +51,34 @@ import com.example.myapplication.activities.models.OrderModel;
 import com.example.myapplication.activities.models.ProductModel;
 import com.example.myapplication.activities.models.SearchModel;
 import com.example.myapplication.activities.models.StoreModel;
+import com.example.myapplication.activities.models.TagModel;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeDealsAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
 import com.example.myapplication.adapters.HomeStorePopularAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
 import com.example.myapplication.adapters.HomeStoreRecAdapter2;
+import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.example.myapplication.adapters.WeatherAdapter;
 import com.example.myapplication.databinding.FragmentForYouBinding;
-import com.example.myapplication.databinding.FragmentHomePageBinding;
+import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.ui.cart.CartFragment;
+import com.example.myapplication.ui.categories.CategoryFragment;
 import com.example.myapplication.ui.filter.FilterFragment;
-import com.example.myapplication.ui.homepage.HomePageFragment;
+import com.example.myapplication.ui.moods.MixMoodFragment;
+import com.example.myapplication.ui.moods.NewMoodFragment;
+import com.example.myapplication.ui.moods.OldMoodFragment;
+import com.example.myapplication.ui.moods.TrendMoodFragment;
 import com.example.myapplication.ui.search.SearchFragment;
+import com.example.myapplication.ui.store.StoreFragment;
+import com.example.myapplication.ui.weather.WeatherFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.tabs.TabLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -67,21 +86,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ForYouFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentForYouBinding binding;
-    private RequestQueue requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2, requestQueueDeals;
+    private RequestQueue requestQueuepf, requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2, requestQueueDeals, requestTag;
 
     private static String JSON_URL;
     private IPModel ipModel;
-
 
     List<OrderItemModel> order_item_temp_list;
     List<OrderModel> order_temp_list;
@@ -95,20 +118,6 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
     RecyclerView rv_home_store_rec;
     List<StoreModel> home_store_rec_list;
     HomeStoreRecAdapter homeStoreRecAdapter;
-
-    RecyclerView rv_home_store_rec2;
-    List<StoreModel> home_store_rec_list2;
-    HomeStoreRecAdapter2 homeStoreRecAdapter2;
-
-    //Store Deals Recycler View
-    RecyclerView rv_deals;
-    List<DealsModel> home_deals_list;
-    HomeDealsAdapter homeDealsAdapter;
-
-    // Store Popular Recycler View
-    RecyclerView rv_home_pop_store;
-    List<StoreModel> home_pop_store_list;
-    HomeStorePopularAdapter homeStorePopularAdapter;
 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
@@ -170,9 +179,15 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
     double curLat, curLong;
     private static int moodCtr;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    RecyclerView recyclerView;
+
+    LinearLayoutManager layoutManager;
+
+
+    @SuppressLint("MissingPermission")
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+
 
         binding = FragmentForYouBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -202,20 +217,59 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
             wallet = bundle.getFloat("wallet");
         }
 
-        moodCtr = 1;
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
         searchModelList = new ArrayList<>();
         tempStoreList = new ArrayList<>();
+        //HOME CATEGORY
+        home_categ_list = new ArrayList<>();
+        home_categ_list.add(new HomeCategoryModel(R.drawable.desert, "Western"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.burger, "Fast Food"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.breakfast, "Breakfast"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.lunch, "Lunch"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.dinner, "Dinner"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.lamp, "Chinese"));
+        home_categ_list.add(new HomeCategoryModel(R.drawable.temple, "Japanese"));
 
-        // Inflate the layout for this fragment
+        //recyclerView = root.findViewById(R.id.rv_home_food_for_you);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
 
-        rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
+//        rv_category = root.findViewById(R.id.rv_category);
+//        homeCategoryAdapter = new HomeCategoryAdapter(getActivity().getApplicationContext(), home_categ_list, ForYouFragment.this);
+//        rv_category.setAdapter(homeCategoryAdapter);
+//        rv_category.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+//        rv_category.setHasFixedSize(true);
+//        rv_category.setNestedScrollingEnabled(false);
+//        requestQueueCateg = Singleton.getsInstance(getActivity()).getRequestQueue();
+
+//        rv_weather = root.findViewById(R.id.rv_weather);
+//        rv_weather.setHasFixedSize(true);
+//        rv_weather.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+//        rv_weather.setNestedScrollingEnabled(false);
+//        weather_list = new ArrayList<>();
+//        requestQueueFood2 = Singleton.getsInstance(getActivity()).getRequestQueue();
+//        tv_weather = root.findViewById(R.id.tv_weather);
+//        tv_weather.setText("Feeling " + weather + "?");
+//        extractWeather();
+
+
+        //STORE REC 1
+//        rv_home_store_rec = root.findViewById(R.id.home_store_rec);
+//        rv_home_store_rec.setHasFixedSize(true);
+//        rv_home_store_rec.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+//        rv_home_store_rec.setNestedScrollingEnabled(false);
+//        home_store_rec_list = new ArrayList<>();
+//        requestQueueRec1 = Singleton.getsInstance(getActivity()).getRequestQueue();
+//        extractDataRec1(curLat,curLong);
+
+
+        rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you2);
         food_for_you_list = new ArrayList<>();
         rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestTag = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractFoodforyou();
 
         //Search List
@@ -249,8 +303,230 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
             }
         });
 
-        return inflater.inflate(R.layout.fragment_for_you, container, false);
+        binding.fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                CartFragment fragment = new CartFragment();
+                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
+                bundle.putInt("userID", userId);
+                bundle.putFloat("wallet", wallet);
+                fragment.setArguments(bundle);
+                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+            }
+        });
+
+        return root;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("Start", "Start");
+        //moodDialog.dismiss();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("Resume", "Resume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("Pause", "Pause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("Stop", "Stop");
+    }
+
+
+    public void extractWeather() {
+        weather_list.clear();
+        ForYouFragment forYouFragment = this;
+        JsonArrayRequest jsonArrayRequest7 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject7 = response.getJSONObject(i);
+                        int idProduct = jsonObject7.getInt("idProduct");
+                        int idStore = jsonObject7.getInt("idStore");
+                        String productName = jsonObject7.getString("productName");
+                        String productDescription = jsonObject7.getString("productDescription");
+                        float productPrice = (float) jsonObject7.getDouble("productPrice");
+                        String productImage = jsonObject7.getString("productImage");
+                        String productServingSize = jsonObject7.getString("productServingSize");
+                        String productTag = jsonObject7.getString("productTag");
+                        int productPrepTime = jsonObject7.getInt("productPrepTime");
+                        String storeName = jsonObject7.getString("storeName");
+                        String storeImage = jsonObject7.getString("storeImage");
+                        String weather2 = jsonObject7.getString("weather");
+
+                        if (weather.equalsIgnoreCase(weather2)) {
+                            Log.d("Weather", weather);
+                            Log.d("WeatherRead", weather2);
+                            ProductModel weatherModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                    productServingSize, productTag, productPrepTime, storeName, storeImage, weather2);
+                            weather_list.add(weatherModel);
+                        }//list.add(productName);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d("WeatherListSize", String.valueOf(weather_list.size()));
+                for (int i = 0; i < weather_list.size(); i++) {
+                    Log.d("WeatherModel", weather_list.get(i).getProductName());
+                }
+                Collections.shuffle(weather_list);
+                weatherAdapter = new WeatherAdapter(getActivity(), weather_list, forYouFragment);
+                rv_weather.setAdapter(weatherAdapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueFood2.add(jsonArrayRequest7);
+    }
+
+
+
+
+    //Food For You
+    public void extractFoodforyou() {
+        ForYouFragment homeFragment = this;
+        JsonArrayRequest jsonArrayRequestFoodforyou = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("FoodResponseLength", String.valueOf(response.length()));
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                        int idStore = jsonObjectFoodforyou.getInt("idStore");
+                        String productName = jsonObjectFoodforyou.getString("productName");
+                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                        String productImage = jsonObjectFoodforyou.getString("productImage");
+                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                        String productTag = jsonObjectFoodforyou.getString("productTag");
+                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                        String storeName = jsonObjectFoodforyou.getString("storeName");
+                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                        String weather = jsonObjectFoodforyou.getString("weather");
+                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                        Log.d("FoodModel", String.valueOf(foodfyModel));
+                        food_for_you_list.add(foodfyModel);
+                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
+                        SearchModel searchModel = new SearchModel(productImage, productName, productTag);
+                        searchModelList.add(searchModel);
+                        //list.add(productName);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
+                    Collections.shuffle(food_for_you_list);
+                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homeFragment);
+                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueFood.add(jsonArrayRequestFoodforyou);
+    }
+
+
+    @Override
+    public void onItemClickForYou(int position) {
+        showBottomSheet(position);
+    }
+
+    @Override
+    public void onItemClickStorePopular(int position) {
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+
+    @Override
+    public void onItemClickStoreRec(int position) {
+        Log.d("CLICKSTOREREC", "Success");
+        Bundle bundle = new Bundle();
+//        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
+//        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
+//        bundle.putString("StoreName", home_store_rec_list.get(position).getStore_name());
+//        bundle.putString("StoreAddress", home_store_rec_list.get(position).getStore_location());
+//        bundle.putString("StoreCategory", home_store_rec_list.get(position).getStore_category());
+//        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
+        StoreModel storeModel = home_store_rec_list.get(position);
+        bundle.putParcelable("StoreClass", storeModel);
+        bundle.putInt("user", userId);
+        StoreFragment fragment = new StoreFragment();
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+    }
+
+    @Override
+    public void onItemClickStoreRec2(int position) {
+
+    }
+
+
+    @Override
+    public void onItemClickSearch(int pos) {
+
+    }
+
+    @Override
+    public void onItemClickWeather(int position) {
+        showWeatherBottomSheet(position);
+    }
+
+    @Override
+    public void onItemClickCategory(int pos) {
+        category = home_categ_list.get(pos).getCateg_name();
+
+        Log.d("Result: ", "Success");
+        Bundle bundle = new Bundle();
+        CategoryFragment fragment = new CategoryFragment();
+        bundle.putString("categoryString", category);
+        bundle.putInt("user", userId);
+        bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+
+    }
+
+    @Override
+    public void onItemClickDeals(int pos) {
+
+    }
+
+    @Override
+    public void onItemClickVoucher(int pos) {
+
+    }
+
+    //Function
+    //Display Product BottomSheet
 
     public void showBottomSheet(int position) {
         String TAG = "Bottomsheet";
@@ -367,6 +643,120 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.show();
     }
 
+    public void showWeatherBottomSheet(int position) {
+        String TAG = "Bottomsheet";
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
+        View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext())
+                .inflate(
+                        R.layout.product_bottom_sheet_layout,
+                        getActivity().findViewById(R.id.product_bottomSheet_container)
+                );
+        Log.d(TAG, "bottomSheetView = LayoutInflater.from");
+        product_image = bottomSheetView.findViewById(R.id.iv_product_imagee2);
+        product_name = bottomSheetView.findViewById(R.id.tv_product_namee2);
+        product_resto = bottomSheetView.findViewById(R.id.tv_product_restos);
+        product_description = bottomSheetView.findViewById(R.id.tv_product_description2);
+        product_price = bottomSheetView.findViewById(R.id.tv_product_pricee2);
+        btn_add_to_cart = bottomSheetView.findViewById(R.id.btn_add_to_cart);
+        cl_product_add = bottomSheetView.findViewById(R.id.cl_product_add);
+        cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
+        tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
+
+        product_image.setImageBitmap(weather_list.get(position).getBitmapImage());
+        product_name.setText(weather_list.get(position).getProductName());
+        product_resto.setText(weather_list.get(position).getProductRestoName());
+        product_description.setText(weather_list.get(position).getProductDescription());
+        product_price.setText("P" + weather_list.get(position).getProductPrice());
+        tv_counter.setText(Integer.toString(product_count));
+        btn_add_to_cart.setEnabled(false);
+
+        //Add count to order
+        cl_product_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (product_count >= 0) {
+                    cl_product_minus.setClickable(true);
+                    btn_add_to_cart.setEnabled(true);
+                    product_count += 1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+
+        //Subtract count to order
+        cl_product_minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (product_count == 0) {
+                    cl_product_minus.setClickable(false);
+                    btn_add_to_cart.setEnabled(false);
+                } else {
+                    product_count -= 1;
+                    tv_counter.setText(Integer.toString(product_count));
+                }
+            }
+        });
+
+        btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
+            int temp_count = 0;
+            float tempPrice = 0;
+
+            @Override
+            public void onClick(View v) {
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "tempCart.php", new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("1 ", result);
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            String success = jsonObject.getString("success");
+
+                            if (success.equals("1")) {
+                                Log.d("TEMP CART INSERT", "success");
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "Not Inserted", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            Log.d("TEMP CART", "catch");
+                            Toast.makeText(getActivity().getApplicationContext(), "Catch ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Error! " + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+                    @Nullable
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("temp_productId", String.valueOf(weather_list.get(position).getIdProduct()));
+                        params.put("temp_storeId", String.valueOf(weather_list.get(position).getStore_idStore()));
+                        params.put("temp_usersId", String.valueOf(userId));
+                        params.put("temp_productName", weather_list.get(position).getProductName());
+                        params.put("temp_productPrice", String.valueOf(weather_list.get(position).getProductPrice()));
+                        params.put("temp_productQuantity", String.valueOf(product_count));
+                        params.put("temp_totalProductPrice", String.valueOf(product_count * weather_list.get(position).getProductPrice()));
+                        product_count = 0;
+                        return params;
+                    }
+
+                };
+
+
+                RequestQueue requestQueueTempCart = Volley.newRequestQueue(getActivity().getApplicationContext());
+                requestQueueTempCart.add(stringRequest);
+                bottomSheetDialog.dismiss();
+
+            }
+        });
+
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+    }
+
     public void showFilterBottomSheet() {
 
         String TAG = "Bottomsheet";
@@ -375,15 +765,18 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
         View bottomSheetView = getLayoutInflater().inflate(R.layout.filter_bottom_sheet_layout,
                 getActivity().findViewById(R.id.filter_bottomSheet_container)
         );
+        CheckBox cb_apply_pref;
         ChipGroup cg_category, cg_mood, cg_weather, cg_budget;
         int budget;
         Log.d(TAG, "bottomSheetView = LayoutInflater.from");
+        cb_apply_pref = bottomSheetView.findViewById(R.id.cb_apply_pref);
         cg_category = bottomSheetView.findViewById(R.id.cg_category);
         cg_weather = bottomSheetView.findViewById(R.id.cg_weather);
         cg_mood = bottomSheetView.findViewById(R.id.cg_mood);
         close_btn = bottomSheetView.findViewById(R.id.close_btn);
         cg_budget = bottomSheetView.findViewById(R.id.cg_budget);
         btn_confirm_filter = bottomSheetView.findViewById(R.id.btn_confirm_filter);
+        requestQueuepf = Singleton.getsInstance(getActivity()).getRequestQueue();
 
         chp_category_list = new ArrayList<>();
         chp_mood_list = new ArrayList<>();
@@ -402,191 +795,279 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
         budget_list = new ArrayList<>();
         weather_list = new ArrayList<>();
         String mood;
+        List<String> preferences = new ArrayList<>();
 
-        for (int i = 0; i < chp_category_list.size(); i++) {
-            Chip chip = new Chip(this.getContext());
-            chip.setText(chp_category_list.get(i));
-            chip.setChipBackgroundColorResource(R.color.gray);
-            chip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String value = chip.getText().toString();
-                    if (chip.isSelected()) {
-                        chip.setSelected(false);
-                        chip.setTextColor(Color.BLACK);
-                        chip.setChipBackgroundColorResource(R.color.gray);
-                        category_list.remove(value);
-                    } else {
-                        chip.setSelected(true);
-                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                        chip.setChipStrokeColorResource(R.color.teal_700);
-                        chip.setTextColor(getResources().getColor(R.color.white));
-                        category_list.add(value);
+        JsonArrayRequest jsonArrayRequestpf = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apipreferences.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int idUser = jsonObject.getInt("idUser");
+                        String tag = jsonObject.getString("tag");
+                        if(userId == idUser){
+                            preferences.add(tag);
+                            Log.d("TAG SIZE during pref", String.valueOf(preferences.size()));
+                        }
+
+                    }
+                    catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
                 }
-            });
-            cg_category.addView(chip);
-        }
+                Log.d("TAG SIZE after pref kinda", String.valueOf(preferences.size()));
 
-        for (int i = 0; i < chp_mood_list.size(); i++) {
-            Chip chip = new Chip(this.getContext());
-            chip.setText(chp_mood_list.get(i));
-            chip.setChipBackgroundColorResource(R.color.gray);
-            chip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String value = chip.getText().toString();
-                    mood_list.add("");
-                    if (chip.isSelected()) {
-                        for (int i = 0; i < cg_mood.getChildCount(); i++) {
-                            Chip chip = (Chip) cg_mood.getChildAt(i);
-                            if (chip.getText() != value) {
-                                chip.setEnabled(true);
+                for (int i = 0; i < chp_category_list.size(); i++) {
+                    Chip chip = new Chip(getContext());
+                    chip.setText(chp_category_list.get(i));
+                    chip.setChipBackgroundColorResource(R.color.gray);
+                    chip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String value = chip.getText().toString();
+                            if (chip.isSelected()) {
+                                chip.setSelected(false);
+                                chip.setTextColor(Color.BLACK);
+                                chip.setChipBackgroundColorResource(R.color.gray);
+                                category_list.remove(value);
+                            } else {
+                                chip.setSelected(true);
+                                chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                chip.setChipStrokeColorResource(R.color.teal_700);
+                                chip.setTextColor(getResources().getColor(R.color.white));
+                                category_list.add(value);
                             }
                         }
-                        chip.setSelected(false);
-                        chip.setTextColor(Color.BLACK);
-                        chip.setChipBackgroundColorResource(R.color.gray);
-                        mood_list.remove(value);
-                    } else {
-                        for (int i = 0; i < cg_mood.getChildCount(); i++) {
-                            Chip chip = (Chip) cg_mood.getChildAt(i);
-                            if (chip.getText() != value) {
+                    });
+                    cg_category.addView(chip);
+                }
+
+                for (int i = 0; i < chp_mood_list.size(); i++) {
+                    Chip chip = new Chip(getContext());
+                    chip.setText(chp_mood_list.get(i));
+                    chip.setChipBackgroundColorResource(R.color.gray);
+                    chip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String value = chip.getText().toString();
+                            mood_list.add("");
+                            if (chip.isSelected()) {
+                                for (int i = 0; i < cg_mood.getChildCount(); i++) {
+                                    Chip chip = (Chip) cg_mood.getChildAt(i);
+                                    if (chip.getText() != value) {
+                                        chip.setEnabled(true);
+                                    }
+                                }
+                                chip.setSelected(false);
+                                chip.setTextColor(Color.BLACK);
+                                chip.setChipBackgroundColorResource(R.color.gray);
+                                mood_list.remove(value);
+                            } else {
+                                for (int i = 0; i < cg_mood.getChildCount(); i++) {
+                                    Chip chip = (Chip) cg_mood.getChildAt(i);
+                                    if (chip.getText() != value) {
+                                        chip.setEnabled(false);
+                                        chip.setChipBackgroundColorResource(R.color.darkGray);
+                                    }
+                                }
+                                chip.setSelected(true);
+                                chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                chip.setChipStrokeColorResource(R.color.teal_700);
+                                chip.setTextColor(getResources().getColor(R.color.white));
+                                mood_list.set(0, value);
+                            }
+                        }
+                    });
+                    cg_mood.addView(chip);
+                }
+
+                cg_mood.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(ChipGroup group, int checkedId) {
+                        for (int i = 0; i < group.getChildCount(); i++) {
+                            Chip chip = (Chip) group.getChildAt(i);
+                            if (chip.getId() != checkedId) {
                                 chip.setEnabled(false);
-                                chip.setChipBackgroundColorResource(R.color.darkGray);
                             }
                         }
-                        chip.setSelected(true);
-                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                        chip.setChipStrokeColorResource(R.color.teal_700);
-                        chip.setTextColor(getResources().getColor(R.color.white));
-                        mood_list.set(0, value);
                     }
-                }
-            });
-            cg_mood.addView(chip);
-        }
+                });
 
-        cg_mood.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(ChipGroup group, int checkedId) {
-                for (int i = 0; i < group.getChildCount(); i++) {
-                    Chip chip = (Chip) group.getChildAt(i);
-                    if (chip.getId() != checkedId) {
-                        chip.setEnabled(false);
-                    }
-                }
-            }
-        });
+                for (int i = 0; i < chp_weather_list.size(); i++) {
+                    Chip chip = new Chip(getContext());
+                    chip.setText(chp_weather_list.get(i));
+                    chip.setChipBackgroundColorResource(R.color.gray);
+                    chip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String value = chip.getText().toString();
+                            if (chip.isSelected()) {
+                                chip.setSelected(false);
+                                chip.setTextColor(Color.BLACK);
+                                chip.setChipBackgroundColorResource(R.color.gray);
+                                weather_list.remove(value);
 
-        for (int i = 0; i < chp_weather_list.size(); i++) {
-            Chip chip = new Chip(this.getContext());
-            chip.setText(chp_weather_list.get(i));
-            chip.setChipBackgroundColorResource(R.color.gray);
-            chip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String value = chip.getText().toString();
-                    if (chip.isSelected()) {
-                        chip.setSelected(false);
-                        chip.setTextColor(Color.BLACK);
-                        chip.setChipBackgroundColorResource(R.color.gray);
-                        weather_list.remove(value);
-
-                    } else {
-                        chip.setSelected(true);
-                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                        chip.setChipStrokeColorResource(R.color.teal_700);
-                        chip.setTextColor(getResources().getColor(R.color.white));
-                        weather_list.add(value);
-                    }
-                }
-            });
-            cg_weather.addView(chip);
-        }
-
-        for (int i = 0; i < chp_budget.size(); i++) {
-            Chip chip = new Chip(this.getContext());
-            chip.setText(chp_budget.get(i));
-            chip.setChipBackgroundColorResource(R.color.gray);
-            chip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String value = chip.getText().toString();
-                    budget_list.add("");
-                    if (chip.isSelected()) {
-                        for (int i = 0; i < cg_budget.getChildCount(); i++) {
-                            Chip chip = (Chip) cg_budget.getChildAt(i);
-                            if (chip.getText() != value) {
-                                chip.setEnabled(true);
+                            } else {
+                                chip.setSelected(true);
+                                chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                chip.setChipStrokeColorResource(R.color.teal_700);
+                                chip.setTextColor(getResources().getColor(R.color.white));
+                                weather_list.add(value);
                             }
                         }
-                        chip.setSelected(false);
-                        chip.setTextColor(Color.BLACK);
-                        chip.setChipBackgroundColorResource(R.color.gray);
-                        budget_list.remove(value);
-                    } else {
-                        for (int i = 0; i < cg_budget.getChildCount(); i++) {
-                            Chip chip = (Chip) cg_budget.getChildAt(i);
-                            if (chip.getText() != value) {
+                    });
+                    cg_weather.addView(chip);
+                }
+
+                for (int i = 0; i < chp_budget.size(); i++) {
+                    Chip chip = new Chip(getContext());
+                    chip.setText(chp_budget.get(i));
+                    chip.setChipBackgroundColorResource(R.color.gray);
+                    chip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String value = chip.getText().toString();
+                            budget_list.add("");
+                            if (chip.isSelected()) {
+                                for (int i = 0; i < cg_budget.getChildCount(); i++) {
+                                    Chip chip = (Chip) cg_budget.getChildAt(i);
+                                    if (chip.getText() != value) {
+                                        chip.setEnabled(true);
+                                    }
+                                }
+                                chip.setSelected(false);
+                                chip.setTextColor(Color.BLACK);
+                                chip.setChipBackgroundColorResource(R.color.gray);
+                                budget_list.remove(value);
+                            } else {
+                                for (int i = 0; i < cg_budget.getChildCount(); i++) {
+                                    Chip chip = (Chip) cg_budget.getChildAt(i);
+                                    if (chip.getText() != value) {
+                                        chip.setEnabled(false);
+                                        chip.setChipBackgroundColorResource(R.color.darkGray);
+                                    }
+                                }
+                                chip.setSelected(true);
+                                chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                chip.setChipStrokeColorResource(R.color.teal_700);
+                                chip.setTextColor(getResources().getColor(R.color.white));
+                                budget_list.set(0, value);
+                            }
+                        }
+                    });
+                    cg_budget.addView(chip);
+                }
+
+                cg_budget.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(ChipGroup group, int checkedId) {
+                        for (int i = 0; i < group.getChildCount(); i++) {
+                            Chip chip = (Chip) group.getChildAt(i);
+                            if (chip.getId() != checkedId) {
                                 chip.setEnabled(false);
-                                chip.setChipBackgroundColorResource(R.color.darkGray);
                             }
                         }
-                        chip.setSelected(true);
-                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                        chip.setChipStrokeColorResource(R.color.teal_700);
-                        chip.setTextColor(getResources().getColor(R.color.white));
-                        budget_list.set(0, value);
                     }
-                }
-            });
-            cg_budget.addView(chip);
-        }
+                });
 
-        cg_budget.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(ChipGroup group, int checkedId) {
-                for (int i = 0; i < group.getChildCount(); i++) {
-                    Chip chip = (Chip) group.getChildAt(i);
-                    if (chip.getId() != checkedId) {
-                        chip.setEnabled(false);
+                cb_apply_pref.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            // Select chips based on preferences
+                            for (int i = 0; i < cg_category.getChildCount(); i++) {
+                                Chip chip = (Chip) cg_category.getChildAt(i);
+                                String value = chip.getText().toString();
+                                if (preferences.contains(value)) {
+                                    chip.setSelected(true);
+                                    chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chip.setChipStrokeColorResource(R.color.teal_700);
+                                    chip.setTextColor(getResources().getColor(R.color.white));
+                                    category_list.add(value);
+                                } else {
+                                    chip.setSelected(false);
+                                    chip.setTextColor(Color.BLACK);
+                                    chip.setChipBackgroundColorResource(R.color.gray);
+                                    category_list.remove(value);
+                                }
+                            }
+                            for (int i = 0; i < cg_weather.getChildCount(); i++) {
+                                Chip chip = (Chip) cg_weather.getChildAt(i);
+                                String value = chip.getText().toString();
+                                if (preferences.contains(value)) {
+                                    chip.setSelected(true);
+                                    chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chip.setChipStrokeColorResource(R.color.teal_700);
+                                    chip.setTextColor(getResources().getColor(R.color.white));
+                                    weather_list.add(value);
+                                } else {
+                                    chip.setSelected(false);
+                                    chip.setTextColor(Color.BLACK);
+                                    chip.setChipBackgroundColorResource(R.color.gray);
+                                    weather_list.remove(value);
+                                }
+                            }
+                        } else {
+                            // Reset chips to default
+                            for (int i = 0; i < cg_category.getChildCount(); i++) {
+                                Chip chip = (Chip) cg_category.getChildAt(i);
+                                chip.setSelected(false);
+                                chip.setTextColor(Color.BLACK);
+                                chip.setChipBackgroundColorResource(R.color.gray);
+                                category_list.remove(chip.getText());
+                            }
+                            for (int i = 0; i < cg_weather.getChildCount(); i++) {
+                                Chip chip = (Chip) cg_weather.getChildAt(i);
+                                chip.setSelected(false);
+                                chip.setTextColor(Color.BLACK);
+                                chip.setChipBackgroundColorResource(R.color.gray);
+                                weather_list.remove(chip.getText());
+                            }
+                        }
                     }
-                }
+                });
+
+                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("filterCateg", String.valueOf(category_list.size()));
+                        Log.d("filterWeather", String.valueOf(weather_list.size()));
+                        int budget = 0;
+                        Bundle bundle = new Bundle();
+                        FilterFragment fragment = new FilterFragment();
+                        bundle.putInt("userId", userId);
+                        bundle.putSerializable("categlist", (Serializable) category_list);
+                        if (mood_list.size() != 0) {
+                            bundle.putString("mood", mood_list.get(0));
+                        }
+                        if (budget_list.size() != 0) {
+                            if (budget_list.get(0).equals("₱₱"))
+                                budget = 99;
+                            else if (budget_list.get(0).equals("₱₱₱"))
+                                budget = 999;
+                            else if (budget_list.get(0).equals("₱₱₱₱"))
+                                budget = 9999;
+
+                            bundle.putInt("budget", budget);
+                        }
+                        bundle.putSerializable("weatherlist", (Serializable) weather_list);
+                        bundle.putSerializable("productList", (Serializable) food_for_you_list);
+                        bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
+                        fragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
             }
         });
+        requestQueuepf.add(jsonArrayRequestpf);
 
-        btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("filterCateg", String.valueOf(category_list.size()));
-                Log.d("filterWeather", String.valueOf(weather_list.size()));
-                int budget = 0;
-                Bundle bundle = new Bundle();
-                FilterFragment fragment = new FilterFragment();
-                bundle.putInt("userId", userId);
-                bundle.putSerializable("categlist", (Serializable) category_list);
-                if (mood_list.size() != 0) {
-                    bundle.putString("mood", mood_list.get(0));
-                }
-                if (budget_list.size() != 0) {
-                    if (budget_list.get(0).equals("₱₱"))
-                        budget = 99;
-                    else if (budget_list.get(0).equals("₱₱₱"))
-                        budget = 999;
-                    else if (budget_list.get(0).equals("₱₱₱₱"))
-                        budget = 9999;
 
-                    bundle.putInt("budget", budget);
-                }
-                bundle.putSerializable("weatherlist", (Serializable) weather_list);
-                bundle.putSerializable("productList", (Serializable) food_for_you_list);
-                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-                bottomSheetDialog.dismiss();
-            }
-        });
 
         bottomSheetDialog.setContentView(bottomSheetView);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from((View) bottomSheetView.getParent());
@@ -594,102 +1075,26 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
         bottomSheetDialog.show();
     }
 
-    public void extractFoodforyou() {
-        ForYouFragment forYouFragment = this;
-        JsonArrayRequest jsonArrayRequestFoodforyou = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Log.d("FoodResponseLength", String.valueOf(response.length()));
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
-                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
-                        int idStore = jsonObjectFoodforyou.getInt("idStore");
-                        String productName = jsonObjectFoodforyou.getString("productName");
-                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
-                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
-                        String productImage = jsonObjectFoodforyou.getString("productImage");
-                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
-                        String productTag = jsonObjectFoodforyou.getString("productTag");
-                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
-                        String storeName = jsonObjectFoodforyou.getString("storeName");
-                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
-                        String weather = jsonObjectFoodforyou.getString("weather");
+    public static double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+        // Convert latitude and longitude to radians
+        double startLatitudeRad = Math.toRadians(startLatitude);
+        double startLongitudeRad = Math.toRadians(startLongitude);
+        double endLatitudeRad = Math.toRadians(endLatitude);
+        double endLongitudeRad = Math.toRadians(endLongitude);
 
-                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
-                        Log.d("FoodModel", String.valueOf(foodfyModel));
-                        food_for_you_list.add(foodfyModel);
-                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-                        SearchModel searchModel = new SearchModel(productImage, productName, productTag);
-                        searchModelList.add(searchModel);
-                        //list.add(productName);
+        // Calculate the difference between latitudes and longitudes
+        double latitudeDiff = endLatitudeRad - startLatitudeRad;
+        double longitudeDiff = endLongitudeRad - startLongitudeRad;
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-                    Collections.shuffle(food_for_you_list);
-                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, forYouFragment);
-                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        // Calculate the distance using Haversine formula
+        double a = Math.sin(latitudeDiff / 2) * Math.sin(latitudeDiff / 2)
+                + Math.cos(startLatitudeRad) * Math.cos(endLatitudeRad)
+                * Math.sin(longitudeDiff / 2) * Math.sin(longitudeDiff / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        DecimalFormat df = new DecimalFormat(".#");
+        double distance = Double.parseDouble(df.format(EARTH_RADIUS * c));
 
-            }
-        });
-        requestQueueFood.add(jsonArrayRequestFoodforyou);
+        return distance;
     }
 
-    @Override
-    public void onItemClickForYou(int position) {
-        showBottomSheet(position);
-    }
-
-    @Override
-    public void onItemClickStorePopular(int position) {
-
-    }
-
-    @Override
-    public void onItemClick(int position) {
-
-    }
-
-    @Override
-    public void onItemClickStoreRec(int position) {
-
-    }
-
-    @Override
-    public void onItemClickStoreRec2(int position) {
-
-    }
-
-    @Override
-    public void onItemClickSearch(int position) {
-
-    }
-
-    @Override
-    public void onItemClickWeather(int position) {
-
-    }
-
-    @Override
-    public void onItemClickCategory(int position) {
-
-    }
-
-    @Override
-    public void onItemClickDeals(int pos) {
-
-    }
-
-    @Override
-    public void onItemClickVoucher(int pos) {
-
-    }
 }

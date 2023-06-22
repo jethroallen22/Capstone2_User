@@ -134,44 +134,6 @@ public class Home extends AppCompatActivity {
         bundle.putInt("userId", id);
         paymentItem.setIntent(new Intent().putExtras(bundle));
 
-
-        //tablayout
-        tabLayout = findViewById(R.id.tabLayout);
-        //tabLayout.disableSwipe();
-
-        viewPager2 = findViewById(R.id.viewPager2);
-        viewPager2.setUserInputEnabled(false);
-
-        tabLayout.addTab(tabLayout.newTab().setText("For You"));
-        tabLayout.addTab(tabLayout.newTab().setText("Home"));
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        adapter = new TabFragmentAdapter(fragmentManager , getLifecycle());
-        viewPager2.setAdapter(adapter);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager2.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                tabLayout.selectTab(tabLayout.getTabAt(position));
-            }
-        });
-
-
         // Handle the click event of the MenuItem
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

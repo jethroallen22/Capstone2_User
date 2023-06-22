@@ -116,6 +116,10 @@ public class HomeFragment extends Fragment {
     double curLat, curLong;
     private static int moodCtr;
 
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager2;
+    private TabFragmentAdapter adapter;
+
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -149,6 +153,44 @@ public class HomeFragment extends Fragment {
         if (bundle != null) {
             wallet = bundle.getFloat("wallet");
         }
+
+        // Initialize views
+        tabLayout = root.findViewById(R.id.tabLayout);
+        viewPager2 = root.findViewById(R.id.viewPager2);
+        viewPager2.setUserInputEnabled(false);
+
+        // Add tabs
+        tabLayout.addTab(tabLayout.newTab().setText("For You"));
+        tabLayout.addTab(tabLayout.newTab().setText("Home"));
+
+        // Set up adapter
+        FragmentManager fragmentManager = getChildFragmentManager();
+        adapter = new TabFragmentAdapter(fragmentManager, getLifecycle());
+        viewPager2.setAdapter(adapter);
+
+        // Set up tab selection listener
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        // Set up page change listener
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+            }
+        });
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override

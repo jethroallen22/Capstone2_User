@@ -65,7 +65,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     private IPModel ipModel;
     RecyclerView rv_filter;
     List<ProductModel> productModelList;
-    String strBudget;
+    String strBudget = "";
     int budget;
     ProductAdapter productAdapter;
     FilterAdapter filterAdapter;
@@ -130,19 +130,19 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
         tv_current = root.findViewById(R.id.tv_current);
         rv_filter = root.findViewById(R.id.rv_filter);
         btn_edit_budget = root.findViewById(R.id.btn_edit_budget);
-        if(strBudget.equalsIgnoreCase("") ){
+        if(strBudget.equals("") ){
             budget = 999999;
             tv_budget.setText("Budget: ∞");
-        } else if(strBudget.equalsIgnoreCase("₱99")){
+        } else if(strBudget.equals("₱99")){
             budget = 99;
             tv_budget.setText("Budget: ₱" + budget);
-        } else if(strBudget.equalsIgnoreCase("₱999")){
+        } else if(strBudget.equals("₱999")){
             budget = 999;
             tv_budget.setText("Budget: ₱" + budget);
-        } else if(strBudget.equalsIgnoreCase("₱9999")){
+        } else if(strBudget.equals("₱9999")){
             budget = 9999;
             tv_budget.setText("Budget: ₱" + budget);
-        } else if(strBudget.equalsIgnoreCase("Custom")){
+        } else if(strBudget.equals("Custom")){
             //budget = 999999;
             filterModal();
         }
@@ -325,6 +325,12 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
                             Log.d("ListSize", String.valueOf(productModelList.size()));
+                            Collections.sort(productModelList, (product1, product2) -> {
+                                int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                            });
+
                             filterAdapter = new FilterAdapter(getActivity(),productModelList,FilterFragment.this);
                             rv_filter.setAdapter(filterAdapter);
                         }
@@ -469,6 +475,11 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
                             Log.d("ListSize", String.valueOf(productModelList.size()));
+                            Collections.sort(productModelList, (product1, product2) -> {
+                                int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                            });
                             filterAdapter = new FilterAdapter(getActivity(),productModelList,FilterFragment.this);
                             rv_filter.setAdapter(filterAdapter);
                         }
@@ -632,6 +643,11 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                         } else {
                                             ll_no_result.setVisibility(View.GONE);
                                         }
+                                        Collections.sort(productModelList, (product1, product2) -> {
+                                            int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                            int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                            return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                        });
                                         filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
                                         rv_filter.setAdapter(filterAdapter);
                                     }
@@ -809,7 +825,11 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                         } else {
                                             ll_no_result.setVisibility(View.GONE);
                                         }
-
+                                        Collections.sort(productModelList, (product1, product2) -> {
+                                            int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                            int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                            return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                        });
                                         filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
                                         rv_filter.setAdapter(filterAdapter);
                                     }
@@ -987,6 +1007,11 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                         } else {
                                             ll_no_result.setVisibility(View.GONE);
                                         }
+                                        Collections.sort(productModelList, (product1, product2) -> {
+                                            int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                            int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                            return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                        });
                                         filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
                                         rv_filter.setAdapter(filterAdapter);
                                     }
@@ -1221,6 +1246,16 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
         });
 
         filterDialog.show();
+    }
+
+    private int calculateMatchedTagsCount(List<TagModel> tags) {
+        int count = 0;
+        for (TagModel tag : tags) {
+            if (tag.isMatch()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override

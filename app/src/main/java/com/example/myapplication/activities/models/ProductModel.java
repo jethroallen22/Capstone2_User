@@ -34,7 +34,7 @@ public class ProductModel implements Parcelable {
 
 
 
-//    public ProductModel(Long product_id, String product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
+    //    public ProductModel(Long product_id, String product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
 //        this.product_id = product_id;
 //        this.product_image = product_image;
 //        this.product_name = product_name;
@@ -53,19 +53,19 @@ public class ProductModel implements Parcelable {
 //        this.product_calories = product_calories;
 //    }
     public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
-    this.idProduct = idProduct;
-    this.store_idStore = store_idStore;
-    this.productName = productName;
-    this.productDescription = productDescription;
-    this.productPrice = productPrice;
-    this.productImage = productImage;
-    this.productServingSize = productServingSize;
-    this.productTag = productTag;
-    this.productPrepTime = productPrepTime;
-    this.productRestoName = productRestoName;
-    this.productRestoImage = productRestoImage;
-    this.weather = weather;
-}
+        this.idProduct = idProduct;
+        this.store_idStore = store_idStore;
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.productPrice = productPrice;
+        this.productImage = productImage;
+        this.productServingSize = productServingSize;
+        this.productTag = productTag;
+        this.productPrepTime = productPrepTime;
+        this.productRestoName = productRestoName;
+        this.productRestoImage = productRestoImage;
+        this.weather = weather;
+    }
 
     public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, int productPrepTime, String productRestoName, String productRestoImage, String weather, List<TagModel> tags_list) {
         this.idProduct = idProduct;

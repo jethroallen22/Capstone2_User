@@ -470,13 +470,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                 });
                 requestQueue.add(jsonArrayRequestFoodforyou);
             }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-                }
-            });
-            requestQueueTag.add(jsonArrayRequestTag);
+            }
+        });
+        requestQueueTag.add(jsonArrayRequestTag);
     }
 
     public void extractNew(){

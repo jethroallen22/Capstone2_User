@@ -9,7 +9,9 @@ import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.myapplication.ui.foryou.ForYouFragment;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.homepage.HomePageFragment;
 
 public class TabFragmentAdapter extends FragmentStateAdapter {
     public TabFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
@@ -20,9 +22,9 @@ public class TabFragmentAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 1){
-            return new HomeFragment();
+            return new HomePageFragment();
         }
-        return new HomeFragment();
+        return new ForYouFragment();
     }
 
     @Override

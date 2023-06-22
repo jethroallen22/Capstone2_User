@@ -68,15 +68,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
                     chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
                     chip.setTextColor(Color.BLACK);
                     holder.cg_tags.addView(chip);
-                }else {
-                    Chip chip = new Chip(context);
-                    chip.setText(tagModel.getTagname());
-                    chip.setEnabled(false);
-                    chip.setHeight(35);
-                    chip.setTextSize(12);
-                    chip.setChipBackgroundColorResource(R.color.gray);
-                    chip.setTextColor(Color.BLACK);
-                    holder.cg_tags.addView(chip);
                 }
             }
         }

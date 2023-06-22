@@ -378,8 +378,9 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                         productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
+
                                 tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+                                //tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
                                     if(tagModel.getIdProduct() == idProduct){

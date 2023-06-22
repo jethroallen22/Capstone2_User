@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -188,6 +189,14 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     double curLat, curLong;
     private static int moodCtr;
 
+    TextView tv_editdistance;
+
+    ImageView btn_editdistance;
+
+    double default_distance = 1;
+    Dialog distanceDialog;
+
+
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -228,6 +237,63 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         order_temp_list = new ArrayList<>();
         searchModelList = new ArrayList<>();
         tempStoreList = new ArrayList<>();
+
+        //Distance
+        tv_editdistance = root.findViewById(R.id.tv_editdistance);
+        btn_editdistance = root.findViewById(R.id.btn_editdistance);
+        tv_editdistance.setText("Distance: " + default_distance+ " km");
+        btn_editdistance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Open Modal
+                distanceDialog = new Dialog(getActivity());
+                distanceDialog.setContentView(R.layout.distance_modal);
+                distanceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                TextView tv_distance_status;
+                EditText et_distance;
+                Button btn_confirm_distance;
+                ImageView close_modal;
+
+                et_distance = distanceDialog.findViewById(R.id.et_distance);
+                btn_confirm_distance = distanceDialog.findViewById(R.id.btn_confirm_distance);
+                tv_distance_status = distanceDialog.findViewById(R.id.tv_distance_status);
+                close_modal = distanceDialog.findViewById(R.id.close_modal);
+
+
+                close_modal.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        filterDialog.dismiss();
+                    }
+                });
+
+                btn_confirm_distance.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(Double.parseDouble(String.valueOf(et_distance.getText())) < 3){
+                            default_distance = Double.parseDouble(String.valueOf(et_distance.getText()));
+                            tv_editdistance.setText("Distance: " + default_distance);
+                            extractDataRec1(curLat,curLong,default_distance);
+                            extractDeals(curLat,curLong,default_distance);
+                            extractDataRec2(curLat,curLong,default_distance);
+                            distanceDialog.dismiss();
+                        } else {
+                            tv_distance_status.setVisibility(View.VISIBLE);
+                            tv_distance_status.setText("Your input has exceeded the allowable distance. Please try again!");
+                        }
+
+                    }
+                });
+
+                distanceDialog.show();
+                //Apply onClick
+                    //set default_distance to value set;
+            }
+        });
+
+        //add distance to deals, food rec
+
+
         //HOME CATEGORY
         home_categ_list = new ArrayList<>();
         home_categ_list.add(new HomeCategoryModel(R.drawable.desert, "Western"));
@@ -246,6 +312,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         rv_category.setNestedScrollingEnabled(false);
         requestQueueCateg = Singleton.getsInstance(getActivity()).getRequestQueue();
 
+        //WEATHER
         rv_weather = root.findViewById(R.id.rv_weather);
         rv_weather.setHasFixedSize(true);
         rv_weather.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
@@ -256,13 +323,14 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         tv_weather.setText("Feeling " + weather + "?");
         extractWeather();
 
+        //DEALS
         rv_deals = root.findViewById(R.id.rv_deals);
         home_deals_list = new ArrayList<>();
         requestQueueDeals = Singleton.getsInstance(getActivity()).getRequestQueue();
         rv_deals.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_deals.setHasFixedSize(true);
         rv_deals.setNestedScrollingEnabled(false);
-        extractDeals(curLat,curLong);
+        extractDeals(curLat,curLong,default_distance);
 
         //STORE REC 1
         rv_home_store_rec = root.findViewById(R.id.home_store_rec);
@@ -271,7 +339,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         rv_home_store_rec.setNestedScrollingEnabled(false);
         home_store_rec_list = new ArrayList<>();
         requestQueueRec1 = Singleton.getsInstance(getActivity()).getRequestQueue();
-        extractDataRec1(curLat,curLong);
+        extractDataRec1(curLat,curLong,default_distance);
 
 
         //STORE REC 2
@@ -282,7 +350,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         rv_home_store_rec2 = root.findViewById(R.id.home_store_rec2);
         requestQueueRec2 = Singleton.getsInstance(getActivity()).getRequestQueue();
         home_store_rec_list2 = new ArrayList<>();
-        extractDataRec2(curLat,curLong);
+        extractDataRec2(curLat,curLong,default_distance);
 
         rv_home_pop_store = root.findViewById(R.id.rv_home_store_popular);
         home_pop_store_list = new ArrayList<>();
@@ -330,7 +398,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                 showFilterBottomSheet();
             }
         });
-
         final TextView textView = binding.textHome;
         return root;
     }
@@ -411,7 +478,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         requestQueueFood2.add(jsonArrayRequest7);
     }
 
-    public void extractDeals(double lati, double longi) {
+    public void extractDeals(double lati, double longi, double set_distance) {
         JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -449,7 +516,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                             if (currentDate.after(startDateTemp)) {
                                 if (currentDate.before(endDateTemp)) {
                                     Log.d("ValidDeal", deal.getStoreName());
-                                    if(distance <= 1.5) {
+                                    if(distance <= set_distance) {
                                         deal.setDistance((float) distance);
                                         home_deals_list.add(deal);
                                     }
@@ -484,7 +551,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     }
 
     //Store Recommendation for RecView 1 and 2 Function
-    public void extractDataRec1(double lati, double longi) {
+    public void extractDataRec1(double lati, double longi, double set_distance) {
 
 
         JsonArrayRequest jsonArrayRequestRec1 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "api.php", null, new Response.Listener<JSONArray>() {
@@ -512,7 +579,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                         Log.d("curLong", String.valueOf(longi));
                         Log.d("distance", String.valueOf(distance));
 
-                        if(distance <= 1.5) {
+                        if(distance <= set_distance) {
                             StoreModel rec = new StoreModel(r_id, r_image, r_name, r_description, r_location, r_category,
                                     (float) r_rating, r_open, r_close);
                             rec.setDistance((float) distance);
@@ -574,7 +641,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         requestQueueRec1.add(jsonArrayRequestRec1);
     }
 
-    public void extractDataRec2(double lati, double longi) {
+    public void extractDataRec2(double lati, double longi, double set_distance) {
         JsonArrayRequest jsonArrayRequestRec2 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "api.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -596,7 +663,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
 
                         double distance = calculateDistance(lati, longi,latitude, longitude);
 
-                        if(distance <= 1.5) {
+                        if(distance <= set_distance) {
                             StoreModel store2 = new StoreModel(r_id, r_image, r_name, r_description, r_location, r_category,
                                     (float) r_rating, r_open, r_close);
                             store2.setDistance((float) distance);
@@ -1126,7 +1193,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         }
         chp_mood_list = Arrays.asList("Old", "New", "Mix", "Trend");
         chp_weather_list = Arrays.asList("Hot", "Cold");
-        chp_budget = Arrays.asList("₱₱", "₱₱₱", "₱₱₱₱");
+        chp_budget = Arrays.asList("₱99", "₱999", "₱9999", "Custom");
 
         List<String> category_list, mood_list, weather_list, budget_list;
         category_list = new ArrayList<>();
@@ -1371,7 +1438,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                     public void onClick(View v) {
                         Log.d("filterCateg", String.valueOf(category_list.size()));
                         Log.d("filterWeather", String.valueOf(weather_list.size()));
-                        int budget = 0;
+                        String budget = "";
                         Bundle bundle = new Bundle();
                         FilterFragment fragment = new FilterFragment();
                         bundle.putInt("userId", userId);
@@ -1380,14 +1447,12 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                             bundle.putString("mood", mood_list.get(0));
                         }
                         if (budget_list.size() != 0) {
-                            if (budget_list.get(0).equals("₱₱"))
-                                budget = 99;
-                            else if (budget_list.get(0).equals("₱₱₱"))
-                                budget = 999;
-                            else if (budget_list.get(0).equals("₱₱₱₱"))
-                                budget = 9999;
+                            if (budget_list.get(0).equals("Custom"))
+                                budget = "Custom";
+                            else
+                                budget = budget_list.get(0);
 
-                            bundle.putInt("budget", budget);
+                            bundle.putString("budget", budget);
                         }
                         bundle.putSerializable("weatherlist", (Serializable) weather_list);
                         bundle.putSerializable("productList", (Serializable) food_for_you_list);

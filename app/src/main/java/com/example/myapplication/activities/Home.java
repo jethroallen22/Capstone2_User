@@ -344,7 +344,7 @@ public class Home extends AppCompatActivity {
                 Log.d("Response Product: ", String.valueOf(response.length()));
                 for (int i=0; i < response.length(); i++){
                     try {
-                        Log.d("Try P: ", "Im in");
+                        //
                         JSONObject jsonObjectRec1 = response.getJSONObject(i);
                         if (jsonObjectRec1.getInt("id") == id) {
 

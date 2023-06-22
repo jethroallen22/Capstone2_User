@@ -108,6 +108,7 @@ public class HomeFragment extends Fragment {
     String userName = "", weather;
     HomeFragment homeFragment = this;
 
+    List<StoreModel> home_store_rec_list;
 
     float wallet;
 
@@ -149,6 +150,21 @@ public class HomeFragment extends Fragment {
         if (bundle != null) {
             wallet = bundle.getFloat("wallet");
         }
+
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                CartFragment fragment = new CartFragment();
+                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
+                bundle.putInt("userID", userId);
+                bundle.putFloat("wallet", wallet);
+                fragment.setArguments(bundle);
+                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+            }
+        });
+
         return root;
     }
 

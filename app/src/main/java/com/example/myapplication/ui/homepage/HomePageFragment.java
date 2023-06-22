@@ -331,20 +331,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
             }
         });
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                CartFragment fragment = new CartFragment();
-                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
-                bundle.putInt("userID", userId);
-                bundle.putFloat("wallet", wallet);
-                fragment.setArguments(bundle);
-                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-            }
-        });
-
         final TextView textView = binding.textHome;
         return root;
     }

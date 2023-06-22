@@ -65,6 +65,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     private IPModel ipModel;
     RecyclerView rv_filter;
     List<ProductModel> productModelList;
+    String strBudget;
     int budget;
     ProductAdapter productAdapter;
     FilterAdapter filterAdapter;
@@ -110,8 +111,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             }
             if(bundle.getSerializable("weatherlist") != null)
                 weather_list = (List<String>) bundle.getSerializable("weatherlist");
-            if(bundle.getInt("budget") != 0)
-                budget = bundle.getInt("budget");
+            if(bundle.getString("budget") != null)
+                strBudget = bundle.getString("budget");
             if (bundle.getInt("userId") != 0)
                 userId = bundle.getInt("userId");
             if(bundle.getSerializable("productList") != null)
@@ -129,11 +130,21 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
         tv_current = root.findViewById(R.id.tv_current);
         rv_filter = root.findViewById(R.id.rv_filter);
         btn_edit_budget = root.findViewById(R.id.btn_edit_budget);
-        if(budget == 0 ){
+        if(strBudget.equalsIgnoreCase("") ){
             budget = 999999;
             tv_budget.setText("Budget: ∞");
-        } else {
-            tv_budget.setText("Budget: P" + budget);
+        } else if(strBudget.equalsIgnoreCase("₱99")){
+            budget = 99;
+            tv_budget.setText("Budget: ₱" + budget);
+        } else if(strBudget.equalsIgnoreCase("₱999")){
+            budget = 999;
+            tv_budget.setText("Budget: ₱" + budget);
+        } else if(strBudget.equalsIgnoreCase("₱9999")){
+            budget = 9999;
+            tv_budget.setText("Budget: ₱" + budget);
+        } else if(strBudget.equalsIgnoreCase("Custom")){
+            //budget = 999999;
+            filterModal();
         }
         productModelList = new ArrayList<>();
         rv_filter.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
@@ -236,7 +247,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
                                 tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+//                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
                                     if(tagModel.getIdProduct() == idProduct){
@@ -251,12 +262,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                     // If all three lists have values
                                     boolean isMatch = false, tmp = false;
                                     for(String categ : categ_list){
-                                        if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                            isMatch = true;
-                                        }
+//                                        if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+//                                            isMatch = true;
+//                                        }
                                         for (int j = 0 ; j < foodfyModel.getTags_list().size() ; j++) {
                                             if (foodfyModel.getTags_list().get(j).getTagname().equalsIgnoreCase(categ)){
                                                 foodfyModel.getTags_list().get(j).setMatch(true);
+                                                isMatch = true;
                                                 Log.d("TAG", "TagTrue");
                                             }
                                         }
@@ -313,7 +325,6 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
                             Log.d("ListSize", String.valueOf(productModelList.size()));
-                            Collections.shuffle(productModelList);
                             filterAdapter = new FilterAdapter(getActivity(),productModelList,FilterFragment.this);
                             rv_filter.setAdapter(filterAdapter);
                         }
@@ -395,12 +406,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                     // If all three lists have values
                                     boolean isMatch = false, tmp = false;
                                     for(String categ : categ_list){
-                                        if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                            isMatch = true;
-                                        }
+//                                        if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+//                                            isMatch = true;
+//                                        }
                                         for (int j = 0 ; j < foodfyModel.getTags_list().size() ; j++) {
                                             if (foodfyModel.getTags_list().get(j).getTagname().equalsIgnoreCase(categ)){
                                                 foodfyModel.getTags_list().get(j).setMatch(true);
+                                                isMatch = true;
                                                 Log.d("TAG", "TagTrue");
                                             }
                                         }
@@ -457,7 +469,6 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
                             Log.d("ListSize", String.valueOf(productModelList.size()));
-                            Collections.shuffle(productModelList);
                             filterAdapter = new FilterAdapter(getActivity(),productModelList,FilterFragment.this);
                             rv_filter.setAdapter(filterAdapter);
                         }
@@ -524,7 +535,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
                                 tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+//                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
                                     if(tagModel.getIdProduct() == idProduct){
@@ -561,12 +572,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                                 // If all three lists have values
                                                 boolean isMatch = false, tmp = false;
                                                 for(String categ : categ_list){
-                                                    if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                        isMatch = true;
-                                                    }
+            //                                        if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+            //                                            isMatch = true;
+            //                                        }
                                                     for (int j = 0 ; j < foodfyModel.getTags_list().size() ; j++) {
                                                         if (foodfyModel.getTags_list().get(j).getTagname().equalsIgnoreCase(categ)){
                                                             foodfyModel.getTags_list().get(j).setMatch(true);
+                                                            isMatch = true;
                                                             Log.d("TAG", "TagTrue");
                                                         }
                                                     }
@@ -620,7 +632,6 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                         } else {
                                             ll_no_result.setVisibility(View.GONE);
                                         }
-                                        Collections.shuffle(productModelList);
                                         filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
                                         rv_filter.setAdapter(filterAdapter);
                                     }
@@ -701,7 +712,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
                                 tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+//                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
                                     if(tagModel.getIdProduct() == idProduct){
@@ -738,12 +749,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                                 // If all three lists have values
                                                 boolean isMatch = false, tmp = false;
                                                 for(String categ : categ_list){
-                                                    if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                        isMatch = true;
-                                                    }
+            //                                        if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+            //                                            isMatch = true;
+            //                                        }
                                                     for (int j = 0 ; j < foodfyModel.getTags_list().size() ; j++) {
                                                         if (foodfyModel.getTags_list().get(j).getTagname().equalsIgnoreCase(categ)){
                                                             foodfyModel.getTags_list().get(j).setMatch(true);
+                                                            isMatch = true;
                                                             Log.d("TAG", "TagTrue");
                                                         }
                                                     }
@@ -798,7 +810,6 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                             ll_no_result.setVisibility(View.GONE);
                                         }
 
-                                        Collections.shuffle(productModelList);
                                         filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
                                         rv_filter.setAdapter(filterAdapter);
                                     }
@@ -881,7 +892,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
                                 tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+//                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
                                     if(tagModel.getIdProduct() == idProduct){
@@ -916,12 +927,13 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                                 // If all three lists have values
                                                 boolean isMatch = false, tmp = false;
                                                 for(String categ : categ_list){
-                                                    if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
-                                                        isMatch = true;
-                                                    }
+            //                                        if (foodfyModel.getProductRestoCategory().equalsIgnoreCase(categ)) {
+            //                                            isMatch = true;
+            //                                        }
                                                     for (int j = 0 ; j < foodfyModel.getTags_list().size() ; j++) {
                                                         if (foodfyModel.getTags_list().get(j).getTagname().equalsIgnoreCase(categ)){
                                                             foodfyModel.getTags_list().get(j).setMatch(true);
+                                                            isMatch = true;
                                                             Log.d("TAG", "TagTrue");
                                                         }
                                                     }
@@ -975,7 +987,6 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                         } else {
                                             ll_no_result.setVisibility(View.GONE);
                                         }
-                                        Collections.shuffle(productModelList);
                                         filterAdapter = new FilterAdapter(getActivity(), productModelList, FilterFragment.this);
                                         rv_filter.setAdapter(filterAdapter);
                                     }
@@ -1186,7 +1197,25 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onClick(View v) {
                 budget = Integer.parseInt(String.valueOf(et_budget.getText()));
-                tv_budget.setText("Budget: P" + budget);
+                tv_budget.setText("Budget: ₱" + budget);
+                if(mood != null){
+                    Log.d(TAG, "if(mood != null){");
+                    if(mood == "Mix"){
+                        Log.d(TAG, "if(mood == \"Mix\"){");
+                        extractMix();
+                    }else if( mood == "New"){
+                        Log.d(TAG, "}else if( mood == \"New\"){");
+                        extractNew();
+                    }else if(mood == "Old"){
+                        Log.d(TAG, "}else if(mood.toLowerCase() == \"Old\"){");
+                        extractOld();
+                    }else if(mood == "Trend"){
+                        Log.d(TAG, "}else if(mood.toLowerCase() == \"Trend\"){");
+                        extractTrend();
+                    }
+                } else {
+                    extractFood();
+                }
                 filterDialog.dismiss();
             }
         });

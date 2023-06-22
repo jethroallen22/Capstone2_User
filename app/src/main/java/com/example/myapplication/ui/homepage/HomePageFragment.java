@@ -399,19 +399,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
             }
         });
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                CartFragment fragment = new CartFragment();
-                bundle.putSerializable("storeList", (Serializable) home_store_rec_list);
-                bundle.putInt("userID", userId);
-                bundle.putFloat("wallet", wallet);
-                fragment.setArguments(bundle);
-                Log.d("Bundling tempOrderItemList", String.valueOf(bundle.size()));
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-            }
-        });
 
         final TextView textView = binding.textHome;
         return root;
@@ -1208,7 +1195,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         }
         chp_mood_list = Arrays.asList("Old", "New", "Mix", "Trend");
         chp_weather_list = Arrays.asList("Hot", "Cold");
-        chp_budget = Arrays.asList("₱₱", "₱₱₱", "₱₱₱₱");
+        chp_budget = Arrays.asList("₱99", "₱999", "₱9999", "Custom");
 
         List<String> category_list, mood_list, weather_list, budget_list;
         category_list = new ArrayList<>();
@@ -1453,7 +1440,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                     public void onClick(View v) {
                         Log.d("filterCateg", String.valueOf(category_list.size()));
                         Log.d("filterWeather", String.valueOf(weather_list.size()));
-                        int budget = 0;
+                        String budget = "";
                         Bundle bundle = new Bundle();
                         FilterFragment fragment = new FilterFragment();
                         bundle.putInt("userId", userId);
@@ -1462,14 +1449,12 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                             bundle.putString("mood", mood_list.get(0));
                         }
                         if (budget_list.size() != 0) {
-                            if (budget_list.get(0).equals("₱₱"))
-                                budget = 99;
-                            else if (budget_list.get(0).equals("₱₱₱"))
-                                budget = 999;
-                            else if (budget_list.get(0).equals("₱₱₱₱"))
-                                budget = 9999;
+                            if (budget_list.get(0).equals("Custom"))
+                                budget = "Custom";
+                            else
+                                budget = budget_list.get(0);
 
-                            bundle.putInt("budget", budget);
+                            bundle.putString("budget", budget);
                         }
                         bundle.putSerializable("weatherlist", (Serializable) weather_list);
                         bundle.putSerializable("productList", (Serializable) food_for_you_list);

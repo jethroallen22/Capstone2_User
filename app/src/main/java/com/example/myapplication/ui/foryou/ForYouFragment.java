@@ -68,6 +68,7 @@ import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.categories.CategoryFragment;
 import com.example.myapplication.ui.filter.FilterFragment;
+import com.example.myapplication.ui.filter.FilterSelectFragment;
 import com.example.myapplication.ui.moods.MixMoodFragment;
 import com.example.myapplication.ui.moods.NewMoodFragment;
 import com.example.myapplication.ui.moods.OldMoodFragment;
@@ -277,7 +278,11 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
         btn_filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFilterBottomSheet();
+                Bundle bundle = new Bundle();
+                FilterSelectFragment fragment = new FilterSelectFragment();
+                bundle.putInt("userId", userId);
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
             }
         });
 

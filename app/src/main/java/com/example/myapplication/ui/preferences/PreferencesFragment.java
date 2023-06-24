@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,13 +49,15 @@ public class PreferencesFragment extends Fragment {
     private IPModel ipModel;
     private RequestQueue requestQueuepf, requestQueuetags;
     private List<String> tags, chips, preferences;
-    ChipGroup chipGroup;
+    ChipGroup chipGroup, cg_temperature, cg_mealtime, cg_noodles, cg_beverages, cg_cuisine, cg_meat, cg_miscellaneous;
     int userId;
 
     private FragmentPreferencesBinding binding;
 
     private String userName, weather;
     private Float wallet;
+
+    private List<String> chp_temp_list, chp_mealtime_list, chp_noodle_list, chp_beverages_list, chp_cuisine_list, chp_meat_list, chp_misc_list;
 
 
     @Override
@@ -86,8 +89,33 @@ public class PreferencesFragment extends Fragment {
         preferences = new ArrayList<>();
         tags = new ArrayList<>();
 
+        //chipGroup = findViewById(R.id.cg_preferences);
+        cg_temperature = root.findViewById(R.id.cg_temperature);
+        cg_mealtime = root.findViewById(R.id.cg_mealtime);
+        cg_noodles = root.findViewById(R.id.cg_noodles);
+        cg_beverages = root.findViewById(R.id.cg_beverages);
+        cg_cuisine = root.findViewById(R.id.cg_cuisine);
+        cg_meat = root.findViewById(R.id.cg_meat);
+        cg_miscellaneous = root.findViewById(R.id.cg_miscellaneous);
+
+        chp_temp_list = new ArrayList<>();
+        chp_mealtime_list = new ArrayList<>();
+        chp_noodle_list = new ArrayList<>();
+        chp_beverages_list = new ArrayList<>();
+        chp_cuisine_list = new ArrayList<>();
+        chp_meat_list = new ArrayList<>();
+        chp_misc_list = new ArrayList<>();
+
+        chp_temp_list = Arrays.asList("Hot", "Cold");
+        chp_mealtime_list = Arrays.asList("Breakfast", "Lunch", "Dessert");
+        chp_noodle_list = Arrays.asList("Noodles", "Pasta", "Ramen");
+        chp_beverages_list = Arrays.asList("Beverages");
+        chp_cuisine_list = Arrays.asList("American", "Chinese", "Filipino", "Japanese", "Thai");
+        chp_meat_list = Arrays.asList("Pork", "Beef", "Fish");
+        chp_misc_list = Arrays.asList("Pizza");
+
         // Initialize the ChipGroup object
-        chipGroup = root.findViewById(R.id.cg_preferences2);
+        //chipGroup = root.findViewById(R.id.cg_preferences2);
 
         JsonArrayRequest jsonArrayRequestpf = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apipreferences.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -103,146 +131,531 @@ public class PreferencesFragment extends Fragment {
                         }
 
                     } //list.add(productName);
-
                     catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
 
                 }
-                Log.d("TAG SIZE after pref kinda", String.valueOf(preferences.size()));
-                JsonArrayRequest jsonArrayRequesttags = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitags.php", null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Chip chipAll = new Chip(getActivity());
-                        chipAll.setText("Select All");
-                        chipAll.setChipBackgroundColorResource(R.color.gray);
 
-                        if(tags.size() == preferences.size())
-                        {
-                            chipAll.setSelected(true);
-                            chipAll.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                            chipAll.setChipStrokeColorResource(R.color.teal_700);
-                            chipAll.setTextColor(getResources().getColor(R.color.white));
-                        }
+                for (int i = 0; i < preferences.size(); i++) {
+                    String tagname = preferences.get(i);
 
-                        chipAll.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                String value = chipAll.getText().toString();
-                                if (chipAll.isSelected()) {
-                                    chipAll.setSelected(false);
-                                    chipAll.setTextColor(Color.BLACK);
-                                    chipAll.setChipBackgroundColorResource(R.color.gray);
+                    boolean isPresentTemp = chp_temp_list.contains(tagname);
+                    boolean isPresentMealtime = chp_mealtime_list.contains(tagname);
+                    boolean isPresentNoodles = chp_noodle_list.contains(tagname);
+                    boolean isPresentBev = chp_beverages_list.contains(tagname);
+                    boolean isPresentCuisine = chp_cuisine_list.contains(tagname);
+                    boolean isPresentMeat = chp_meat_list.contains(tagname);
+                    boolean isPresentMisc = chp_misc_list.contains(tagname);
 
-                                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
-                                        Chip chip = (Chip) chipGroup.getChildAt(i);
-                                        chip.setSelected(false);
-                                        chip.setTextColor(Color.BLACK);
-                                        chip.setChipBackgroundColorResource(R.color.gray);
-                                        chips.remove(chip.getText().toString());
+                    for(int a = 0; a < chp_temp_list.size(); a++){
+                        Chip chiptemp = new Chip(getActivity());
+                        chiptemp.setText(chp_temp_list.get(a));
+                        String value = chiptemp.getText().toString();
+
+                        if(isPresentTemp == true){
+
+                            chiptemp.setSelected(true);
+                            chiptemp.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chiptemp.setChipStrokeColorResource(R.color.teal_700);
+                            chiptemp.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
+
+                            chiptemp.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chiptemp.getText().toString();
+                                    if (chiptemp.isSelected()) {
+                                        chiptemp.setSelected(false);
+                                        chiptemp.setTextColor(Color.BLACK);
+                                        chiptemp.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chiptemp.setSelected(true);
+                                        chiptemp.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chiptemp.setChipStrokeColorResource(R.color.teal_700);
+                                        chiptemp.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
                                     }
-
-                                } else {
-                                    chipAll.setSelected(true);
-                                    chipAll.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                    chipAll.setChipStrokeColorResource(R.color.teal_700);
-                                    chipAll.setTextColor(getResources().getColor(R.color.white));
-
-                                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
-                                        Chip chip = (Chip) chipGroup.getChildAt(i);
-                                        chip.setSelected(true);
-                                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                        chip.setChipStrokeColorResource(R.color.teal_700);
-                                        chip.setTextColor(getResources().getColor(R.color.white));
-                                        chips.add(chip.getText().toString());
-                                    }
-
-                                }//else
-                            } //onClick
-                        }); //chipAll.setOnClickListener
-
-                        chipGroup.addView(chipAll);
-                        chipGroup.setVisibility(View.VISIBLE);
-                        chipGroup.getLayoutParams();
-
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject jsonObject2 = response.getJSONObject(i);
-                                String tagname = jsonObject2.getString("tagname");
-                                tags.add(tagname);
-                                Log.d("tags", tags.get(i));
-
-                                Log.d("chip", "inside for");
-                                Chip chip = new Chip(getActivity());
-                                chip.setText(tags.get(i));
-                                String value = chip.getText().toString();
-
-                                boolean isPresent = preferences.contains(tags.get(i));
-                                if(isPresent == true){
-                                    chip.setSelected(true);
-                                    chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                    chip.setChipStrokeColorResource(R.color.teal_700);
-                                    chip.setTextColor(getResources().getColor(R.color.white));
-                                    chips.add(value);
-                                    Log.d("TAG SIZE called present", String.valueOf(chips.size()));
                                 }
-                                else{
-                                    chip.setSelected(false);
-                                    chip.setTextColor(Color.BLACK);
-                                    chip.setChipBackgroundColorResource(R.color.gray);
-                                    chips.remove(value);
-                                }
+                            });
 
-                                chip.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        String value = chip.getText().toString();
-                                        if (chip.isSelected()) {
-                                            chip.setSelected(false);
-                                            chip.setTextColor(Color.BLACK);
-                                            chip.setChipBackgroundColorResource(R.color.gray);
-                                            chips.remove(value);
-                                        } else {
-                                            Log.d("TAG SIZE clicked chip", value);
-                                            chip.setSelected(true);
-                                            chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                            chip.setChipStrokeColorResource(R.color.teal_700);
-                                            chip.setTextColor(getResources().getColor(R.color.white));
-                                            chips.add(value);
-                                            Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+                            cg_temperature.addView(chiptemp);
+                            cg_temperature.setVisibility(View.VISIBLE);
+                            cg_temperature.getLayoutParams();
 
-                                        }
+                        } else if(isPresentTemp == false){
+
+                            chiptemp.setSelected(false);
+                            chiptemp.setTextColor(Color.BLACK);
+                            chiptemp.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+
+                            chiptemp.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chiptemp.getText().toString();
+                                    if (chiptemp.isSelected()) {
+                                        chiptemp.setSelected(false);
+                                        chiptemp.setTextColor(Color.BLACK);
+                                        chiptemp.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chiptemp.setSelected(true);
+                                        chiptemp.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chiptemp.setChipStrokeColorResource(R.color.teal_700);
+                                        chiptemp.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
                                     }
-                                });
+                                }
+                            });
 
-                                chipGroup.addView(chip);
-                                chipGroup.setVisibility(View.VISIBLE);
-                                chipGroup.getLayoutParams();
-
-
-                            } //list.add(productName);
-
-                            catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-
+                            cg_temperature.addView(chiptemp);
+                            cg_temperature.setVisibility(View.VISIBLE);
+                            cg_temperature.getLayoutParams();
                         }
-
-
-                        Log.d("TAG SIZE after chip kinda", String.valueOf(tags.size()));
                     }
 
+                    for(int b = 0; b < chp_mealtime_list.size(); b++){
+                        Chip chipmeal = new Chip(getActivity());
+                        chipmeal.setText(chp_mealtime_list.get(b));
+                        String value = chipmeal.getText().toString();
 
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
+                        if(isPresentMealtime == true){
+                            chipmeal.setSelected(true);
+                            chipmeal.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chipmeal.setChipStrokeColorResource(R.color.teal_700);
+                            chipmeal.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
+
+                            chipmeal.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipmeal.getText().toString();
+                                    if (chipmeal.isSelected()) {
+                                        chipmeal.setSelected(false);
+                                        chipmeal.setTextColor(Color.BLACK);
+                                        chipmeal.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipmeal.setSelected(true);
+                                        chipmeal.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipmeal.setChipStrokeColorResource(R.color.teal_700);
+                                        chipmeal.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_mealtime.addView(chipmeal);
+                            cg_mealtime.setVisibility(View.VISIBLE);
+                            cg_mealtime.getLayoutParams();
+
+                        } else if(isPresentMealtime == false){
+                            chipmeal.setSelected(false);
+                            chipmeal.setTextColor(Color.BLACK);
+                            chipmeal.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+
+                            chipmeal.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipmeal.getText().toString();
+                                    if (chipmeal.isSelected()) {
+                                        chipmeal.setSelected(false);
+                                        chipmeal.setTextColor(Color.BLACK);
+                                        chipmeal.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipmeal.setSelected(true);
+                                        chipmeal.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipmeal.setChipStrokeColorResource(R.color.teal_700);
+                                        chipmeal.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_mealtime.addView(chipmeal);
+                            cg_mealtime.setVisibility(View.VISIBLE);
+                            cg_mealtime.getLayoutParams();
+                        }
                     }
-                });
-                requestQueuetags.add(jsonArrayRequesttags);
 
-            }
+                    for(int c = 0; c < chp_noodle_list.size(); c++){
+                        Chip chipnoodles = new Chip(getActivity());
+                        chipnoodles.setText(chp_noodle_list.get(c));
+                        String value = chipnoodles.getText().toString();
 
+                        if(isPresentNoodles == true){
+                            chipnoodles.setSelected(true);
+                            chipnoodles.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chipnoodles.setChipStrokeColorResource(R.color.teal_700);
+                            chipnoodles.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
 
+                            chipnoodles.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipnoodles.getText().toString();
+                                    if (chipnoodles.isSelected()) {
+                                        chipnoodles.setSelected(false);
+                                        chipnoodles.setTextColor(Color.BLACK);
+                                        chipnoodles.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipnoodles.setSelected(true);
+                                        chipnoodles.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipnoodles.setChipStrokeColorResource(R.color.teal_700);
+                                        chipnoodles.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_noodles.addView(chipnoodles);
+                            cg_noodles.setVisibility(View.VISIBLE);
+                            cg_noodles.getLayoutParams();
+
+                        } else if(isPresentNoodles == false){
+                            chipnoodles.setSelected(false);
+                            chipnoodles.setTextColor(Color.BLACK);
+                            chipnoodles.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+
+                            chipnoodles.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipnoodles.getText().toString();
+                                    if (chipnoodles.isSelected()) {
+                                        chipnoodles.setSelected(false);
+                                        chipnoodles.setTextColor(Color.BLACK);
+                                        chipnoodles.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipnoodles.setSelected(true);
+                                        chipnoodles.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipnoodles.setChipStrokeColorResource(R.color.teal_700);
+                                        chipnoodles.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_noodles.addView(chipnoodles);
+                            cg_noodles.setVisibility(View.VISIBLE);
+                            cg_noodles.getLayoutParams();
+                        }
+                    }
+
+                    for(int d = 0; d < chp_beverages_list.size(); d++){
+                        Chip chipbev = new Chip(getActivity());
+                        chipbev.setText(chp_beverages_list.get(d));
+                        String value = chipbev.getText().toString();
+
+                        if(isPresentBev == true){
+                            chipbev.setSelected(true);
+                            chipbev.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chipbev.setChipStrokeColorResource(R.color.teal_700);
+                            chipbev.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
+
+                            chipbev.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipbev.getText().toString();
+                                    if (chipbev.isSelected()) {
+                                        chipbev.setSelected(false);
+                                        chipbev.setTextColor(Color.BLACK);
+                                        chipbev.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipbev.setSelected(true);
+                                        chipbev.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipbev.setChipStrokeColorResource(R.color.teal_700);
+                                        chipbev.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_beverages.addView(chipbev);
+                            cg_beverages.setVisibility(View.VISIBLE);
+                            cg_beverages.getLayoutParams();
+
+                        } else if(isPresentBev == false){
+                            chipbev.setSelected(false);
+                            chipbev.setTextColor(Color.BLACK);
+                            chipbev.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+
+                            chipbev.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipbev.getText().toString();
+                                    if (chipbev.isSelected()) {
+                                        chipbev.setSelected(false);
+                                        chipbev.setTextColor(Color.BLACK);
+                                        chipbev.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipbev.setSelected(true);
+                                        chipbev.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipbev.setChipStrokeColorResource(R.color.teal_700);
+                                        chipbev.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_beverages.addView(chipbev);
+                            cg_beverages.setVisibility(View.VISIBLE);
+                            cg_beverages.getLayoutParams();
+                        }
+                    }
+
+                    for(int e = 0; e < chp_cuisine_list.size(); e++){
+                        Chip chipc = new Chip(getActivity());
+                        chipc.setText(chp_cuisine_list.get(e));
+                        String value = chipc.getText().toString();
+
+                        if(isPresentCuisine == true){
+                            chipc.setSelected(true);
+                            chipc.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chipc.setChipStrokeColorResource(R.color.teal_700);
+                            chipc.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
+
+                            chipc.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipc.getText().toString();
+                                    if (chipc.isSelected()) {
+                                        chipc.setSelected(false);
+                                        chipc.setTextColor(Color.BLACK);
+                                        chipc.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipc.setSelected(true);
+                                        chipc.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipc.setChipStrokeColorResource(R.color.teal_700);
+                                        chipc.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_cuisine.addView(chipc);
+                            cg_cuisine.setVisibility(View.VISIBLE);
+                            cg_cuisine.getLayoutParams();
+
+                        } else if(isPresentCuisine == false){
+                            chipc.setSelected(false);
+                            chipc.setTextColor(Color.BLACK);
+                            chipc.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+
+                            chipc.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipc.getText().toString();
+                                    if (chipc.isSelected()) {
+                                        chipc.setSelected(false);
+                                        chipc.setTextColor(Color.BLACK);
+                                        chipc.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipc.setSelected(true);
+                                        chipc.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipc.setChipStrokeColorResource(R.color.teal_700);
+                                        chipc.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_cuisine.addView(chipc);
+                            cg_cuisine.setVisibility(View.VISIBLE);
+                            cg_cuisine.getLayoutParams();
+                        }
+                    }
+
+                    for(int f = 0; f < chp_meat_list.size(); f++){
+                        Chip chipmeat = new Chip(getActivity());
+                        chipmeat.setText(chp_meat_list.get(f));
+                        String value = chipmeat.getText().toString();
+
+                        if(isPresentMeat == true){
+                            chipmeat.setSelected(true);
+                            chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chipmeat.setChipStrokeColorResource(R.color.teal_700);
+                            chipmeat.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
+
+                            chipmeat.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipmeat.getText().toString();
+                                    if (chipmeat.isSelected()) {
+                                        chipmeat.setSelected(false);
+                                        chipmeat.setTextColor(Color.BLACK);
+                                        chipmeat.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipmeat.setSelected(true);
+                                        chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipmeat.setChipStrokeColorResource(R.color.teal_700);
+                                        chipmeat.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_meat.addView(chipmeat);
+                            cg_meat.setVisibility(View.VISIBLE);
+                            cg_meat.getLayoutParams();
+
+                        } else if(isPresentMeat == false){
+                            chipmeat.setSelected(false);
+                            chipmeat.setTextColor(Color.BLACK);
+                            chipmeat.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+
+                            chipmeat.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipmeat.getText().toString();
+                                    if (chipmeat.isSelected()) {
+                                        chipmeat.setSelected(false);
+                                        chipmeat.setTextColor(Color.BLACK);
+                                        chipmeat.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipmeat.setSelected(true);
+                                        chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipmeat.setChipStrokeColorResource(R.color.teal_700);
+                                        chipmeat.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_meat.addView(chipmeat);
+                            cg_meat.setVisibility(View.VISIBLE);
+                            cg_meat.getLayoutParams();
+                        }
+                    }
+
+                    for(int g = 0; g < chp_misc_list.size(); g++){
+                        Chip chipmisc = new Chip(getActivity());
+                        chipmisc.setText(chp_misc_list.get(g));
+                        String value = chipmisc.getText().toString();
+
+                        if(isPresentMisc == true){
+                            chipmisc.setSelected(true);
+                            chipmisc.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chipmisc.setChipStrokeColorResource(R.color.teal_700);
+                            chipmisc.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
+
+                            chipmisc.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipmisc.getText().toString();
+                                    if (chipmisc.isSelected()) {
+                                        chipmisc.setSelected(false);
+                                        chipmisc.setTextColor(Color.BLACK);
+                                        chipmisc.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipmisc.setSelected(true);
+                                        chipmisc.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipmisc.setChipStrokeColorResource(R.color.teal_700);
+                                        chipmisc.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_miscellaneous.addView(chipmisc);
+                            cg_miscellaneous.setVisibility(View.VISIBLE);
+                            cg_miscellaneous.getLayoutParams();
+
+                        } else if(isPresentMisc == false){
+                            chipmisc.setSelected(false);
+                            chipmisc.setTextColor(Color.BLACK);
+                            chipmisc.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+
+                            chipmisc.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String value = chipmisc.getText().toString();
+                                    if (chipmisc.isSelected()) {
+                                        chipmisc.setSelected(false);
+                                        chipmisc.setTextColor(Color.BLACK);
+                                        chipmisc.setChipBackgroundColorResource(R.color.gray);
+                                        chips.remove(value);
+                                    } else {
+                                        Log.d("TAG SIZE clicked chip", value);
+                                        chipmisc.setSelected(true);
+                                        chipmisc.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                        chipmisc.setChipStrokeColorResource(R.color.teal_700);
+                                        chipmisc.setTextColor(getResources().getColor(R.color.white));
+                                        chips.add(value);
+                                        Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                    }
+                                }
+                            });
+
+                            cg_miscellaneous.addView(chipmisc);
+                            cg_miscellaneous.setVisibility(View.VISIBLE);
+                            cg_miscellaneous.getLayoutParams();
+                        }
+                    }
+
+                } //list.add(productName);
+                }
 
 
         }, new Response.ErrorListener() {
@@ -252,6 +665,7 @@ public class PreferencesFragment extends Fragment {
             }
         });
         requestQueuepf.add(jsonArrayRequestpf);
+
 
 
         Button confirm = root.findViewById(R.id.btn_confirmpref);

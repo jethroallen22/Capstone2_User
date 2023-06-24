@@ -2,27 +2,38 @@ package com.example.myapplication.activities.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.nfc.Tag;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+
 public class SearchModel implements Parcelable {
     String searchImage;
     String searchName;
-    String searchTag;
 
-    public SearchModel(String searchImage, String searchName, String searchTag) {
+    String searchCategory;
+    List<TagModel> tagModelList;
+
+    public SearchModel(String searchImage, String searchName) {
         this.searchImage = searchImage;
         this.searchName = searchName;
-        this.searchTag = searchTag;
+    }
+
+    public SearchModel(String searchImage, String searchName, String searchCategory) {
+        this.searchImage = searchImage;
+        this.searchName = searchName;
+        this.searchCategory = searchCategory;
     }
 
     protected SearchModel(Parcel in) {
         searchImage = in.readString();
         searchName = in.readString();
-        searchTag = in.readString();
+        searchCategory = in.readString();
+        tagModelList = in.createTypedArrayList(TagModel.CREATOR);
     }
 
     public static final Creator<SearchModel> CREATOR = new Creator<SearchModel>() {
@@ -53,12 +64,20 @@ public class SearchModel implements Parcelable {
         this.searchName = searchName;
     }
 
-    public String getSearchTag() {
-        return searchTag;
+    public List<TagModel> getTagModelList() {
+        return tagModelList;
     }
 
-    public void setSearchTag(String searchTag) {
-        this.searchTag = searchTag;
+    public void setTagModelList(List<TagModel> tagModelList) {
+        this.tagModelList = tagModelList;
+    }
+
+    public String getSearchCategory() {
+        return searchCategory;
+    }
+
+    public void setSearchCategory(String searchCategory) {
+        this.searchCategory = searchCategory;
     }
 
     public Bitmap getBitmapImage(){
@@ -75,7 +94,8 @@ public class SearchModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(searchImage);
         dest.writeString(searchName);
-        dest.writeString(searchTag);
+        dest.writeString(searchCategory);
+        dest.writeTypedList(tagModelList);
 
     }
 }

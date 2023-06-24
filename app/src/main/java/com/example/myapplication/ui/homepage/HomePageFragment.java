@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.nfc.Tag;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -48,6 +50,8 @@ import com.example.myapplication.activities.models.OrderModel;
 import com.example.myapplication.activities.models.ProductModel;
 import com.example.myapplication.activities.models.SearchModel;
 import com.example.myapplication.activities.models.StoreModel;
+import com.example.myapplication.activities.models.TagModel;
+import com.example.myapplication.adapters.FilterAdapter;
 import com.example.myapplication.adapters.HomeCategoryAdapter;
 import com.example.myapplication.adapters.HomeDealsAdapter;
 import com.example.myapplication.adapters.HomeFoodForYouAdapter;
@@ -97,7 +101,7 @@ import java.util.Map;
 public class HomePageFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomePageBinding binding;
-    private RequestQueue requestQueuepf, requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueFood, requestQueueFood2, requestQueueDeals;
+    private RequestQueue requestQueuepf, requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueTag, requestQueueFood, requestQueueFood2, requestQueueDeals;
 
     private static String JSON_URL;
     private IPModel ipModel;
@@ -133,6 +137,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     //Food For You Recycler View
     RecyclerView rv_food_for_you;
     List<ProductModel> food_for_you_list;
+    List<TagModel> tagModelList;
     HomeFoodForYouAdapter homeFoodForYouAdapter;
 
     RecyclerView rv_weather;
@@ -201,6 +206,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
 
         binding = FragmentHomePageBinding.inflate(inflater, container, false);
@@ -236,7 +242,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         moodCtr = 1;
         order_item_temp_list = new ArrayList<>();
         order_temp_list = new ArrayList<>();
-        searchModelList = new ArrayList<>();
         tempStoreList = new ArrayList<>();
 
         //Distance
@@ -363,10 +368,12 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
+        searchModelList = new ArrayList<>();
         rv_food_for_you.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         rv_food_for_you.setHasFixedSize(true);
         rv_food_for_you.setNestedScrollingEnabled(false);
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueTag = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractFoodforyou();
 
         //Search List
@@ -588,6 +595,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                             StoreModel rec = new StoreModel(r_id, r_image, r_name, r_description, r_location, r_category,
                                     (float) r_rating, r_open, r_close);
                             rec.setDistance((float) distance);
+
                             SearchModel searchModel = new SearchModel(r_image, r_name, r_category);
                             searchModelList.add(searchModel);
                             home_store_rec_list.add(rec);
@@ -773,43 +781,77 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     //Food For You
     public void extractFoodforyou() {
         HomePageFragment homePageFragment = this;
-        JsonArrayRequest jsonArrayRequestFoodforyou = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
+
+        tagModelList = new ArrayList<>();
+        JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Log.d("FoodResponseLength", String.valueOf(response.length()));
                 for (int i = 0; i < response.length(); i++) {
                     try {
-                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
-                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
-                        int idStore = jsonObjectFoodforyou.getInt("idStore");
-                        String productName = jsonObjectFoodforyou.getString("productName");
-                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
-                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
-                        String productImage = jsonObjectFoodforyou.getString("productImage");
-                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
-                        String productTag = jsonObjectFoodforyou.getString("productTag");
-                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
-                        String storeName = jsonObjectFoodforyou.getString("storeName");
-                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
-                        String weather = jsonObjectFoodforyou.getString("weather");
-
-                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
-                        Log.d("FoodModel", String.valueOf(foodfyModel));
-                        food_for_you_list.add(foodfyModel);
-                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-                        SearchModel searchModel = new SearchModel(productImage, productName, productTag);
-                        searchModelList.add(searchModel);
-                        //list.add(productName);
+                        JSONObject jsonObjectTag = response.getJSONObject(i);
+                        int idProduct = jsonObjectTag.getInt("idProduct");
+                        int idStore = jsonObjectTag.getInt("idStore");
+                        String tagname = jsonObjectTag.getString("tagname");
+                        tagModelList.add(new TagModel(idProduct, idStore, tagname));
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-                    Collections.shuffle(food_for_you_list);
-                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homePageFragment);
-                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
                 }
+                JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifoodfilter.php", null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for (int i=0; i < response.length(); i++){
+                            try {
+                                JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                                int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                                int idStore = jsonObjectFoodforyou.getInt("idStore");
+                                String productName = jsonObjectFoodforyou.getString("productName");
+                                String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                                float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                                String productImage = jsonObjectFoodforyou.getString("productImage");
+                                String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                                String productTag = jsonObjectFoodforyou.getString("productTag");
+                                int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                                String storeName = jsonObjectFoodforyou.getString("storeName");
+                                String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                                String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
+                                String weather = jsonObjectFoodforyou.getString("weather");
+
+                                ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                        productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                SearchModel searchModel = new SearchModel(productImage, productName, productTag);
+                                foodfyModel.setProductRestoCategory(storeCategory);
+                                List<TagModel> tempTagModelList = new ArrayList<>();
+                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+//                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+                                for (TagModel tagModel: tagModelList){
+                                    if(tagModel.getIdProduct() == idProduct){
+//                                        tagModel.setMatch(true);
+                                        tempTagModelList.add(tagModel);
+                                    }
+                                }
+                                foodfyModel.setTags_list(tempTagModelList);
+                                searchModel.setTagModelList(tempTagModelList);
+                                Log.d("search", "TagSize: " + searchModel.getTagModelList().size());
+                                searchModelList.add(searchModel);
+                                food_for_you_list.add(foodfyModel);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            Collections.shuffle(food_for_you_list);
+                            homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homePageFragment);
+                            rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+                requestQueueFood.add(jsonArrayRequestFoodforyou);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -817,7 +859,55 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
 
             }
         });
-        requestQueueFood.add(jsonArrayRequestFoodforyou);
+        requestQueueTag.add(jsonArrayRequestTag);
+
+//        /////////////////////////////////////////////////////
+//
+//        JsonArrayRequest jsonArrayRequestFoodforyou = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                Log.d("FoodResponseLength", String.valueOf(response.length()));
+//                for (int i = 0; i < response.length(); i++) {
+//                    try {
+//                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+//                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+//                        int idStore = jsonObjectFoodforyou.getInt("idStore");
+//                        String productName = jsonObjectFoodforyou.getString("productName");
+//                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
+//                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+//                        String productImage = jsonObjectFoodforyou.getString("productImage");
+//                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+//                        String productTag = jsonObjectFoodforyou.getString("productTag");
+//                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+//                        String storeName = jsonObjectFoodforyou.getString("storeName");
+//                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
+//                        String weather = jsonObjectFoodforyou.getString("weather");
+//
+//                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+//                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+//                        Log.d("FoodModel", String.valueOf(foodfyModel));
+//                        food_for_you_list.add(foodfyModel);
+//                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
+//                        SearchModel searchModel = new SearchModel(productImage, productName, productTag);
+//                        searchModelList.add(searchModel);
+//                        //list.add(productName);
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
+//                    Collections.shuffle(food_for_you_list);
+//                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homePageFragment);
+//                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        requestQueueFood.add(jsonArrayRequestFoodforyou);
     }
 
 

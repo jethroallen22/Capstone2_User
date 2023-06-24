@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.models.TagModel;
 import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentSearchBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
@@ -114,31 +115,44 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
         }
 
         /////////////////////////////////////
-        if (getSearchQuery.length()>0){
-            for (int i = 0 ; i < productModelList.size() ; i++){
-                if (productModelList.get(i).getProductName().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
-                        productModelList.get(i).getProductTag().toLowerCase().contains(getSearchQuery.toLowerCase())){
-                    SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
+        if (getSearchQuery.length() > 0) {
+            for (ProductModel product : productModelList) {
+                if (product.getProductName().toLowerCase().contains(getSearchQuery.toLowerCase())) {
+                    SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                    searchModel.setTagModelList(product.getTags_list());
+                    tempSearchModelList.add(searchModel);
+                } else {
+                    for (TagModel tag : product.getTags_list()) {
+                        if (tag.getTagname().toLowerCase().contains(getSearchQuery.toLowerCase())) {
+                            SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                            searchModel.setTagModelList(product.getTags_list());
+                            tempSearchModelList.add(searchModel);
+                            break; // Exit the loop if a matching tag is found
+                        }
+                    }
+                }
+            }
+
+            for (StoreModel store : storeModelList) {
+                if (store.getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
+                        store.getStore_category().toLowerCase().contains(getSearchQuery.toLowerCase())) {
+                    SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
                     tempSearchModelList.add(searchModel);
                 }
             }
-            for (int i = 0 ; i < storeModelList.size() ; i++){
-                if (storeModelList.get(i).getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
-                        storeModelList.get(i).getStore_category().toLowerCase().contains(getSearchQuery.toLowerCase())){
-                    SearchModel searchModel = new SearchModel(storeModelList.get(i).getStore_image(),storeModelList.get(i).getStore_name(),storeModelList.get(i).getStore_category());
-                    tempSearchModelList.add(searchModel);
-                }
-            }
+
             Log.d("FirstSearch", String.valueOf(tempSearchModelList.size()));
-            for (int i = 0 ; i < tempSearchModelList.size() ; i++)
+            for (int i = 0; i < tempSearchModelList.size(); i++)
                 Log.d("FirstSearchItems", tempSearchModelList.get(i).getSearchName());
-            searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
+
+            searchAdapter = new SearchAdapter(getActivity(), tempSearchModelList, SearchFragment.this);
             rv_search.setAdapter(searchAdapter);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             rv_search.setLayoutManager(layoutManager);
             rv_search.setHasFixedSize(true);
             rv_search.setNestedScrollingEnabled(false);
         }
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -151,27 +165,31 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
             public boolean onQueryTextChange(String newText) {
                 tempSearchModelList = new ArrayList<>();
                 if(newText.length()>0){
-//                    for (int i = 0; i < searchModelList.size() ; i++){
-//                        if (searchModelList.get(i).getSearchName().toLowerCase().contains(newText.toLowerCase()) ||
-//                                searchModelList.get(i).getSearchTag().toLowerCase().contains(newText.toLowerCase())){
-//                            SearchModel searchModel = new SearchModel(searchModelList.get(i).getSearchImage(),searchModelList.get(i).getSearchName(),searchModelList.get(i).getSearchTag());
-//                            tempSearchModelList.add(searchModel);
-//                        }
-//                    }
-                    for (int i = 0 ; i < productModelList.size() ; i++){
-                        if (productModelList.get(i).getProductName().toLowerCase().contains(newText.toLowerCase()) ||
-                                productModelList.get(i).getProductTag().toLowerCase().contains(newText.toLowerCase())){
-                            SearchModel searchModel = new SearchModel(productModelList.get(i).getProductImage(),productModelList.get(i).getProductName(),productModelList.get(i).getProductTag());
+                    for (ProductModel product : productModelList) {
+                        if (product.getProductName().toLowerCase().contains(newText.toLowerCase())) {
+                            SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                            searchModel.setTagModelList(product.getTags_list());
+                            tempSearchModelList.add(searchModel);
+                        } else {
+                            for (TagModel tag : product.getTags_list()) {
+                                if (tag.getTagname().toLowerCase().contains(newText.toLowerCase())) {
+                                    SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                                    searchModel.setTagModelList(product.getTags_list());
+                                    tempSearchModelList.add(searchModel);
+                                    break; // Exit the loop if a matching tag is found
+                                }
+                            }
+                        }
+                    }
+
+                    for (StoreModel store : storeModelList) {
+                        if (store.getStore_name().toLowerCase().contains(newText.toLowerCase()) ||
+                                store.getStore_category().toLowerCase().contains(newText.toLowerCase())) {
+                            SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
                             tempSearchModelList.add(searchModel);
                         }
                     }
-                    for (int i = 0 ; i < storeModelList.size() ; i++){
-                        if (storeModelList.get(i).getStore_name().toLowerCase().contains(newText.toLowerCase()) ||
-                                storeModelList.get(i).getStore_category().toLowerCase().contains(newText.toLowerCase())){
-                            SearchModel searchModel = new SearchModel(storeModelList.get(i).getStore_image(),storeModelList.get(i).getStore_name(),storeModelList.get(i).getStore_category());
-                            tempSearchModelList.add(searchModel);
-                        }
-                    }
+
                     searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
                     rv_search.setAdapter(searchAdapter);
                     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());

@@ -67,6 +67,7 @@ import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.categories.CategoryFragment;
 import com.example.myapplication.ui.filter.FilterFragment;
 import com.example.myapplication.ui.filter.FilterSelectFragment;
+import com.example.myapplication.ui.foryou.ForYouFragment;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.moods.MixMoodFragment;
 import com.example.myapplication.ui.moods.NewMoodFragment;
@@ -101,7 +102,7 @@ import java.util.Map;
 public class HomePageFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentHomePageBinding binding;
-    private RequestQueue requestQueuepf, requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueTag, requestQueueFood, requestQueueFood2, requestQueueDeals;
+    private RequestQueue requestQueuepf, requestQueueRec1, requestQueueRec2, requestQueueCateg, requestQueuePopu, requestQueueTag, requestQueueFood, requestQueueFood2, requestQueueDeals , requestQueueInner, requestQueueOuter;
 
     private static String JSON_URL;
     private IPModel ipModel;
@@ -364,7 +365,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         rv_home_pop_store.setHasFixedSize(true);
         rv_home_pop_store.setNestedScrollingEnabled(false);
         requestQueuePopu = Singleton.getsInstance(getActivity()).getRequestQueue();
-        extractPopular();
+//        extractPopular();
 
         rv_food_for_you = root.findViewById(R.id.rv_home_food_for_you);
         food_for_you_list = new ArrayList<>();
@@ -374,6 +375,8 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         rv_food_for_you.setNestedScrollingEnabled(false);
         requestQueueFood = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueTag = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueInner = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueOuter = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractFoodforyou();
 
         //Search List
@@ -710,73 +713,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     }
 
     //Popular Recommendation Function
-    public void extractPopular() {
-//        JsonArrayRequest jsonArrayRequest3 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apistorepopu.php", null, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                Log.d("ResponseJson", String.valueOf(response));
-//                for (int i=0; i < response.length(); i++){
-//                    Log.d("PopuLength", String.valueOf(response.length()));
-//                    try {
-//                        JSONObject jsonObject = response.getJSONObject(i);
-//                        int store_idStore = jsonObject.getInt("store_idStore");
-//                        for (int j = 0 ; j < home_store_rec_list.size() ; j++){
-//                            if(home_store_rec_list.get(j).getStore_id() == store_idStore) {
-//                                Log.d("StorePopuMatch", "Match");
-//                                home_pop_store_list.add(home_store_rec_list.get(j));
-//                            }
-//                        }
-//                        Log.d("Popu", String.valueOf(home_pop_store_list.size()));
-//                        Log.d("StorePopuSize", String.valueOf(home_pop_store_list.size()));
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    homeStorePopularAdapter = new HomeStorePopularAdapter( home_pop_store_list,getActivity(), homeFragment);
-//                    rv_home_pop_store.setAdapter(homeStorePopularAdapter);
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueuePopu.add(jsonArrayRequest3);
 
-    }
-    //Category Function
-    /*public void extractCateg(){
-
-        JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicateg.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for (int i=0; i < response.length(); i++){
-                    try {
-                        JSONObject jsonObject1 = response.getJSONObject(i);
-                        String categ_image = jsonObject1.getString("categ_image");
-                        String categ_name = jsonObject1.getString("categ_name");
-
-                        Log.d("Category", categ_image + categ_name);
-
-                        HomeCategoryModel categModel = new HomeCategoryModel(categ_image,categ_name);
-                        home_categ_list.add(categModel);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    homeCategoryAdapter = new HomeCategoryAdapter(getActivity(),home_categ_list);
-                    rv_category.setAdapter(homeCategoryAdapter);
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueueCateg.add(jsonArrayRequest1);
-    }*/
 
     //Food For You
     public void extractFoodforyou() {
@@ -861,53 +798,128 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         });
         requestQueueTag.add(jsonArrayRequestTag);
 
-//        /////////////////////////////////////////////////////
-//
-//        JsonArrayRequest jsonArrayRequestFoodforyou = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifood.php", null, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                Log.d("FoodResponseLength", String.valueOf(response.length()));
-//                for (int i = 0; i < response.length(); i++) {
-//                    try {
-//                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
-//                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
-//                        int idStore = jsonObjectFoodforyou.getInt("idStore");
-//                        String productName = jsonObjectFoodforyou.getString("productName");
-//                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
-//                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
-//                        String productImage = jsonObjectFoodforyou.getString("productImage");
-//                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
-//                        String productTag = jsonObjectFoodforyou.getString("productTag");
-//                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
-//                        String storeName = jsonObjectFoodforyou.getString("storeName");
-//                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
-//                        String weather = jsonObjectFoodforyou.getString("weather");
-//
-//                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-//                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
-//                        Log.d("FoodModel", String.valueOf(foodfyModel));
-//                        food_for_you_list.add(foodfyModel);
-//                        Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-//                        SearchModel searchModel = new SearchModel(productImage, productName, productTag);
-//                        searchModelList.add(searchModel);
-//                        //list.add(productName);
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Log.d("FoodSize", String.valueOf(food_for_you_list.size()));
-//                    Collections.shuffle(food_for_you_list);
-//                    homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homePageFragment);
-//                    rv_food_for_you.setAdapter(homeFoodForYouAdapter);
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueueFood.add(jsonArrayRequestFoodforyou);
+        ////////////////////////////////////////////////////////////////////////
+        List<ProductModel> productModelList = new ArrayList<>();
+        List<String> tag_list = new ArrayList<>();
+        tagModelList = new ArrayList<>();
+        String TAG = "foryou";
+        JsonArrayRequest jsonArrayRequestInner = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifrequency.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Trend Resp", String.valueOf(response));
+                boolean productExistsInOrderItems = false;
+
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int idUser = jsonObject.getInt("idUser");
+                        String tagname = jsonObject.getString("tagname");
+                        if(idUser == userId)
+                            tag_list.add(tagname);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d(TAG, "Frequency: " + tag_list.size());
+                for (String tag : tag_list)
+                    Log.d(TAG, "Frequency: " + tag);
+                JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject jsonObjectTag = response.getJSONObject(i);
+                                int idProduct = jsonObjectTag.getInt("idProduct");
+                                int idStore = jsonObjectTag.getInt("idStore");
+                                String tagname = jsonObjectTag.getString("tagname");
+                                tagModelList.add(new TagModel(idProduct, idStore, tagname));
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        Log.d(TAG, "TagProduct: " + tagModelList.size());
+                        for (TagModel tagProduct: tagModelList)
+                            Log.d(TAG, "TagProduct: " + tagProduct.getTagname());
+                        JsonArrayRequest jsonArrayRequestOuter= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifoodfilter.php", null, new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                for (int i=0; i < response.length(); i++){
+                                    try {
+                                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                                        int idStore = jsonObjectFoodforyou.getInt("idStore");
+                                        String productName = jsonObjectFoodforyou.getString("productName");
+                                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                                        String productImage = jsonObjectFoodforyou.getString("productImage");
+                                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                                        String productTag = jsonObjectFoodforyou.getString("productTag");
+                                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                                        String storeName = jsonObjectFoodforyou.getString("storeName");
+                                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                                        String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
+                                        String weather = jsonObjectFoodforyou.getString("weather");
+
+                                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                        foodfyModel.setProductRestoCategory(storeCategory);
+                                        List<TagModel> tempTagModelList = new ArrayList<>();
+
+                                        for (TagModel tagModel: tagModelList){
+                                            if(tagModel.getIdProduct() == idProduct){
+                                                tempTagModelList.add(tagModel);
+                                            }
+                                        }
+                                        foodfyModel.setTags_list(tempTagModelList);
+                                        productModelList.add(foodfyModel);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                Collections.sort(productModelList, (product1, product2) -> {
+                                    int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                    int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                    return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                });
+                                homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), productModelList, homePageFragment);
+                                rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        });
+                        requestQueueOuter.add(jsonArrayRequestOuter);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+                requestQueueTag.add(jsonArrayRequestTag);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle error
+            }
+        });
+        requestQueueInner.add(jsonArrayRequestInner);
+    }
+
+    private int calculateMatchedTagsCount(List<TagModel> tags) {
+        int count = 0;
+        for (TagModel tag : tags) {
+            if (tag.isMatch()) {
+                count++;
+            }
+        }
+        return count;
     }
 
 

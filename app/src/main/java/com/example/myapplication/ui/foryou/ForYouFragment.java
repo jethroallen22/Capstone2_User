@@ -59,74 +59,29 @@ import java.util.Map;
 public class ForYouFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentForYouBinding binding;
-    private RequestQueue requestQueuepf, requestQueue, requestQueueTag, requestQueueOuter, requestQueueInner;
-
+    private RequestQueue requestQueue, requestQueueTag, requestQueueOuter, requestQueueInner;
     private static String JSON_URL;
     private IPModel ipModel;
-
-    List<OrderItemModel> order_item_temp_list;
-    List<OrderModel> order_temp_list;
-
-    //Category Recycler View
-    RecyclerView rv_category;
-    List<HomeCategoryModel> home_categ_list;
-    List<StoreModel> home_store_rec_list;
-    List<ProductModel> food_for_you_list;
-
-    RecyclerView rv_weather, rv_filter;
-    List<ProductModel> weather_list;
-    WeatherAdapter weatherAdapter;
-
+    List<ProductModel> food_for_you_list, tempProductModelList;
+    RecyclerView rv_filter;
     //Search
     SearchView searchView;
-    List<SearchModel> searchModelList;
-
     //For Product Bottomsheet
-    LinearLayout linearLayout;
-    TextView product_name, product_resto, product_price, product_description, tv_counter, tv_weather;
+    TextView product_name, product_resto, product_price, product_description, tv_counter;
     RoundedImageView product_image;
     ConstraintLayout cl_product_add;
     ConstraintLayout cl_product_minus;
     Button btn_add_to_cart;
     int product_count = 0;
-
-    //Filter Bottomsheet
-
-    Chip chip_categ, chip_weather, chip_mood;
-    ImageView close_btn;
-    SeekBar sb_budget;
-    TextView tv_set_budget;
-    Button btn_confirm_filter;
-    List<String> chp_category_list, chp_mood_list, chp_weather_list, chp_budget;
     ImageView btn_filter;
-
-    //Category
-    List<StoreModel> tempStoreList;
-    String category;
-
-    //Getting Bundle
     int userId = 0;
-    int tempCount = 0;
     String userName = "", weather;
-    ForYouFragment forYouFragment = this;
-
     float wallet;
-
     private static final int EARTH_RADIUS = 6371; // Radius of the Earth in kilometers
-
     double curLat, curLong;
-    private static int moodCtr;
-
-
-    LinearLayoutManager layoutManager;
-
     List<TagModel> tagModelList;
 
-    List<String> preferences;
-
-    List<ProductModel> productModelList;
-
-    Boolean match;
+    boolean exist = false;
 
     FilterAdapter filterAdapter;
     List<String> tag_list;
@@ -313,8 +268,8 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                     Log.d(TAG, "Product: " + productModel.getProductName());
 
                                 searchView.findViewById(R.id.sv_for_you_page);
+                                tempProductModelList = new ArrayList<>();
                                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                                    List<ProductModel> tempProductModelList = new ArrayList<>();
                                     @Override
                                     public boolean onQueryTextSubmit(String query) {
                                         tempProductModelList.clear();
@@ -336,6 +291,7 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                             int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
                                             return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
                                         });
+                                        exist = true;
                                         filterAdapter = new FilterAdapter(getActivity(), tempProductModelList, ForYouFragment.this);
                                         rv_filter.setAdapter(filterAdapter);
                                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -366,6 +322,7 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                                 int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
                                                 return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
                                             });
+                                            exist = true;
                                             filterAdapter = new FilterAdapter(getActivity(), tempProductModelList, ForYouFragment.this);
                                             rv_filter.setAdapter(filterAdapter);
                                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -376,6 +333,7 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                                 int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
                                                 return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
                                             });
+                                            exist = false;
                                             filterAdapter = new FilterAdapter(getActivity(), food_for_you_list, ForYouFragment.this);
                                             rv_filter.setAdapter(filterAdapter);
                                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -391,6 +349,7 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                     int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
                                     return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
                                 });
+                                exist = false;
                                 filterAdapter = new FilterAdapter(getActivity(), food_for_you_list, ForYouFragment.this);
                                 rv_filter.setAdapter(filterAdapter);
                             }
@@ -504,13 +463,23 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
 
         //Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
-        product_image.setImageBitmap(food_for_you_list.get(position).getBitmapImage());
-        product_name.setText(food_for_you_list.get(position).getProductName());
-        product_resto.setText(food_for_you_list.get(position).getProductRestoName());
-        product_description.setText(food_for_you_list.get(position).getProductDescription());
-        product_price.setText("P" + food_for_you_list.get(position).getProductPrice());
-        tv_counter.setText(Integer.toString(product_count));
-        btn_add_to_cart.setEnabled(false);
+        if (exist){
+            product_image.setImageBitmap(tempProductModelList.get(position).getBitmapImage());
+            product_name.setText(tempProductModelList.get(position).getProductName());
+            product_resto.setText(tempProductModelList.get(position).getProductRestoName());
+            product_description.setText(tempProductModelList.get(position).getProductDescription());
+            product_price.setText("P" + tempProductModelList.get(position).getProductPrice());
+            tv_counter.setText(Integer.toString(product_count));
+            btn_add_to_cart.setEnabled(false);
+        } else {
+            product_image.setImageBitmap(food_for_you_list.get(position).getBitmapImage());
+            product_name.setText(food_for_you_list.get(position).getProductName());
+            product_resto.setText(food_for_you_list.get(position).getProductRestoName());
+            product_description.setText(food_for_you_list.get(position).getProductDescription());
+            product_price.setText("P" + food_for_you_list.get(position).getProductPrice());
+            tv_counter.setText(Integer.toString(product_count));
+            btn_add_to_cart.setEnabled(false);
+        }
 
         //Add count to order
         cl_product_add.setOnClickListener(new View.OnClickListener() {

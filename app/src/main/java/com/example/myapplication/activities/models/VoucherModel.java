@@ -5,20 +5,26 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Date;
+
 public class VoucherModel implements Parcelable {
 
     int voucherId;
     String voucherName;
-    int storeId;
     int voucherAmount;
     int voucherMin;
 
-    public VoucherModel(int voucherId, String voucherName, int storeId, int voucherAmount, int voucherMin){
+    Date startDate;
+
+    Date endDate;
+
+    public VoucherModel(int voucherId, String voucherName,int voucherAmount, int voucherMin, Date startDate, Date endDate){
         this.voucherId = voucherId;
         this.voucherName = voucherName;
-        this.storeId = storeId;
         this.voucherAmount = voucherAmount;
         this.voucherMin = voucherMin;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     protected VoucherModel(Parcel in) {
@@ -52,14 +58,6 @@ public class VoucherModel implements Parcelable {
         this.voucherName = voucherName;
     }
 
-    public int getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(int storeId) {
-        this.storeId = storeId;
-    }
-
     public int getVoucherAmount() {
         return voucherAmount;
     }
@@ -76,6 +74,22 @@ public class VoucherModel implements Parcelable {
         this.voucherMin = voucherMin;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -85,8 +99,9 @@ public class VoucherModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeInt(voucherId);
         dest.writeString(voucherName);
-        dest.writeInt(storeId);
         dest.writeInt(voucherAmount);
         dest.writeInt(voucherMin);
+        dest.writeSerializable(startDate);
+        dest.writeSerializable(endDate);
     }
 }

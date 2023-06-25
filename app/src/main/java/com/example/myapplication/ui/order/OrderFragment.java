@@ -51,7 +51,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -490,12 +494,22 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         JSONObject jsonObjectVoucher = response.getJSONObject(i);
                         int voucherId = jsonObjectVoucher.getInt("voucherId");
                         String voucherName = jsonObjectVoucher.getString("voucherName");
-                        int storeId = jsonObjectVoucher.getInt("storeId");
                         int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
                         int voucherMin = jsonObjectVoucher.getInt("voucherMin");
+                        String startDateString = jsonObjectVoucher.getString("startDate");
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        Date startDate = dateFormat.parse(startDateString);
+
+                        String endDateString = jsonObjectVoucher.getString("endDate");
+                        SimpleDateFormat dateFormatend = new SimpleDateFormat("yyyy-MM-dd");
+                        Date endDate = dateFormatend.parse(endDateString);
+
+                        LocalDate curDate = LocalDate.now();
+                        Date curdate = dateFormat.parse(String.valueOf(curDate));
+
 
                        // orderModel.getOrderItemTotalPrice() >= voucherMin
-                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, storeId, voucherAmount, voucherMin);
+                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
                             //voucher_list.add(voucherModel);
 
                         //JsonArrayRequest for Reading Vouchers DB
@@ -520,7 +534,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                     }
                                 }
                                 if(!voucherAvailed){
-                                    voucher_list.add(voucherModel);
+                                    if (curdate.before(voucherModel.getEndDate())) {
+                                        voucher_list.add(voucherModel);
+                                    }
                                 }
                                 voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);
                                 rv_vouchers.setAdapter(voucherAdapter);
@@ -547,7 +563,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         requestQueueAvailVoucher.add(jsonArrayRequestAvailVouchers);
                         //
 
-                    } catch (JSONException e) {
+                    } catch (JSONException | ParseException e) {
                         e.printStackTrace();
                     }
                 }

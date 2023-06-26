@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,23 +22,17 @@ public class CheckoutFragment extends Fragment {
 
     TextView merchant,id, amount;
 
+    String store_name;
+    public CheckoutFragment(OrderModel orderModel) {
+        this.orderModel = orderModel;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentCheckoutBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        merchant = root.findViewById(R.id.tv_merchant);
-        amount = root.findViewById(R.id.tv_amount);
-
-
-
-        Bundle bundle = this.getArguments();
-        if (bundle != null)
-            orderModel = bundle.getParcelable("order");
-
-        merchant.setText(orderModel.getStore_name());
-        amount.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
 
         binding.nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +41,8 @@ public class CheckoutFragment extends Fragment {
                 bundle.putParcelable("order", orderModel);
                 Checkout2Fragment fragment = new Checkout2Fragment();
                 fragment.setArguments(bundle);
+                store_name = orderModel.getStore_name();
+                Log.d("C1StoreName",store_name);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
             }
         });

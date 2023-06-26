@@ -174,7 +174,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("order", orderModel);
-                    CheckoutFragment fragment = new CheckoutFragment();
+                    CheckoutFragment fragment = new CheckoutFragment(orderModel);
                     fragment.setArguments(bundle);
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 }

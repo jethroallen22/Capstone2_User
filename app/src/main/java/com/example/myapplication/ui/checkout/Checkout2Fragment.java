@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,6 @@ public class Checkout2Fragment extends Fragment {
     int[] randomNumbers;
     NotificationManager manager;
     List<Integer> randomInt;
-
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,

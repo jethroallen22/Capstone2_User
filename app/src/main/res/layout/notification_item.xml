@@ -53,6 +53,15 @@
                     android:singleLine="false"
                     android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a sem risus. Suspendisse potenti. Fusce vel commodo est. "
                     android:textAlignment="textStart" />
+
+                <TextView
+                    android:id="@+id/tv_notif_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="TextView"
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 

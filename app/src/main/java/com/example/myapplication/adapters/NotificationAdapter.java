@@ -36,6 +36,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.iv_notif_img.setImageResource(R.drawable.ic_baseline_money_24);
         holder.tv_notif_description.setText(list.get(position).getDescription());
         holder.tv_notif_title.setText(list.get(position).getTitle());
+        holder.tv_notif_date.setText(list.get(position).getDate().toString());
     }
 
     @Override
@@ -48,6 +49,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         ImageView iv_notif_img;
         TextView tv_notif_description;
         TextView tv_notif_title;
+        TextView tv_notif_date;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,6 +57,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             iv_notif_img = itemView.findViewById(R.id.iv_notif_img);
             tv_notif_description = itemView.findViewById(R.id.tv_notif_description);
             tv_notif_title = itemView.findViewById(R.id.tv_notif_title);
+            tv_notif_date = itemView.findViewById(R.id.tv_notif_date);
         }
     }
 }

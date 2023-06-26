@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.models.WalletModel;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.adapters.VoucherAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
@@ -44,6 +46,7 @@ import com.example.myapplication.activities.models.OrderModel;
 import com.example.myapplication.activities.models.VoucherModel;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
+import com.example.myapplication.ui.payment.PaymentFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
@@ -80,7 +83,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     float wallet;
     String walletText;
     NotificationManager manager;
-    RequestQueue requestQueueOrder, requestQueueVoucher, requestQueueAvailVoucher;
+    RequestQueue requestQueueOrder, requestQueueVoucher, requestQueueAvailVoucher, requestQueueBalance;
 
     RecyclerView rv_vouchers;
 
@@ -88,7 +91,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     List<VoucherModel> voucher_list;
     VoucherAdapter voucherAdapter;
-
+    Handler handler;
+    Runnable myRunnable;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -103,6 +107,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
         requestQueueVoucher = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueAvailVoucher = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueBalance = Singleton.getsInstance(getActivity()).getRequestQueue();
 
 
         tv_store_name = root.findViewById(R.id.tv_store_name);
@@ -123,8 +128,14 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
             Log.d("StoreName",store_name);
         }
 
-        walletText = "Wallet: P" + wallet;
-        radio_wallet.setText(walletText);
+        handler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                getAvailBalance();
+            }
+        };
+        handler.postDelayed(myRunnable, 1000);
         btn_place_order.setEnabled(false);
         rv_order_items = root.findViewById(R.id.rv_order_items);
         orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),this);
@@ -190,6 +201,37 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         });
 
         return root;
+    }
+
+    public void getAvailBalance(){
+        //walletModel = new WalletModel(0,0);
+        JsonArrayRequest jsonArrayRequestBalance = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apiwalletget.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int id = jsonObject.getInt("id");
+                        final double wallet = jsonObject.getDouble("wallet");
+                        if(id == orderModel.getUsers_id()) {
+                            OrderFragment.this.wallet = (float) wallet;
+                            walletText = "Wallet: P" + wallet;
+                            radio_wallet.setText(walletText);
+                        }
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle error response
+            }
+        });
+        requestQueueBalance.add(jsonArrayRequestBalance);
     }
 
     private void getDataFromServer() {

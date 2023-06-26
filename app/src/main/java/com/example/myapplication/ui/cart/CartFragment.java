@@ -66,26 +66,21 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
         binding = FragmentCartBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
-
         order_list = new ArrayList<>();
         order_item_list = new ArrayList<>();
         temp_store_list = new ArrayList<>();
         Bundle bundle = getArguments();
         if(bundle != null) {
-//            temp_store_list = (List<StoreModel>) bundle.getSerializable("storeList");
             userID = bundle.getInt("userID");
             wallet = bundle.getFloat("wallet");
             Log.d("USERID", String.valueOf(userID));
         }
-
         rv_cart = root.findViewById(R.id.rv_cart);
         requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueStore = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractStoreCartItem();
-
         handler = new Handler();
         myRunnable = new Runnable() {
             @Override
@@ -98,20 +93,6 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
             }
         };
         handler.postDelayed(myRunnable, 1000);
-
-//        root.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                order_list = new ArrayList<>();
-//                order_item_list = new ArrayList<>();
-//                extractStoreCartItem();
-//                //Log.d("OrderStatus", order.getOrderStatus());
-//                root.postDelayed(this, 1000);
-//            }
-//        }, 1000);
-
-
-
         btn_remove = root.findViewById(R.id.btn_remove);
         cb_cart_item = root.findViewById(R.id.cb_voucher);
         btn_remove.setOnClickListener(new View.OnClickListener() {
@@ -122,9 +103,6 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                 }
             }
         });
-
-
-
         return root;
     }
 
@@ -184,14 +162,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     public void onItemClick(int position) {
         handler.removeCallbacks(myRunnable);
         Bundle bundle = new Bundle();
-        float tempTotal = 0;
-        for(int i = 0 ; i < order_list.get(position).getOrderItem_list().size() ; i++){
-            tempTotal+= order_list.get(position).getOrderItem_list().get(i).getTotalPrice();
-        }
-        order_list.get(position).setOrderItemTotalPrice(tempTotal);
         bundle.putParcelable("order", order_list.get(position));
         bundle.putFloat("wallet", wallet);
-
         OrderFragment fragment = new OrderFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -216,10 +188,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                             double c_totalProductPrice = jsonObjectCart.getDouble("temp_totalProductPrice");
                             String c_storeName = jsonObjectCart.getString("storeName");
                             String c_storeImage = jsonObjectCart.getString("storeImage");
-
                             OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, userID, c_productName, (float) c_productPrice, c_productQuantity,
                                     (float) (c_productPrice * c_productQuantity));
-
                             Log.d("BEFORE", String.valueOf(userID));
                             Log.d("BEFOREDB", String.valueOf(c_usersId));
                             if(order_list.isEmpty()){
@@ -273,12 +243,18 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                     }
                 }
                  Log.d("CartSize", String.valueOf(order_list.size()));
+                 float tempTotal = 0;
+                 for (OrderModel orderModel : order_list) {
+                     for (OrderItemModel orderItemModel : orderModel.getOrderItem_list()) {
+                         tempTotal += orderItemModel.getTotalPrice();
+                     }
+                     orderModel.setOrderItemTotalPrice(tempTotal);
+                 }
                  cartAdapter = new CartAdapter(getActivity(),order_list, CartFragment.this);
                  rv_cart.setAdapter(cartAdapter);
                  RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
                  rv_cart.setLayoutManager(layoutManager);
             }
-
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {

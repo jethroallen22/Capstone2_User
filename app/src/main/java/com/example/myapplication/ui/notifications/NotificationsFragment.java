@@ -24,8 +24,12 @@ import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.activities.models.IPModel;
 import com.example.myapplication.activities.models.NotificationModel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,13 +95,18 @@ public class NotificationsFragment extends Fragment {
                             String title = jsonObject.getString("title");
                             String description = jsonObject.getString("description");
                             String type = jsonObject.getString("type");
+                            String date = jsonObject.getString("date");
                             Log.d("notif_match", "MATCH");
-                            NotificationModel notificationModel = new NotificationModel(title, description, type);
+
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                            NotificationModel notificationModel = new NotificationModel(title, description, type, dateFormat.parse(date));
                             notification_list.add(notificationModel);
                         }
                     }
                     catch (JSONException e) {
                         e.printStackTrace();
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
                     }
                 }
                 Log.d("notif_list", String.valueOf(notification_list.size()));

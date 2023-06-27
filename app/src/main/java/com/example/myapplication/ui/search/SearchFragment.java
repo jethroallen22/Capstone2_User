@@ -7,8 +7,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +32,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.models.TagModel;
 import com.example.myapplication.adapters.SearchAdapter;
+import com.example.myapplication.adapters.TabFragmentAdapter;
+import com.example.myapplication.adapters.TabSearchFragmentAdapter;
 import com.example.myapplication.databinding.FragmentSearchBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.activities.models.IPModel;
@@ -38,11 +42,13 @@ import com.example.myapplication.activities.models.SearchModel;
 import com.example.myapplication.activities.models.StoreModel;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.tabs.TabLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,11 +68,11 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
 
     //Search Query
     SearchView searchView;
-    String getSearchQuery;
-    List<SearchModel> searchModelList;
-    List<SearchModel> tempSearchModelList;
-    List<StoreModel> storeModelList;
-    List<ProductModel> productModelList;
+    private String getSearchQuery;
+    private List<SearchModel> searchModelList;
+    private List<SearchModel> tempSearchModelList;
+    private List<StoreModel> storeModelList;
+    private List<ProductModel> productModelList;
     RecyclerView rv_search;
     SearchAdapter searchAdapter;
     RecyclerViewInterface recyclerViewInterface;
@@ -79,10 +85,13 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
     ConstraintLayout cl_product_minus;
     Button btn_add_to_cart;
     int product_count = 0;
-    int userId = 0;
+    public int userId = 0;
 
     private static String JSON_URL;
     private IPModel ipModel;
+    TabLayout tabLayoutSearch;
+    ViewPager2 viewPagerSearch;
+    TabSearchFragmentAdapter tabSearchFragmentAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -93,9 +102,9 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
 
-        rv_search = root.findViewById(R.id.rv_search);
-        searchView = root.findViewById(R.id.searchView2);
-        searchView.setIconified(false);
+//        rv_search = root.findViewById(R.id.rv_search);
+//        searchView = root.findViewById(R.id.searchView2);
+//        searchView.setIconified(false);
 
         Bundle bundle = this.getArguments();
         searchModelList = new ArrayList<>();
@@ -114,98 +123,170 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
             Log.d("Search Result Product List: ", String.valueOf(productModelList.size()));
         }
 
-        /////////////////////////////////////
-        if (getSearchQuery.length() > 0) {
-            for (ProductModel product : productModelList) {
-                if (product.getProductName().toLowerCase().contains(getSearchQuery.toLowerCase())) {
-                    SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
-                    searchModel.setTagModelList(product.getTags_list());
-                    tempSearchModelList.add(searchModel);
-                } else {
-                    for (TagModel tag : product.getTags_list()) {
-                        if (tag.getTagname().toLowerCase().contains(getSearchQuery.toLowerCase())) {
-                            SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
-                            searchModel.setTagModelList(product.getTags_list());
-                            tempSearchModelList.add(searchModel);
-                            break; // Exit the loop if a matching tag is found
-                        }
-                    }
-                }
-            }
+        // Initialize views
+        tabLayoutSearch = root.findViewById(R.id.tabLayoutSearch);
+        viewPagerSearch = root.findViewById(R.id.viewPagerSearch);
+        viewPagerSearch.setUserInputEnabled(false);
 
-            for (StoreModel store : storeModelList) {
-                if (store.getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
-                        store.getStore_category().toLowerCase().contains(getSearchQuery.toLowerCase())) {
-                    SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
-                    tempSearchModelList.add(searchModel);
-                }
-            }
+        // Add tabs
+        tabLayoutSearch.addTab(tabLayoutSearch.newTab().setText("All"));
+        tabLayoutSearch.addTab(tabLayoutSearch.newTab().setText("Products"));
+        tabLayoutSearch.addTab(tabLayoutSearch.newTab().setText("Stores"));
 
-            Log.d("FirstSearch", String.valueOf(tempSearchModelList.size()));
-            for (int i = 0; i < tempSearchModelList.size(); i++)
-                Log.d("FirstSearchItems", tempSearchModelList.get(i).getSearchName());
+        // Set up adapter
+        FragmentManager fragmentManager = getChildFragmentManager();
+        tabSearchFragmentAdapter = new TabSearchFragmentAdapter(fragmentManager, getLifecycle());
+        viewPagerSearch.setAdapter(tabSearchFragmentAdapter);
+        viewPagerSearch.setCurrentItem(0);
+        Bundle bundle1 = new Bundle();
+        bundle1.putString("search", getSearchQuery);
+        bundle1.putSerializable("SearchList", (Serializable) searchModelList);
+        bundle1.putSerializable("ProductList", (Serializable) productModelList);
+        bundle1.putSerializable("StoreList", (Serializable) storeModelList);
+        bundle1.putInt("userId", userId);
+        SearchAllFragment searchAllFragment = new SearchAllFragment();
+        SearchProductFragment searchProductFragment = new SearchProductFragment();
+        SearchStoreFragment searchStoreFragment = new SearchStoreFragment();
+        searchAllFragment.setArguments(bundle1);
+        searchProductFragment.setArguments(bundle1);
+        searchStoreFragment.setArguments(bundle1);
 
-            searchAdapter = new SearchAdapter(getActivity(), tempSearchModelList, SearchFragment.this);
-            rv_search.setAdapter(searchAdapter);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-            rv_search.setLayoutManager(layoutManager);
-            rv_search.setHasFixedSize(true);
-            rv_search.setNestedScrollingEnabled(false);
-        }
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        // Set up tab selection listener
+        tabLayoutSearch.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-//
-                return false;
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPagerSearch.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                tempSearchModelList = new ArrayList<>();
-                if(newText.length()>0){
-                    for (ProductModel product : productModelList) {
-                        if (product.getProductName().toLowerCase().contains(newText.toLowerCase())) {
-                            SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
-                            searchModel.setTagModelList(product.getTags_list());
-                            tempSearchModelList.add(searchModel);
-                        } else {
-                            for (TagModel tag : product.getTags_list()) {
-                                if (tag.getTagname().toLowerCase().contains(newText.toLowerCase())) {
-                                    SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
-                                    searchModel.setTagModelList(product.getTags_list());
-                                    tempSearchModelList.add(searchModel);
-                                    break; // Exit the loop if a matching tag is found
-                                }
-                            }
-                        }
-                    }
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
 
-                    for (StoreModel store : storeModelList) {
-                        if (store.getStore_name().toLowerCase().contains(newText.toLowerCase()) ||
-                                store.getStore_category().toLowerCase().contains(newText.toLowerCase())) {
-                            SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
-                            tempSearchModelList.add(searchModel);
-                        }
-                    }
-
-                    searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
-                    rv_search.setAdapter(searchAdapter);
-                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-                    rv_search.setLayoutManager(layoutManager);
-                } else{
-                    searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
-                    rv_search.setAdapter(searchAdapter);
-                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-                    rv_search.setLayoutManager(layoutManager);
-
-                }
-                return true;
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
             }
         });
 
+        // Set up page change listener
+        viewPagerSearch.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayoutSearch.selectTab(tabLayoutSearch.getTabAt(position));
+            }
+        });
+
+        /////////////////////////////////////
+//        if (getSearchQuery.length() > 0) {
+//            for (ProductModel product : productModelList) {
+//                if (product.getProductName().toLowerCase().contains(getSearchQuery.toLowerCase())) {
+//                    SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+//                    searchModel.setTagModelList(product.getTags_list());
+//                    tempSearchModelList.add(searchModel);
+//                } else {
+//                    for (TagModel tag : product.getTags_list()) {
+//                        if (tag.getTagname().toLowerCase().contains(getSearchQuery.toLowerCase())) {
+//                            SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+//                            searchModel.setTagModelList(product.getTags_list());
+//                            tempSearchModelList.add(searchModel);
+//                            break; // Exit the loop if a matching tag is found
+//                        }
+//                    }
+//                }
+//            }
+//
+//            for (StoreModel store : storeModelList) {
+//                if (store.getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
+//                        store.getStore_category().toLowerCase().contains(getSearchQuery.toLowerCase())) {
+//                    SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
+//                    tempSearchModelList.add(searchModel);
+//                }
+//            }
+//
+//            Log.d("FirstSearch", String.valueOf(tempSearchModelList.size()));
+//            for (int i = 0; i < tempSearchModelList.size(); i++)
+//                Log.d("FirstSearchItems", tempSearchModelList.get(i).getSearchName());
+//
+//            searchAdapter = new SearchAdapter(getActivity(), tempSearchModelList, SearchFragment.this);
+//            rv_search.setAdapter(searchAdapter);
+//            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+//            rv_search.setLayoutManager(layoutManager);
+//            rv_search.setHasFixedSize(true);
+//            rv_search.setNestedScrollingEnabled(false);
+//        }
+//
+//
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+////
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                tempSearchModelList = new ArrayList<>();
+//                if(newText.length()>0){
+//                    for (ProductModel product : productModelList) {
+//                        if (product.getProductName().toLowerCase().contains(newText.toLowerCase())) {
+//                            SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+//                            searchModel.setTagModelList(product.getTags_list());
+//                            tempSearchModelList.add(searchModel);
+//                        } else {
+//                            for (TagModel tag : product.getTags_list()) {
+//                                if (tag.getTagname().toLowerCase().contains(newText.toLowerCase())) {
+//                                    SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+//                                    searchModel.setTagModelList(product.getTags_list());
+//                                    tempSearchModelList.add(searchModel);
+//                                    break; // Exit the loop if a matching tag is found
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    for (StoreModel store : storeModelList) {
+//                        if (store.getStore_name().toLowerCase().contains(newText.toLowerCase()) ||
+//                                store.getStore_category().toLowerCase().contains(newText.toLowerCase())) {
+//                            SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
+//                            tempSearchModelList.add(searchModel);
+//                        }
+//                    }
+//
+//                    searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
+//                    rv_search.setAdapter(searchAdapter);
+//                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+//                    rv_search.setLayoutManager(layoutManager);
+//                } else{
+//                    searchAdapter = new SearchAdapter(getActivity(),tempSearchModelList, SearchFragment.this);
+//                    rv_search.setAdapter(searchAdapter);
+//                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+//                    rv_search.setLayoutManager(layoutManager);
+//
+//                }
+//                return true;
+//            }
+//        });
+
         return root;
+    }
+
+    public String getGetSearchQuery(){
+        return getSearchQuery;
+    }
+
+    public int getUserId(){
+        return userId;
+    }
+
+    public List<ProductModel> getProductModelList(){
+        return productModelList;
+    }
+
+    public List<StoreModel> getStoreModelList(){
+        return storeModelList;
+    }
+
+    public List<SearchModel> getSearchModelList(){
+        return searchModelList;
     }
 
     @Override
@@ -237,6 +318,11 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface{
 
     @Override
     public void onItemClickStoreRec2(int position) {
+
+    }
+
+    @Override
+    public void onItemClickSearch(int position, int recyclerViewId) {
 
     }
 

@@ -399,6 +399,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
     }
 
     @Override
+    public void onItemClickSearch(int position, int recyclerViewId) {
+
+    }
+
+    @Override
     public void onItemClickCategory(int position) {
         showBottomSheetCateg(position);
     }

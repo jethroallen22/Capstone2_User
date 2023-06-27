@@ -7,7 +7,10 @@ public interface RecyclerViewInterface {
     void onItemClickStoreRec(int position);
     void onItemClickStoreRec2(int position);
 
+    void onItemClickSearch(int position, int recyclerViewId);
+
     void onItemClickSearch(int position);
+
     void onItemClickWeather(int position);
     void onItemClickCategory(int position);
 

@@ -153,6 +153,11 @@ public class OrderSummaryActivityFragment extends Fragment implements RecyclerVi
     }
 
     @Override
+    public void onItemClickSearch(int position, int recyclerViewId) {
+
+    }
+
+    @Override
     public void onItemClickSearch(int position) {
 
     }

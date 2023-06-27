@@ -23,23 +23,25 @@ import java.util.List;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
     private final RecyclerViewInterface recyclerViewInterface;
-    Context context;
-    List<SearchModel> list;
+    private final Context context;
+    private final List<SearchModel> list;
+    private final int recyclerViewId;
 
-    public SearchAdapter(Context context, List<SearchModel> list, RecyclerViewInterface recyclerViewInterface) {
+    public SearchAdapter(Context context, List<SearchModel> list, RecyclerViewInterface recyclerViewInterface, int recyclerViewId) {
         this.context = context;
         this.list = list;
         this.recyclerViewInterface = recyclerViewInterface;
+        this.recyclerViewId = recyclerViewId;
     }
 
     @NonNull
     @Override
-    public SearchAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.search_item,parent,false),recyclerViewInterface);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.search_item, parent, false), recyclerViewInterface, recyclerViewId);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d("search", "Name: " + list.get(position).getSearchName());
         if (list.get(position).getTagModelList() != null)
             Log.d("search", "ListSize: " + list.get(position).getTagModelList().size());
@@ -63,7 +65,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 holder.cg_tags.addView(chip);
             }
         }
-
     }
 
     @Override
@@ -75,7 +76,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         ImageView iv_search_item_img;
         TextView tv_search_item_name;
         ChipGroup cg_tags;
-        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
+
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface, int recyclerViewId) {
             super(itemView);
 
             iv_search_item_img = itemView.findViewById(R.id.iv_transac_icon);
@@ -85,12 +87,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("CLICK", "CLICK");
-                    if(recyclerViewInterface != null){
+                    if (recyclerViewInterface != null) {
                         int pos = getAdapterPosition();
-
-                        if(pos != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClickSearch(pos);
+                        if (pos != RecyclerView.NO_POSITION) {
+                            recyclerViewInterface.onItemClickSearch(pos, recyclerViewId);
                         }
                     }
                 }

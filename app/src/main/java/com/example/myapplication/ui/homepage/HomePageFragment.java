@@ -73,6 +73,7 @@ import com.example.myapplication.ui.moods.MixMoodFragment;
 import com.example.myapplication.ui.moods.NewMoodFragment;
 import com.example.myapplication.ui.moods.OldMoodFragment;
 import com.example.myapplication.ui.moods.TrendMoodFragment;
+import com.example.myapplication.ui.search.SearchAllFragment;
 import com.example.myapplication.ui.search.SearchFragment;
 import com.example.myapplication.ui.store.StoreFragment;
 import com.example.myapplication.ui.weather.WeatherFragment;
@@ -391,6 +392,8 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                 bundle.putSerializable("StoreList", (Serializable) home_store_rec_list);
                 bundle.putInt("userId", userId);
                 SearchFragment fragment = new SearchFragment();
+                SearchAllFragment searchAllFragment = new SearchAllFragment();
+                searchAllFragment.setArguments(bundle);
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 return false;
@@ -1011,6 +1014,11 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         StoreFragment fragment = new StoreFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+    }
+
+    @Override
+    public void onItemClickSearch(int position, int recyclerViewId) {
+
     }
 
     @Override

@@ -124,6 +124,11 @@ public class CategoryFragment extends Fragment implements RecyclerViewInterface{
     }
 
     @Override
+    public void onItemClickSearch(int position, int recyclerViewId) {
+
+    }
+
+    @Override
     public void onItemClickSearch(int position) {
 
     }

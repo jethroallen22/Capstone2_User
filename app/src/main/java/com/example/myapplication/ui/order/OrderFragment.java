@@ -442,7 +442,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickVoucher(int pos) {
-        Log.d("tiwtiwtiw", voucher_list.get(pos).getVoucherName());
+
     }
 
     @Override
@@ -529,9 +529,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         TextView tv_voucher_status = view.findViewById(R.id.tv_voucher_status);
         //Button bt_apply_voucher = view.findViewById(R.id.bt_apply_voucher);
         rv_vouchers = view.findViewById(R.id.rv_vouchers);
-        rv_vouchers.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-        rv_vouchers.setHasFixedSize(true);
-        rv_vouchers.setNestedScrollingEnabled(false);
         //JsonArrayRequest for Reading Vouchers DB
         JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -541,7 +538,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         JSONObject jsonObjectVoucher = response.getJSONObject(i);
                         int voucherId = jsonObjectVoucher.getInt("voucherId");
                         String voucherName = jsonObjectVoucher.getString("voucherName");
-                        int storeId = jsonObjectVoucher.getInt("voucherId");
+                        int storeId = jsonObjectVoucher.getInt("storeId");
                         int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
                         int voucherMin = jsonObjectVoucher.getInt("voucherMin");
                         String startDateString = jsonObjectVoucher.getString("startDate");
@@ -558,7 +555,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
 
                        // orderModel.getOrderItemTotalPrice() >= voucherMin
-                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
+                        VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
                             //voucher_list.add(voucherModel);
 
                         //JsonArrayRequest for Reading Vouchers DB
@@ -591,6 +588,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                 }
                                 voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);
                                 rv_vouchers.setAdapter(voucherAdapter);
+                                rv_vouchers.setLayoutManager(new LinearLayoutManager(getContext()));
                                 voucherAdapter.setOnItemClickListener(new VoucherAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(int position) {
@@ -602,6 +600,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                         orderModel.setVoucher_id(voucher_list.get(position).getVoucherId());
                                         voucherDialog.dismiss();
                                     }
+
                                 });
 
                             }

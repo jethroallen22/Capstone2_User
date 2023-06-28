@@ -28,6 +28,12 @@ public class DealsModel implements Parcelable {
         this.storeCategory = storeCategory;
     }
 
+    public DealsModel(int dealsId, int storeId, int percentage){
+        this.dealsId = dealsId;
+        this.storeId = storeId;
+        this.percentage = percentage;
+    }
+
     protected DealsModel(Parcel in) {
         dealsId = in.readInt();
         storeId = in.readInt();

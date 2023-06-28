@@ -241,10 +241,12 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 String storeImage = jsonObjectFoodforyou.getString("storeImage");
                                 String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
                                 String weather = jsonObjectFoodforyou.getString("weather");
+                                int percentage = jsonObjectFoodforyou.getInt("percentage");
 
                                 ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
                                         productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
                                 foodfyModel.setProductRestoCategory(storeCategory);
+                                foodfyModel.setPercentage(percentage);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
                                 tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
 //                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));

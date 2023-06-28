@@ -23,13 +23,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private final RecyclerViewInterface recyclerViewInterface;
     Context context;
     List<OrderModel> list;
-    private OrderItemsAdapter.OnItemClickListener listener;
+    private CartAdapter.OnItemClickListener listener;
 
     public interface OnItemClickListener{
         void onItemClick(int position);
     }
 
-    public void setOnItemClickListener(OrderItemsAdapter.OnItemClickListener clickListener){
+    public void setOnItemClickListener(CartAdapter.OnItemClickListener clickListener){
         listener = clickListener;
     }
 

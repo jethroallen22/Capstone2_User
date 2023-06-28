@@ -20,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.CartAdapter;
 import com.example.myapplication.adapters.OrderItemsAdapter;
@@ -37,7 +38,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class CartFragment extends Fragment implements RecyclerViewInterface {
@@ -94,19 +97,15 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         };
         handler.postDelayed(myRunnable, 1000);
         btn_remove = root.findViewById(R.id.btn_remove);
-        cb_cart_item = root.findViewById(R.id.checkBox2);
+        //cb_cart_item = root.findViewById(R.id.checkBox2);
+        checkBox = root.findViewById(R.id.checkBox2);
         btn_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(checkBox.isChecked()){
                     //
+                    deleteAll();
                 }
-            }
-        });
-        cartAdapter.setOnItemClickListener(new CartAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                deleteProduct(position);
             }
         });
         return root;
@@ -266,6 +265,12 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                  rv_cart.setAdapter(cartAdapter);
                  RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
                  rv_cart.setLayoutManager(layoutManager);
+                 cartAdapter.setOnItemClickListener(new CartAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        deleteProduct(position);
+                    }
+                 });
 
 
             }
@@ -280,7 +285,63 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
 
     }
 
-    public void deleteProduct(){
+    public void deleteProduct(int position) {
+        RequestQueue queue = Singleton.getsInstance(getContext()).getRequestQueue();
 
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "deleteCartAll.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("CartDelete", "inside onResponse");
+                        // Item deleted successfully, now remove it from local data and notify the adapter
+                        order_list.remove(position);
+                        cartAdapter.notifyItemRemoved(position);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Volley Error", String.valueOf(error));
+                // Error occurred, handle it appropriately (e.g., show an error message)
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> paramV = new HashMap<>();
+                paramV.put("idStore", String.valueOf(order_list.get(position).getStore_idstore()));
+                paramV.put("idUser", String.valueOf(order_list.get(position).getUsers_id()));
+                return paramV;
+            }
+        };
+
+        queue.add(stringRequest);
     }
+
+    public void deleteAll() {
+        RequestQueue queue = Singleton.getsInstance(getContext()).getRequestQueue();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "deleteAllCartItems.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String result) {
+                        Log.d("CartDelete", "inside onResponse");
+                        // Item deleted successfully, now remove it from local data and notify the adapter
+                        order_list.clear();
+//                        cartAdapter.notifyItemRemoved(position);
+                        cartAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Volley Error", String.valueOf(error));
+                // Error occurred, handle it appropriately (e.g., show an error message)
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> paramV = new HashMap<>();
+                paramV.put("idUser", String.valueOf(userID));
+                return paramV;
+            }
+        };
+
+        queue.add(stringRequest);
+    }
+
 }

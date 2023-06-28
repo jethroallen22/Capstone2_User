@@ -442,7 +442,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickVoucher(int pos) {
-        Log.d("tiwtiwtiw", voucher_list.get(pos).getVoucherName());
+
     }
 
     @Override
@@ -529,9 +529,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         TextView tv_voucher_status = view.findViewById(R.id.tv_voucher_status);
         //Button bt_apply_voucher = view.findViewById(R.id.bt_apply_voucher);
         rv_vouchers = view.findViewById(R.id.rv_vouchers);
-        rv_vouchers.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-        rv_vouchers.setHasFixedSize(true);
-        rv_vouchers.setNestedScrollingEnabled(false);
         //JsonArrayRequest for Reading Vouchers DB
         JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
             @Override
@@ -556,10 +553,10 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         Date curdate = dateFormat.parse(String.valueOf(curDate));
                         String status = jsonObjectVoucher.getString("status");
 
+
                        // orderModel.getOrderItemTotalPrice() >= voucherMin
                         VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
-                        //voucher_list.add(voucherModel);
-                        Log.d("voucher", "VoucherModel: " + voucherModel);
+                            //voucher_list.add(voucherModel);
 
                         //JsonArrayRequest for Reading Vouchers DB
                         JsonArrayRequest jsonArrayRequestAvailVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiavailvouchers.php", null, new Response.Listener<JSONArray>() {
@@ -585,13 +582,13 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                 if(!voucherAvailed){
                                     if (curdate.before(voucherModel.getEndDate())) {
                                         if(storeId == orderModel.getStore_idstore()){
-                                            voucher_list.add(voucherModel);
+                                        voucher_list.add(voucherModel);
                                         }
                                     }
                                 }
-                                Log.d("voucher", "VoucherSize: " + voucher_list.size());
                                 voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);
                                 rv_vouchers.setAdapter(voucherAdapter);
+                                rv_vouchers.setLayoutManager(new LinearLayoutManager(getContext()));
                                 voucherAdapter.setOnItemClickListener(new VoucherAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(int position) {
@@ -603,6 +600,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                         orderModel.setVoucher_id(voucher_list.get(position).getVoucherId());
                                         voucherDialog.dismiss();
                                     }
+
                                 });
 
                             }

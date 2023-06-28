@@ -11,9 +11,7 @@ import androidx.annotation.NonNull;
 public class DealsModel implements Parcelable {
     int dealsId;
     int storeId;
-    String type;
     int percentage;
-    String convFee;
     String storeImage;
     String storeName;
 
@@ -21,13 +19,10 @@ public class DealsModel implements Parcelable {
 
     float distance;
 
-    public DealsModel(int dealsId, int storeId, String type, int percentage,
-                      String convFee, String storeImage, String storeName, String storeCategory){
+    public DealsModel(int dealsId, int storeId, int percentage, String storeImage, String storeName, String storeCategory){
         this.dealsId = dealsId;
         this.storeId = storeId;
-        this.type = type;
         this.percentage = percentage;
-        this.convFee = convFee;
         this.storeImage = storeImage;
         this.storeName = storeName;
         this.storeCategory = storeCategory;
@@ -36,9 +31,7 @@ public class DealsModel implements Parcelable {
     protected DealsModel(Parcel in) {
         dealsId = in.readInt();
         storeId = in.readInt();
-        type = in.readString();
         percentage = in.readInt();
-        convFee = in.readString();
         storeImage = in.readString();
         storeName = in.readString();
         storeCategory = in.readString();
@@ -72,14 +65,6 @@ public class DealsModel implements Parcelable {
         this.storeId = storeId;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public int getPercentage() {
         return percentage;
     }
@@ -88,13 +73,6 @@ public class DealsModel implements Parcelable {
         this.percentage = percentage;
     }
 
-    public String getConvFee() {
-        return convFee;
-    }
-
-    public void setConvFee(String convFee) {
-        this.convFee = convFee;
-    }
     public String getStoreName() {
         return storeName;
     }
@@ -136,9 +114,7 @@ public class DealsModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeInt(dealsId);
         dest.writeInt(storeId);
-        dest.writeString(type);
         dest.writeInt(percentage);
-        dest.writeString(convFee);
         dest.writeString(storeImage);
         dest.writeString(storeName);
         dest.writeString(storeCategory);

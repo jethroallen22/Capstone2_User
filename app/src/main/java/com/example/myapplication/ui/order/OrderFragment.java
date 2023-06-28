@@ -541,7 +541,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         JSONObject jsonObjectVoucher = response.getJSONObject(i);
                         int voucherId = jsonObjectVoucher.getInt("voucherId");
                         String voucherName = jsonObjectVoucher.getString("voucherName");
-                        int storeId = jsonObjectVoucher.getInt("voucherId");
+                        int storeId = jsonObjectVoucher.getInt("storeId");
                         int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
                         int voucherMin = jsonObjectVoucher.getInt("voucherMin");
                         String startDateString = jsonObjectVoucher.getString("startDate");
@@ -556,10 +556,10 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         Date curdate = dateFormat.parse(String.valueOf(curDate));
                         String status = jsonObjectVoucher.getString("status");
 
-
                        // orderModel.getOrderItemTotalPrice() >= voucherMin
-                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
-                            //voucher_list.add(voucherModel);
+                        VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
+                        //voucher_list.add(voucherModel);
+                        Log.d("voucher", "VoucherModel: " + voucherModel);
 
                         //JsonArrayRequest for Reading Vouchers DB
                         JsonArrayRequest jsonArrayRequestAvailVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiavailvouchers.php", null, new Response.Listener<JSONArray>() {
@@ -585,10 +585,11 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                 if(!voucherAvailed){
                                     if (curdate.before(voucherModel.getEndDate())) {
                                         if(storeId == orderModel.getStore_idstore()){
-                                        voucher_list.add(voucherModel);
+                                            voucher_list.add(voucherModel);
                                         }
                                     }
                                 }
+                                Log.d("voucher", "VoucherSize: " + voucher_list.size());
                                 voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);
                                 rv_vouchers.setAdapter(voucherAdapter);
                                 voucherAdapter.setOnItemClickListener(new VoucherAdapter.OnItemClickListener() {

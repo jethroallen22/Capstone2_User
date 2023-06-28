@@ -18,7 +18,6 @@ public class OrderModel implements Parcelable {
     String store_image;
     String store_name;
     int users_id;
-
     int voucher_id;
     List<OrderItemModel> orderItem_list;
 
@@ -59,6 +58,10 @@ public class OrderModel implements Parcelable {
         this.users_id = users_id;
         this.store_name = store_name;
         this.orderItem_list = orderItem_list;
+    }
+
+    public OrderModel(int store_idstore, int itemlistsize){
+        this.store_idstore = store_idstore;
     }
 
     public OrderModel() {

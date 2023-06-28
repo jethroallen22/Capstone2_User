@@ -29,9 +29,8 @@
 
             <TextView
                 android:id="@+id/tv_voucher"
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:fontFamily="@font/robotobold"
                 android:text="McDonalds - Binondo"
                 android:textSize="16sp"
@@ -42,7 +41,6 @@
                 android:id="@+id/tv_cart_item_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/robotoregular"
                 android:lines="1"

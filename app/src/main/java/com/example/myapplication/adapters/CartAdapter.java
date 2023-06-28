@@ -86,7 +86,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView iv_cart_item_img;
-        CheckBox cb_cart_item;
+//        CheckBox cb_cart_item;
         TextView tv_cart_store_name;
         TextView tv_cart_item_info;
 
@@ -95,7 +95,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             super(itemView);
 
             iv_cart_item_img = itemView.findViewById(R.id.iv_cart_item_img);
-            cb_cart_item = itemView.findViewById(R.id.cb_voucher);
+//            cb_cart_item = itemView.findViewById(R.id.cb_voucher);
             tv_cart_store_name = itemView.findViewById(R.id.tv_voucher);
             tv_cart_item_info = itemView.findViewById(R.id.tv_cart_item_info);
 
@@ -115,12 +115,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         }
 
-        public void removeItem(){
-            if (cb_cart_item.isChecked()){
-                list.remove(getAdapterPosition());
-                //list.notify(getAdapterPosition());
-            }
-        }
+//        public void removeItem(){
+//            if (cb_cart_item.isChecked()){
+//                list.remove(getAdapterPosition());
+//                //list.notify(getAdapterPosition());
+//            }
+//        }
     }
 }
 

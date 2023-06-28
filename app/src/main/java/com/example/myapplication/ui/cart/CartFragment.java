@@ -82,14 +82,13 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         requestQueueStore = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractStoreCartItem();
         handler = new Handler();
+//        extractStoreCartItem();
         myRunnable = new Runnable() {
             @Override
             public void run() {
-                order_list = new ArrayList<>();
-                order_item_list = new ArrayList<>();
                 extractStoreCartItem();
                 //Log.d("OrderStatus", order.getOrderStatus());
-                root.postDelayed(this, 1000);
+                root.postDelayed(this, 5000);
             }
         };
         handler.postDelayed(myRunnable, 1000);
@@ -99,7 +98,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onClick(View v) {
                 if(checkBox.isChecked()){
-
+                    //
                 }
             }
         });
@@ -175,7 +174,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void extractStoreCartItem(){
-
+        order_list = new ArrayList<>();
+        order_item_list = new ArrayList<>();
         JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

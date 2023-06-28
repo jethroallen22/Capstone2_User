@@ -23,6 +23,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private final RecyclerViewInterface recyclerViewInterface;
     Context context;
     List<OrderModel> list;
+    private OrderItemsAdapter.OnItemClickListener listener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OrderItemsAdapter.OnItemClickListener clickListener){
+        listener = clickListener;
+    }
 
     public CartAdapter(Context context, List<OrderModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
@@ -90,6 +99,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         TextView tv_cart_store_name;
         TextView tv_cart_item_info;
 
+        ImageView iv_close_btn2;
+
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
@@ -98,6 +109,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 //            cb_cart_item = itemView.findViewById(R.id.cb_voucher);
             tv_cart_store_name = itemView.findViewById(R.id.tv_voucher);
             tv_cart_item_info = itemView.findViewById(R.id.tv_cart_item_info);
+            iv_close_btn2 = itemView.findViewById(R.id.iv_close_btn2);
+
+            iv_close_btn2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        int pos = getAdapterPosition();
+
+                        if (pos != RecyclerView.NO_POSITION){
+                            listener.onItemClick(pos);
+                        }
+                    }
+                }
+            });
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

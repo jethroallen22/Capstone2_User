@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.CartAdapter;
+import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.databinding.FragmentCartBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
@@ -93,13 +94,19 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         };
         handler.postDelayed(myRunnable, 1000);
         btn_remove = root.findViewById(R.id.btn_remove);
-        cb_cart_item = root.findViewById(R.id.cb_voucher);
+        cb_cart_item = root.findViewById(R.id.checkBox2);
         btn_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(checkBox.isChecked()){
                     //
                 }
+            }
+        });
+        cartAdapter.setOnItemClickListener(new CartAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                deleteProduct(position);
             }
         });
         return root;
@@ -259,6 +266,8 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                  rv_cart.setAdapter(cartAdapter);
                  RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
                  rv_cart.setLayoutManager(layoutManager);
+
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -268,6 +277,10 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         });
         requestQueueCart.add(jsonArrayRequest1);
         Log.d("OUTSIDE LIST", String.valueOf(order_list.size()));
+
+    }
+
+    public void deleteProduct(){
 
     }
 }

@@ -541,6 +541,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         JSONObject jsonObjectVoucher = response.getJSONObject(i);
                         int voucherId = jsonObjectVoucher.getInt("voucherId");
                         String voucherName = jsonObjectVoucher.getString("voucherName");
+                        int storeId = jsonObjectVoucher.getInt("voucherId");
                         int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
                         int voucherMin = jsonObjectVoucher.getInt("voucherMin");
                         String startDateString = jsonObjectVoucher.getString("startDate");
@@ -553,6 +554,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
                         LocalDate curDate = LocalDate.now();
                         Date curdate = dateFormat.parse(String.valueOf(curDate));
+                        String status = jsonObjectVoucher.getString("status");
 
 
                        // orderModel.getOrderItemTotalPrice() >= voucherMin
@@ -582,7 +584,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                 }
                                 if(!voucherAvailed){
                                     if (curdate.before(voucherModel.getEndDate())) {
+                                        if(storeId == orderModel.getStore_idstore()){
                                         voucher_list.add(voucherModel);
+                                        }
                                     }
                                 }
                                 voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);

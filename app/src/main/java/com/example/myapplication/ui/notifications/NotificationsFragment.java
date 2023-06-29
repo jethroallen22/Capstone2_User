@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.models.DealsModel;
 import com.example.myapplication.adapters.NotificationAdapter;
 import com.example.myapplication.databinding.FragmentNotificationsBinding;
 import com.example.myapplication.interfaces.Singleton;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,7 +102,20 @@ public class NotificationsFragment extends Fragment {
 
                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                             NotificationModel notificationModel = new NotificationModel(title, description, type, dateFormat.parse(date));
-                            notification_list.add(notificationModel);
+
+                            Date curDate = new Date();
+                            try {
+                                Date dateTemp = dateFormat.parse(date);
+                                long timeDifference = curDate.getTime() - dateTemp.getTime();
+                                long daysDifference = TimeUnit.MILLISECONDS.toDays(timeDifference);
+
+                                if (daysDifference <= 7) {
+                                    notification_list.add(notificationModel);
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                Log.d("ParseException", e.getMessage());
+                            }
                         }
                     }
                     catch (JSONException e) {
@@ -109,7 +124,8 @@ public class NotificationsFragment extends Fragment {
                         throw new RuntimeException(e);
                     }
                 }
-                Log.d("notif_list", String.valueOf(notification_list.size()));
+                for (NotificationModel notif: notification_list)
+                    Log.d("notif", notif.getDate() + " " + notif.getTitle());
                 notificationAdapter = new NotificationAdapter(getActivity(),notification_list);
                 rv_notification.setAdapter(notificationAdapter);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());

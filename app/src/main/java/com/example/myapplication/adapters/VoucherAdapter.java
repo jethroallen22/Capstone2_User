@@ -13,26 +13,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-
 import com.example.myapplication.activities.models.VoucherModel;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHolder> {
 
-    Context context;
-    List<VoucherModel> list;
+    private Context context;
+    private List<VoucherModel> list;
     private final RecyclerViewInterface recyclerViewInterface;
-
     private OnItemClickListener listener;
+    private List<Integer> clickedPositions; // List to store clicked positions
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onItemClick(int position);
     }
 
-    public void setOnItemClickListener(OnItemClickListener clickListener){
+    public void setOnItemClickListener(OnItemClickListener clickListener) {
         listener = clickListener;
     }
 
@@ -40,18 +39,25 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
         this.context = context;
         this.list = list;
         this.recyclerViewInterface = recyclerViewInterface;
+        this.clickedPositions = new ArrayList<>(); // Initialize the clicked positions list
     }
 
     @NonNull
     @Override
-    public VoucherAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new VoucherAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.voucher_item,parent,false),recyclerViewInterface);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.voucher_item, parent, false), recyclerViewInterface);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VoucherAdapter.ViewHolder holder, int position) {
-        holder.tv_voucher.setText("Get " + list.get(position).getVoucherAmount() +" Php Discount, for a Minimum Purchase of " + list.get(position).getVoucherMin() +
-                " Php!");
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.tv_voucher.setText("Get " + list.get(position).getVoucherAmount() + " Php Discount, for a Minimum Purchase of " + list.get(position).getVoucherMin() + " Php!");
+
+        // Disable button if the position is in the clickedPositions list
+        if (clickedPositions.contains(position)) {
+            holder.bt_claim.setEnabled(false);
+        } else {
+            holder.bt_claim.setEnabled(true);
+        }
     }
 
     @Override
@@ -61,12 +67,11 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tv_voucher;
-        LinearLayout ll_voucher;
+        private TextView tv_voucher;
+        private LinearLayout ll_voucher;
+        private Button bt_claim;
 
-        Button bt_claim;
-
-        public ViewHolder(@NonNull View itemView,RecyclerViewInterface recyclerViewInterface) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             tv_voucher = itemView.findViewById(R.id.tv_voucher2);
@@ -76,30 +81,32 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
             bt_claim.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (listener != null){
+                    if (listener != null) {
                         int pos = getAdapterPosition();
 
-                        if (pos != RecyclerView.NO_POSITION){
-                            listener.onItemClick(pos);
+                        if (pos != RecyclerView.NO_POSITION) {
+                            if (!clickedPositions.contains(pos)) { // Check if position is not already clicked
+                                clickedPositions.add(pos); // Add clicked position to the list
+                                bt_claim.setEnabled(false); // Disable the button
+                                listener.onItemClick(pos);
+                            }
                         }
                     }
                 }
             });
 
-            itemView.setOnClickListener(new View.OnClickListener(){
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (recyclerViewInterface != null){
+                    if (recyclerViewInterface != null) {
                         int pos = getAdapterPosition();
 
-                        if (pos != RecyclerView.NO_POSITION){
+                        if (pos != RecyclerView.NO_POSITION) {
                             recyclerViewInterface.onItemClickVoucher(pos);
                         }
                     }
                 }
             });
-
         }
-
     }
 }

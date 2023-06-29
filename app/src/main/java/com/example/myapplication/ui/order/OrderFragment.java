@@ -123,7 +123,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         radio_wallet = root.findViewById(R.id.radio_wallet);
         tv_voucher_order = root.findViewById(R.id.tv_voucher_order);
         Bundle bundle = this.getArguments();
-
+        voucher_list = new ArrayList<>();
         if (bundle != null){
             orderModel = bundle.getParcelable("order");
             wallet = bundle.getFloat("wallet");
@@ -588,112 +588,136 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         BottomSheetDialog voucherDialog = new BottomSheetDialog(getActivity());
         voucherDialog.setContentView(view);
 
-        voucher_list = new ArrayList<>();
+
 
 
         TextView tv_voucher_status = view.findViewById(R.id.tv_voucher_status);
         //Button bt_apply_voucher = view.findViewById(R.id.bt_apply_voucher);
         rv_vouchers = view.findViewById(R.id.rv_vouchers);
         //JsonArrayRequest for Reading Vouchers DB
-        JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Log.d("voucher", "Voucher: " + response);
-                for (int i=0; i < response.length(); i++){
-                    try {
-                        JSONObject jsonObjectVoucher = response.getJSONObject(i);
-                        int voucherId = jsonObjectVoucher.getInt("voucherId");
-                        String voucherName = jsonObjectVoucher.getString("voucherName");
-                        int storeId = jsonObjectVoucher.getInt("storeId");
-                        int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
-                        int voucherMin = jsonObjectVoucher.getInt("voucherMin");
-                        String startDateString = jsonObjectVoucher.getString("startDate");
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        Date startDate = dateFormat.parse(startDateString);
+        if(voucher_list.size() == 0) {
+            voucher_list = new ArrayList<>();
+            JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apivouchers.php", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Log.d("voucher", "Voucher: " + response);
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            JSONObject jsonObjectVoucher = response.getJSONObject(i);
+                            int voucherId = jsonObjectVoucher.getInt("voucherId");
+                            String voucherName = jsonObjectVoucher.getString("voucherName");
+                            int storeId = jsonObjectVoucher.getInt("storeId");
+                            int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
+                            int voucherMin = jsonObjectVoucher.getInt("voucherMin");
+                            String startDateString = jsonObjectVoucher.getString("startDate");
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date startDate = dateFormat.parse(startDateString);
 
-                        String endDateString = jsonObjectVoucher.getString("endDate");
-                        SimpleDateFormat dateFormatend = new SimpleDateFormat("yyyy-MM-dd");
-                        Date endDate = dateFormatend.parse(endDateString);
+                            String endDateString = jsonObjectVoucher.getString("endDate");
+                            SimpleDateFormat dateFormatend = new SimpleDateFormat("yyyy-MM-dd");
+                            Date endDate = dateFormatend.parse(endDateString);
 
-                        LocalDate curDate = LocalDate.now();
-                        Date curdate = dateFormat.parse(String.valueOf(curDate));
-                        String status = jsonObjectVoucher.getString("status");
+                            LocalDate curDate = LocalDate.now();
+                            Date curdate = dateFormat.parse(String.valueOf(curDate));
+                            String status = jsonObjectVoucher.getString("status");
 
 
-                       // orderModel.getOrderItemTotalPrice() >= voucherMin
-                        VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
+                            // orderModel.getOrderItemTotalPrice() >= voucherMin
+                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin, startDate, endDate);
                             //voucher_list.add(voucherModel);
 
-                        //JsonArrayRequest for Reading Vouchers DB
-                        JsonArrayRequest jsonArrayRequestAvailVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiavailvouchers.php", null, new Response.Listener<JSONArray>() {
-                            @Override
-                            public void onResponse(JSONArray response) {
-                                Log.d("voucher", "AvailVoucher: " + response);
-                                boolean voucherAvailed = false;
-                                for (int i=0; i < response.length(); i++){
-                                    try {
-                                        JSONObject jsonObjectAvailVoucher = response.getJSONObject(i);
-                                        int availVoucherId = jsonObjectAvailVoucher.getInt("availVoucherId");
-                                        int availVoucherId2 = jsonObjectAvailVoucher.getInt("voucherId");
-                                        int availUserId = jsonObjectAvailVoucher.getInt("userId");
+                            //JsonArrayRequest for Reading Vouchers DB
+                            JsonArrayRequest jsonArrayRequestAvailVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apiavailvouchers.php", null, new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    Log.d("voucher", "AvailVoucher: " + response);
+                                    boolean voucherAvailed = false;
+                                    for (int i = 0; i < response.length(); i++) {
+                                        try {
+                                            JSONObject jsonObjectAvailVoucher = response.getJSONObject(i);
+                                            int availVoucherId = jsonObjectAvailVoucher.getInt("availVoucherId");
+                                            int availVoucherId2 = jsonObjectAvailVoucher.getInt("voucherId");
+                                            int availUserId = jsonObjectAvailVoucher.getInt("userId");
 
-                                        if(availUserId == orderModel.getUsers_id() && voucherModel.getVoucherId() == availVoucherId2){
-                                            voucherAvailed = true;
-                                            break;
-                                        }
+                                            if (availUserId == orderModel.getUsers_id() && voucherModel.getVoucherId() == availVoucherId2) {
+                                                voucherAvailed = true;
+                                                break;
+                                            }
 
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                if(!voucherAvailed){
-                                    if (curdate.before(voucherModel.getEndDate())) {
-                                        if(storeId == orderModel.getStore_idstore()){
-                                        voucher_list.add(voucherModel);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
                                         }
                                     }
-                                }
-                                voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);
-                                rv_vouchers.setAdapter(voucherAdapter);
-                                rv_vouchers.setLayoutManager(new LinearLayoutManager(getContext()));
-                                voucherAdapter.setOnItemClickListener(new VoucherAdapter.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(int position) {
-                                        Log.d("witwiw", voucher_list.get(position).getVoucherName());
-                                        float tempTotalPrice;
-                                        tempTotalPrice = orderModel.getOrderItemTotalPrice()-voucher_list.get(position).getVoucherAmount();
-                                        tv_total_price.setText("P"+tempTotalPrice);
-                                        orderModel.setOrderItemTotalPrice(tempTotalPrice);
-                                        orderModel.setVoucher_id(voucher_list.get(position).getVoucherId());
-                                        voucherDialog.dismiss();
+                                    if (!voucherAvailed) {
+                                        if (curdate.before(voucherModel.getEndDate())) {
+                                            if (storeId == orderModel.getStore_idstore()) {
+                                                voucher_list.add(voucherModel);
+                                            }
+                                        }
                                     }
+                                    voucherAdapter = new VoucherAdapter(getActivity(), voucher_list, OrderFragment.this);
+                                    rv_vouchers.setAdapter(voucherAdapter);
+                                    rv_vouchers.setLayoutManager(new LinearLayoutManager(getContext()));
+                                    voucherAdapter.setOnItemClickListener(new VoucherAdapter.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(int position) {
+                                            Log.d("witwiw", voucher_list.get(position).getVoucherName());
+                                            float tempTotalPrice;
+                                            tempTotalPrice = orderModel.getOrderItemTotalPrice() - voucher_list.get(position).getVoucherAmount();
+                                            tv_total_price.setText("P" + tempTotalPrice);
+                                            orderModel.setOrderItemTotalPrice(tempTotalPrice);
+                                            orderModel.setVoucher_id(voucher_list.get(position).getVoucherId());
+                                            voucher_list.remove(position);
+                                            voucherAdapter.notifyItemRemoved(position);
+                                            voucherDialog.dismiss();
+                                        }
 
-                                });
+                                    });
 
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
 
-                            }
-                        });
-                        requestQueueAvailVoucher.add(jsonArrayRequestAvailVouchers);
-                        //
+                                }
+                            });
+                            requestQueueAvailVoucher.add(jsonArrayRequestAvailVouchers);
+                            //
 
-                    } catch (JSONException | ParseException e) {
-                        e.printStackTrace();
+                        } catch (JSONException | ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    Log.d("sizelist", String.valueOf(voucher_list.size()));
+
                 }
-                Log.d("sizelist", String.valueOf(voucher_list.size()));
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                }
+            });
+            requestQueueVoucher.add(jsonArrayRequestVouchers);
+        } else {
+            voucherAdapter = new VoucherAdapter(getActivity(), voucher_list, OrderFragment.this);
+            rv_vouchers.setAdapter(voucherAdapter);
+            rv_vouchers.setLayoutManager(new LinearLayoutManager(getContext()));
+            voucherAdapter.setOnItemClickListener(new VoucherAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    Log.d("witwiw", voucher_list.get(position).getVoucherName());
+                    float tempTotalPrice;
+                    tempTotalPrice = orderModel.getOrderItemTotalPrice() - voucher_list.get(position).getVoucherAmount();
+                    tv_total_price.setText("P" + tempTotalPrice);
+                    orderModel.setOrderItemTotalPrice(tempTotalPrice);
+                    orderModel.setVoucher_id(voucher_list.get(position).getVoucherId());
+                    voucher_list.remove(position);
+                    voucherAdapter.notifyItemRemoved(position);
+                    voucherDialog.dismiss();
+                }
 
-            }
-        });
-        requestQueueVoucher.add(jsonArrayRequestVouchers);
+            });
+        }
         //
 
 

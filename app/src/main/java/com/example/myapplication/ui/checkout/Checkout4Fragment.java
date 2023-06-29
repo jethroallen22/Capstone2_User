@@ -80,7 +80,9 @@ public class Checkout4Fragment extends Fragment {
         orderModelList = new ArrayList<>();
         requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
 
+        Log.d("checkout", String.valueOf(orderModel.getOrderItemTotalPrice()));
         total.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
+        Log.d("checkout", total.getText().toString());
         amount.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
 
 

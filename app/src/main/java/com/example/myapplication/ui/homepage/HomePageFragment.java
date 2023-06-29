@@ -727,83 +727,83 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         HomePageFragment homePageFragment = this;
 
         tagModelList = new ArrayList<>();
-//        JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                for (int i = 0; i < response.length(); i++) {
-//                    try {
-//                        JSONObject jsonObjectTag = response.getJSONObject(i);
-//                        int idProduct = jsonObjectTag.getInt("idProduct");
-//                        int idStore = jsonObjectTag.getInt("idStore");
-//                        String tagname = jsonObjectTag.getString("tagname");
-//                        tagModelList.add(new TagModel(idProduct, idStore, tagname));
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifoodfilter.php", null, new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        for (int i=0; i < response.length(); i++){
-//                            try {
-//                                JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
-//                                int idProduct = jsonObjectFoodforyou.getInt("idProduct");
-//                                int idStore = jsonObjectFoodforyou.getInt("idStore");
-//                                String productName = jsonObjectFoodforyou.getString("productName");
-//                                String productDescription = jsonObjectFoodforyou.getString("productDescription");
-//                                float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
-//                                String productImage = jsonObjectFoodforyou.getString("productImage");
-//                                String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
-//                                String productTag = jsonObjectFoodforyou.getString("productTag");
-//                                int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
-//                                String storeName = jsonObjectFoodforyou.getString("storeName");
-//                                String storeImage = jsonObjectFoodforyou.getString("storeImage");
-//                                String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
-//                                String weather = jsonObjectFoodforyou.getString("weather");
-//
-//                                ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-//                                        productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
-//                                SearchModel searchModel = new SearchModel(productImage, productName, productTag);
-//                                foodfyModel.setProductRestoCategory(storeCategory);
-//                                List<TagModel> tempTagModelList = new ArrayList<>();
-//                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-////                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
-//                                for (TagModel tagModel: tagModelList){
-//                                    if(tagModel.getIdProduct() == idProduct){
-////                                        tagModel.setMatch(true);
-//                                        tempTagModelList.add(tagModel);
-//                                    }
-//                                }
-//                                foodfyModel.setTags_list(tempTagModelList);
-//                                searchModel.setTagModelList(tempTagModelList);
-//                                Log.d("search", "TagSize: " + searchModel.getTagModelList().size());
-//                                searchModelList.add(searchModel);
-//                                food_for_you_list.add(foodfyModel);
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            Collections.shuffle(food_for_you_list);
-//                            homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homePageFragment);
-//                            rv_food_for_you.setAdapter(homeFoodForYouAdapter);
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                    }
-//                });
-//                requestQueueFood.add(jsonArrayRequestFoodforyou);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueueTag.add(jsonArrayRequestTag);
+        JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObjectTag = response.getJSONObject(i);
+                        int idProduct = jsonObjectTag.getInt("idProduct");
+                        int idStore = jsonObjectTag.getInt("idStore");
+                        String tagname = jsonObjectTag.getString("tagname");
+                        tagModelList.add(new TagModel(idProduct, idStore, tagname));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                JsonArrayRequest jsonArrayRequestFoodforyou= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifoodfilter.php", null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for (int i=0; i < response.length(); i++){
+                            try {
+                                JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                                int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                                int idStore = jsonObjectFoodforyou.getInt("idStore");
+                                String productName = jsonObjectFoodforyou.getString("productName");
+                                String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                                float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                                String productImage = jsonObjectFoodforyou.getString("productImage");
+                                String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                                String productTag = jsonObjectFoodforyou.getString("productTag");
+                                int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                                String storeName = jsonObjectFoodforyou.getString("storeName");
+                                String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                                String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
+                                String weather = jsonObjectFoodforyou.getString("weather");
+
+                                ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                        productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                SearchModel searchModel = new SearchModel(productImage, productName, productTag);
+                                foodfyModel.setProductRestoCategory(storeCategory);
+                                List<TagModel> tempTagModelList = new ArrayList<>();
+                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+//                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+                                for (TagModel tagModel: tagModelList){
+                                    if(tagModel.getIdProduct() == idProduct){
+//                                        tagModel.setMatch(true);
+                                        tempTagModelList.add(tagModel);
+                                    }
+                                }
+                                foodfyModel.setTags_list(tempTagModelList);
+                                searchModel.setTagModelList(tempTagModelList);
+                                Log.d("search", "TagSize: " + searchModel.getTagModelList().size());
+                                searchModelList.add(searchModel);
+                                food_for_you_list.add(foodfyModel);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            Collections.shuffle(food_for_you_list);
+                            homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homePageFragment);
+                            rv_food_for_you.setAdapter(homeFoodForYouAdapter);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+                requestQueueFood.add(jsonArrayRequestFoodforyou);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueTag.add(jsonArrayRequestTag);
 
         ////////////////////////////////////////////////////////////////////////
         List<ProductModel> productModelList = new ArrayList<>();

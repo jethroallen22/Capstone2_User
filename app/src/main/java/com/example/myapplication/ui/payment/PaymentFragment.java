@@ -54,7 +54,6 @@ public class PaymentFragment extends Fragment {
     RequestQueue requestQueue, requestQueueBalance;
     int userId = 0;
     double tmpWallet = 0;
-    WalletModel walletModel;
     List<WalletModel> walletModelList;
     private boolean stopExecution = false;
     private Handler handler;
@@ -144,7 +143,6 @@ public class PaymentFragment extends Fragment {
     }
 
     public void getAvailBalance(){
-        walletModel = new WalletModel(0,0);
         JsonArrayRequest jsonArrayRequestBalance = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apiwalletget.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

@@ -11,34 +11,41 @@ import androidx.annotation.NonNull;
 public class DealsModel implements Parcelable {
     int dealsId;
     int storeId;
-    String type;
     int percentage;
-    String convFee;
     String storeImage;
     String storeName;
-
+    int productId;
     String storeCategory;
 
     float distance;
 
-    public DealsModel(int dealsId, int storeId, String type, int percentage,
-                      String convFee, String storeImage, String storeName, String storeCategory){
+    public DealsModel(int dealsId, int storeId, int percentage, String storeImage, String storeName, String storeCategory){
         this.dealsId = dealsId;
         this.storeId = storeId;
-        this.type = type;
         this.percentage = percentage;
-        this.convFee = convFee;
         this.storeImage = storeImage;
         this.storeName = storeName;
         this.storeCategory = storeCategory;
     }
 
+    public DealsModel(int dealsId, int storeId, int percentage){
+        this.dealsId = dealsId;
+        this.storeId = storeId;
+        this.percentage = percentage;
+    }
+
+    public DealsModel(int dealsId, int storeId, int productId, int percentage){
+        this.dealsId = dealsId;
+        this.storeId = storeId;
+        this.productId = productId;
+        this.percentage = percentage;
+    }
+
     protected DealsModel(Parcel in) {
         dealsId = in.readInt();
         storeId = in.readInt();
-        type = in.readString();
+        productId = in.readInt();
         percentage = in.readInt();
-        convFee = in.readString();
         storeImage = in.readString();
         storeName = in.readString();
         storeCategory = in.readString();
@@ -72,14 +79,6 @@ public class DealsModel implements Parcelable {
         this.storeId = storeId;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public int getPercentage() {
         return percentage;
     }
@@ -88,13 +87,6 @@ public class DealsModel implements Parcelable {
         this.percentage = percentage;
     }
 
-    public String getConvFee() {
-        return convFee;
-    }
-
-    public void setConvFee(String convFee) {
-        this.convFee = convFee;
-    }
     public String getStoreName() {
         return storeName;
     }
@@ -111,7 +103,13 @@ public class DealsModel implements Parcelable {
         this.distance = distance;
     }
 
+    public int getProductId() {
+        return productId;
+    }
 
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
 
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(storeImage, Base64.DEFAULT);
@@ -136,9 +134,8 @@ public class DealsModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeInt(dealsId);
         dest.writeInt(storeId);
-        dest.writeString(type);
+        dest.writeInt(productId);
         dest.writeInt(percentage);
-        dest.writeString(convFee);
         dest.writeString(storeImage);
         dest.writeString(storeName);
         dest.writeString(storeCategory);

@@ -204,12 +204,16 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
                         }
+                        Log.d(TAG, "============================================");
                         Log.d(TAG, "TagProduct: " + tagModelList.size());
-                        for (TagModel tagProduct: tagModelList)
+                        for (TagModel tagProduct: tagModelList) {
                             Log.d(TAG, "TagProduct: " + tagProduct.getTagname());
+                        }
                         JsonArrayRequest jsonArrayRequestOuter= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifoodfilter.php", null, new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
+                                Log.d(TAG, "============================================");
+                                Log.d(TAG, String.valueOf(response));
                                 for (int i=0; i < response.length(); i++){
                                     try {
                                         JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
@@ -226,10 +230,12 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
                                         String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
                                         String weather = jsonObjectFoodforyou.getString("weather");
+                                        int percentage = jsonObjectFoodforyou.getInt("percentage");
 
                                         ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
                                                 productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
                                         foodfyModel.setProductRestoCategory(storeCategory);
+                                        foodfyModel.setPercentage(percentage);
                                         List<TagModel> tempTagModelList = new ArrayList<>();
 //                                        tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
                                         //tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
@@ -246,15 +252,19 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                         e.printStackTrace();
                                     }
                                 }
+                                Log.d(TAG, "============================================");
+                                Log.d(TAG, String.valueOf("ProductFullSize: " + food_for_you_list.size()));
                                 List<ProductModel> temp = new ArrayList<>();
-                                boolean isMatch = false;
                                 for (ProductModel productModel: food_for_you_list) {
+                                    boolean isMatch = false;
+                                    Log.d(TAG, "============================================");
+                                    Log.d(TAG, "ProductModel: " + productModel.getProductName());
                                     for (TagModel tagModel : productModel.getTags_list()) {
                                         for (String tag : tag_list) {
                                             if (tagModel.getTagname().equalsIgnoreCase(tag)) {
                                                 tagModel.setMatch(true);
                                                 isMatch = true;
-                                                Log.d("pasok", productModel.getProductName());
+                                                Log.d(TAG, productModel.getProductName());
                                             }
                                         }
                                     }
@@ -263,6 +273,7 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                         isMatch = false;
                                     }
                                 }
+                                Log.d(TAG, "============================================");
                                 Log.d(TAG, "Product: " + temp.size());
                                 for (ProductModel productModel: temp)
                                     Log.d(TAG, "Product: " + productModel.getProductName());

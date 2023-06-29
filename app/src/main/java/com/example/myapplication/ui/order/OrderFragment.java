@@ -35,7 +35,10 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.models.DealsModel;
+import com.example.myapplication.activities.models.OrderItemModel;
 import com.example.myapplication.activities.models.WalletModel;
+import com.example.myapplication.adapters.HomeDealsAdapter;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.adapters.VoucherAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
@@ -54,6 +57,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -61,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class OrderFragment extends Fragment implements RecyclerViewInterface {
@@ -138,20 +143,10 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         handler.postDelayed(myRunnable, 1000);
         btn_place_order.setEnabled(false);
         rv_order_items = root.findViewById(R.id.rv_order_items);
-        orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),this);
-        rv_order_items.setAdapter(orderItemsAdapter);
-        rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-        rv_order_items.setHasFixedSize(true);
-        rv_order_items.setNestedScrollingEnabled(false);
-        tv_total_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
         requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
+        getDiscount();
 
-        orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                deleteProduct(position);
-            }
-        });
+
 
         rg_payment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -201,6 +196,76 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         });
 
         return root;
+    }
+
+    public void getDiscount(){
+        RecyclerViewInterface recyclerViewInterface = OrderFragment.this;
+        JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("DealsResponse", String.valueOf(response));
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        int dealId = jsonObject.getInt("dealsId");
+                        int storeId = jsonObject.getInt("storeId");
+                        int percentage = jsonObject.getInt("percentage");
+                        int productId = jsonObject.getInt("productId");
+                        String startDate = jsonObject.getString("startDate");
+                        String endDate = jsonObject.getString("endDate");
+                        DealsModel deal = new DealsModel(dealId, storeId, percentage);
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        Date currentDate = new Date(); // Current date
+                        try {
+                            Date startDateTemp = dateFormat.parse(startDate);
+                            Date endDateTemp = dateFormat.parse(endDate);
+
+                            if (currentDate.after(startDateTemp)) {
+                                if (currentDate.before(endDateTemp)) {
+                                    float temp = 0;
+                                    for (OrderItemModel orderItemModel: orderModel.getOrderItem_list()){
+                                        Log.d("OrderFragment", "ReadDealProdID: " + productId + " OrderItemIdProd: " + orderItemModel.getIdProduct());
+                                        if(orderItemModel.getIdProduct() == productId) {
+                                            orderItemModel.setTotalPrice(orderItemModel.getTotalPrice() - ((orderItemModel.getTotalPrice() * percentage) / 100));
+                                        }
+                                        temp += orderItemModel.getTotalPrice();
+                                    }
+                                    orderModel.setOrderItemTotalPrice(temp);
+                                } else {
+                                    Log.d("InvalidDeal", deal.getStoreName() + ": Date is after end date");
+                                }
+                            } else {
+                                Log.d("InvalidDeal", deal.getStoreName() + ": Date is before start date");
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            Log.d("ParseException", e.getMessage());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d("JSONException", e.getMessage());
+                    }
+                }
+                orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),recyclerViewInterface);
+                rv_order_items.setAdapter(orderItemsAdapter);
+                rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+                rv_order_items.setHasFixedSize(true);
+                rv_order_items.setNestedScrollingEnabled(false);
+                tv_total_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
+                orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        deleteProduct(position);
+                    }
+                });
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.d("VolleyError", error.getMessage());
+            }
+        });
+        requestQueueOrder.add(jsonArrayRequestDeals);
     }
 
     public void getAvailBalance(){
@@ -442,7 +507,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void onItemClickVoucher(int pos) {
-        Log.d("tiwtiwtiw", voucher_list.get(pos).getVoucherName());
+
     }
 
     @Override
@@ -489,6 +554,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                     @Override
                     public void onResponse(String result) {
                         Log.d("On Res", "inside on res");
+                        orderModel.getOrderItem_list().remove(position);
+                        orderItemsAdapter.notifyItemRemoved(position);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -503,8 +570,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 Log.d("ProductNameDelete", "ID: " + orderModel.getOrderItem_list().get(position).getIdProduct() + " " + orderModel.getOrderItem_list().get(position).getProductName());
                 paramV.put("idProduct", String.valueOf(orderModel.getOrderItem_list().get(position).getIdProduct()));
                 paramV.put("idUser", String.valueOf(orderModel.getUsers_id()));
-                orderModel.getOrderItem_list().remove(position);
-                orderItemsAdapter.notifyItemRemoved(position);
                 return paramV;
             }
         };
@@ -529,18 +594,17 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         TextView tv_voucher_status = view.findViewById(R.id.tv_voucher_status);
         //Button bt_apply_voucher = view.findViewById(R.id.bt_apply_voucher);
         rv_vouchers = view.findViewById(R.id.rv_vouchers);
-        rv_vouchers.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-        rv_vouchers.setHasFixedSize(true);
-        rv_vouchers.setNestedScrollingEnabled(false);
         //JsonArrayRequest for Reading Vouchers DB
         JsonArrayRequest jsonArrayRequestVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apivouchers.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("voucher", "Voucher: " + response);
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObjectVoucher = response.getJSONObject(i);
                         int voucherId = jsonObjectVoucher.getInt("voucherId");
                         String voucherName = jsonObjectVoucher.getString("voucherName");
+                        int storeId = jsonObjectVoucher.getInt("storeId");
                         int voucherAmount = jsonObjectVoucher.getInt("voucherAmount");
                         int voucherMin = jsonObjectVoucher.getInt("voucherMin");
                         String startDateString = jsonObjectVoucher.getString("startDate");
@@ -553,16 +617,18 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
                         LocalDate curDate = LocalDate.now();
                         Date curdate = dateFormat.parse(String.valueOf(curDate));
+                        String status = jsonObjectVoucher.getString("status");
 
 
                        // orderModel.getOrderItemTotalPrice() >= voucherMin
-                            VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
+                        VoucherModel voucherModel = new VoucherModel(voucherId, voucherName, voucherAmount, voucherMin,startDate,endDate);
                             //voucher_list.add(voucherModel);
 
                         //JsonArrayRequest for Reading Vouchers DB
                         JsonArrayRequest jsonArrayRequestAvailVouchers = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apiavailvouchers.php", null, new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
+                                Log.d("voucher", "AvailVoucher: " + response);
                                 boolean voucherAvailed = false;
                                 for (int i=0; i < response.length(); i++){
                                     try {
@@ -582,11 +648,14 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                 }
                                 if(!voucherAvailed){
                                     if (curdate.before(voucherModel.getEndDate())) {
+                                        if(storeId == orderModel.getStore_idstore()){
                                         voucher_list.add(voucherModel);
+                                        }
                                     }
                                 }
                                 voucherAdapter = new VoucherAdapter(getActivity(), voucher_list,OrderFragment.this);
                                 rv_vouchers.setAdapter(voucherAdapter);
+                                rv_vouchers.setLayoutManager(new LinearLayoutManager(getContext()));
                                 voucherAdapter.setOnItemClickListener(new VoucherAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(int position) {
@@ -598,6 +667,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                         orderModel.setVoucher_id(voucher_list.get(position).getVoucherId());
                                         voucherDialog.dismiss();
                                     }
+
                                 });
 
                             }

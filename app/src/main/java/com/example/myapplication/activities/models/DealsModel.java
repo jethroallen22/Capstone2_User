@@ -14,7 +14,7 @@ public class DealsModel implements Parcelable {
     int percentage;
     String storeImage;
     String storeName;
-
+    int productId;
     String storeCategory;
 
     float distance;
@@ -34,9 +34,17 @@ public class DealsModel implements Parcelable {
         this.percentage = percentage;
     }
 
+    public DealsModel(int dealsId, int storeId, int productId, int percentage){
+        this.dealsId = dealsId;
+        this.storeId = storeId;
+        this.productId = productId;
+        this.percentage = percentage;
+    }
+
     protected DealsModel(Parcel in) {
         dealsId = in.readInt();
         storeId = in.readInt();
+        productId = in.readInt();
         percentage = in.readInt();
         storeImage = in.readString();
         storeName = in.readString();
@@ -95,7 +103,13 @@ public class DealsModel implements Parcelable {
         this.distance = distance;
     }
 
+    public int getProductId() {
+        return productId;
+    }
 
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
 
     public Bitmap getBitmapImage(){
         byte[] byteArray = Base64.decode(storeImage, Base64.DEFAULT);
@@ -120,6 +134,7 @@ public class DealsModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeInt(dealsId);
         dest.writeInt(storeId);
+        dest.writeInt(productId);
         dest.writeInt(percentage);
         dest.writeString(storeImage);
         dest.writeString(storeName);

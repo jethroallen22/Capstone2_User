@@ -280,7 +280,6 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
                         }
-
 //                        if(dealsModel != null) {
 //                            for (int i = 0; i < food_for_you_list.size(); i++) {
 //                                food_for_you_list.get(i).setPercentage(dealsModel.getPercentage());

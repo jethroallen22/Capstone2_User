@@ -50,7 +50,7 @@ public class Preferences extends AppCompatActivity {
     private RequestQueue requestQueue1, requestQueuepref, requestQueuetags;
     List<UserModel> userList;
 
-    ChipGroup chipGroup, cg_temperature, cg_mealtime, cg_noodles, cg_beverages, cg_cuisine, cg_meat, cg_miscellaneous;
+    ChipGroup chipGroup, cg_temperature, cg_mealtime, cg_noodles, cg_beverages, cg_cuisine, cg_meat, cg_miscellaneous, cg_taste;
 
     private static String JSON_URL;
     private IPModel ipModel;
@@ -61,7 +61,7 @@ public class Preferences extends AppCompatActivity {
 
     private View v;
 
-    private List<String> chips, tags, chp_temp_list, chp_mealtime_list, chp_noodle_list, chp_beverages_list, chp_cuisine_list, chp_meat_list, chp_misc_list;
+    private List<String> chips, tags, chp_temp_list, chp_mealtime_list, chp_noodle_list, chp_beverages_list, chp_cuisine_list, chp_meat_list, chp_misc_list, chp_taste_list;
     Context context = this;
 
 
@@ -97,6 +97,7 @@ public class Preferences extends AppCompatActivity {
         cg_cuisine = findViewById(R.id.cg_cuisine);
         cg_meat = findViewById(R.id.cg_meat);
         cg_miscellaneous = findViewById(R.id.cg_miscellaneous);
+        cg_taste = findViewById(R.id.cg_taste);
 
         imageView3 = findViewById(R.id.imageView3);
         textViewPref = findViewById(R.id.textViewPref);
@@ -114,14 +115,16 @@ public class Preferences extends AppCompatActivity {
         chp_cuisine_list = new ArrayList<>();
         chp_meat_list = new ArrayList<>();
         chp_misc_list = new ArrayList<>();
+        chp_taste_list = new ArrayList<>();
 
         chp_temp_list = Arrays.asList("Hot", "Cold");
         chp_mealtime_list = Arrays.asList("Breakfast", "Lunch", "Dessert");
         chp_noodle_list = Arrays.asList("Noodles", "Pasta", "Ramen");
-        chp_beverages_list = Arrays.asList("Beverages");
+        chp_beverages_list = Arrays.asList("Beverages", "Juice", "Soda", "Milktea");
         chp_cuisine_list = Arrays.asList("American", "Chinese", "Filipino", "Japanese", "Thai");
-        chp_meat_list = Arrays.asList("Pork", "Beef", "Fish");
-        chp_misc_list = Arrays.asList("Pizza");
+        chp_meat_list = Arrays.asList("Pork", "Chicken", "Beef", "Fish", "Seafood");
+        chp_misc_list = Arrays.asList("Pizza", "Salad", "Fast Food", "Bread", "Quick bites", "Easy to eat", "Heavy meal", "Baked");
+        chp_taste_list = Arrays.asList("Crispy", "Spicy", "Sweet");
 
         //ChipGroup Function
         //starts here
@@ -592,6 +595,85 @@ public class Preferences extends AppCompatActivity {
                 cg_meat.addView(chip);
                 cg_meat.setVisibility(View.VISIBLE);
                 cg_meat.getLayoutParams();
+            } //list.add(productName);
+
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        //FOR MISCELLANEOUS
+        Chip chipAll_taste = new Chip(context);
+        chipAll_taste.setText("Select All");
+        chipAll_taste.setChipBackgroundColorResource(R.color.gray);
+
+        chipAll_taste.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String value = chipAll_taste.getText().toString();
+                if (chipAll_taste.isSelected()) {
+                    chipAll_taste.setSelected(false);
+                    chipAll_taste.setTextColor(Color.BLACK);
+                    chipAll_taste.setChipBackgroundColorResource(R.color.gray);
+
+                    for (int i = 0; i < cg_taste.getChildCount(); i++) {
+                        Chip chip = (Chip) cg_taste.getChildAt(i);
+                        chip.setSelected(false);
+                        chip.setTextColor(Color.BLACK);
+                        chip.setChipBackgroundColorResource(R.color.gray);
+                        chips.remove(chip.getText().toString());
+                    }
+
+                } else {
+                    chipAll_taste.setSelected(true);
+                    chipAll_taste.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                    chipAll_taste.setChipStrokeColorResource(R.color.teal_700);
+                    chipAll_taste.setTextColor(getResources().getColor(R.color.white));
+
+                    for (int i = 0; i < cg_taste.getChildCount(); i++) {
+                        Chip chip = (Chip) cg_taste.getChildAt(i);
+                        chip.setSelected(true);
+                        chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chip.setChipStrokeColorResource(R.color.teal_700);
+                        chip.setTextColor(getResources().getColor(R.color.white));
+                        chips.add(chip.getText().toString());
+                    }
+
+                }//else
+            } //onClick
+        }); //chipAll.setOnClickListener
+        cg_taste.addView(chipAll_taste);
+        cg_taste.setVisibility(View.VISIBLE);
+        cg_taste.getLayoutParams();
+
+        for (int i = 0; i < chp_taste_list.size(); i++) {
+            try {
+                String tagname = chp_taste_list.get(i);
+                Chip chip = new Chip(context);
+                chip.setText(chp_taste_list.get(i));
+                chip.setChipBackgroundColorResource(R.color.gray);
+
+                chip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String value = chip.getText().toString();
+                        if (chip.isSelected()) {
+                            chip.setSelected(false);
+                            chip.setTextColor(Color.BLACK);
+                            chip.setChipBackgroundColorResource(R.color.gray);
+                            chips.remove(value);
+                        } else {
+                            chip.setSelected(true);
+                            chip.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                            chip.setChipStrokeColorResource(R.color.teal_700);
+                            chip.setTextColor(getResources().getColor(R.color.white));
+                            chips.add(value);
+                        }
+                    }
+                });
+                cg_taste.addView(chip);
+                cg_taste.setVisibility(View.VISIBLE);
+                cg_taste.getLayoutParams();
             } //list.add(productName);
 
             catch (Exception e) {

@@ -49,7 +49,7 @@ public class PreferencesFragment extends Fragment {
     private IPModel ipModel;
     private RequestQueue requestQueuepf, requestQueuetags;
     private List<String> tags, chips, preferences;
-    ChipGroup chipGroup, cg_temperature, cg_mealtime, cg_noodles, cg_beverages, cg_cuisine, cg_meat, cg_miscellaneous;
+    ChipGroup chipGroup, cg_temperature, cg_mealtime, cg_noodles, cg_beverages, cg_cuisine, cg_meat, cg_miscellaneous, cg_taste;
     int userId;
 
     private FragmentPreferencesBinding binding;
@@ -57,7 +57,7 @@ public class PreferencesFragment extends Fragment {
     private String userName, weather;
     private Float wallet;
 
-    private List<String> chp_temp_list, chp_mealtime_list, chp_noodle_list, chp_beverages_list, chp_cuisine_list, chp_meat_list, chp_misc_list;
+    private List<String> chp_temp_list, chp_mealtime_list, chp_noodle_list, chp_beverages_list, chp_cuisine_list, chp_meat_list, chp_misc_list, chp_taste_list;
 
     Boolean isPresentTemp, isPresentMealtime, isPresentNoodles, isPresentBev, isPresentCuisine, isPresentMeat, isPresentMisc;
 
@@ -99,6 +99,7 @@ public class PreferencesFragment extends Fragment {
         cg_cuisine = root.findViewById(R.id.cg_cuisine);
         cg_meat = root.findViewById(R.id.cg_meat);
         cg_miscellaneous = root.findViewById(R.id.cg_miscellaneous);
+        cg_taste = root.findViewById(R.id.cg_taste);
 
         chp_temp_list = new ArrayList<>();
         chp_mealtime_list = new ArrayList<>();
@@ -111,10 +112,11 @@ public class PreferencesFragment extends Fragment {
         chp_temp_list = Arrays.asList("Hot", "Cold");
         chp_mealtime_list = Arrays.asList("Breakfast", "Lunch", "Dessert");
         chp_noodle_list = Arrays.asList("Noodles", "Pasta", "Ramen");
-        chp_beverages_list = Arrays.asList("Beverages");
+        chp_beverages_list = Arrays.asList("Beverages", "Juice", "Soda", "Milktea");
         chp_cuisine_list = Arrays.asList("American", "Chinese", "Filipino", "Japanese", "Thai");
-        chp_meat_list = Arrays.asList("Pork", "Beef", "Fish");
-        chp_misc_list = Arrays.asList("Pizza");
+        chp_meat_list = Arrays.asList("Pork", "Chicken", "Beef", "Fish", "Seafood");
+        chp_misc_list = Arrays.asList("Pizza", "Salad", "Fast Food", "Bread", "Quick bites", "Easy to eat", "Heavy meal", "Baked");
+        chp_taste_list = Arrays.asList("Crispy", "Spicy", "Sweet");
 
         // Initialize the ChipGroup object
 
@@ -505,33 +507,33 @@ public class PreferencesFragment extends Fragment {
 
                 }
 
-                // FOR CHIPGROUP MEAT
-                for(int f = 0; f < chp_meat_list.size(); f++) {
-                    Chip chipmeat = new Chip(getActivity());
-                    chipmeat.setText(chp_meat_list.get(f));
+                // FOR CHIPGROUP TASTE
+                for(int f = 0; f < chp_taste_list.size(); f++) {
+                    Chip chiptaste = new Chip(getActivity());
+                    chiptaste.setText(chp_taste_list.get(f));
 
-                    if(preferences.contains(chp_meat_list.get(f))){
-                        chipmeat.setSelected(true);
-                        chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                        chipmeat.setChipStrokeColorResource(R.color.teal_700);
-                        chipmeat.setTextColor(getResources().getColor(R.color.white));
-                        chips.add(chipmeat.getText().toString());
+                    if(preferences.contains(chp_taste_list.get(f))){
+                        chiptaste.setSelected(true);
+                        chiptaste.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chiptaste.setChipStrokeColorResource(R.color.teal_700);
+                        chiptaste.setTextColor(getResources().getColor(R.color.white));
+                        chips.add(chiptaste.getText().toString());
 
-                        chipmeat.setOnClickListener(new View.OnClickListener() {
+                        chiptaste.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                String value = chipmeat.getText().toString();
-                                if (chipmeat.isSelected()) {
-                                    chipmeat.setSelected(false);
-                                    chipmeat.setTextColor(Color.BLACK);
-                                    chipmeat.setChipBackgroundColorResource(R.color.gray);
+                                String value = chiptaste.getText().toString();
+                                if (chiptaste.isSelected()) {
+                                    chiptaste.setSelected(false);
+                                    chiptaste.setTextColor(Color.BLACK);
+                                    chiptaste.setChipBackgroundColorResource(R.color.gray);
                                     chips.remove(value);
                                 } else {
                                     Log.d("TAG SIZE clicked chip", value);
-                                    chipmeat.setSelected(true);
-                                    chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                    chipmeat.setChipStrokeColorResource(R.color.teal_700);
-                                    chipmeat.setTextColor(getResources().getColor(R.color.white));
+                                    chiptaste.setSelected(true);
+                                    chiptaste.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chiptaste.setChipStrokeColorResource(R.color.teal_700);
+                                    chiptaste.setTextColor(getResources().getColor(R.color.white));
                                     chips.add(value);
                                     Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
 
@@ -539,31 +541,31 @@ public class PreferencesFragment extends Fragment {
                             }
                         });
 
-                        cg_meat.addView(chipmeat);
-                        cg_meat.setVisibility(View.VISIBLE);
-                        cg_meat.getLayoutParams();
+                        cg_taste.addView(chiptaste);
+                        cg_taste.setVisibility(View.VISIBLE);
+                        cg_taste.getLayoutParams();
 
                     } else {
-                        chipmeat.setSelected(false);
-                        chipmeat.setTextColor(Color.BLACK);
-                        chipmeat.setChipBackgroundColorResource(R.color.gray);
-                        chips.remove(chipmeat.getText().toString());
+                        chiptaste.setSelected(false);
+                        chiptaste.setTextColor(Color.BLACK);
+                        chiptaste.setChipBackgroundColorResource(R.color.gray);
+                        chips.remove(chiptaste.getText().toString());
 
-                        chipmeat.setOnClickListener(new View.OnClickListener() {
+                        chiptaste.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                String value = chipmeat.getText().toString();
-                                if (chipmeat.isSelected()) {
-                                    chipmeat.setSelected(false);
-                                    chipmeat.setTextColor(Color.BLACK);
-                                    chipmeat.setChipBackgroundColorResource(R.color.gray);
+                                String value = chiptaste.getText().toString();
+                                if (chiptaste.isSelected()) {
+                                    chiptaste.setSelected(false);
+                                    chiptaste.setTextColor(Color.BLACK);
+                                    chiptaste.setChipBackgroundColorResource(R.color.gray);
                                     chips.remove(value);
                                 } else {
                                     Log.d("TAG SIZE clicked chip", value);
-                                    chipmeat.setSelected(true);
-                                    chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
-                                    chipmeat.setChipStrokeColorResource(R.color.teal_700);
-                                    chipmeat.setTextColor(getResources().getColor(R.color.white));
+                                    chiptaste.setSelected(true);
+                                    chiptaste.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chiptaste.setChipStrokeColorResource(R.color.teal_700);
+                                    chiptaste.setTextColor(getResources().getColor(R.color.white));
                                     chips.add(value);
                                     Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
 
@@ -571,14 +573,14 @@ public class PreferencesFragment extends Fragment {
                             }
                         });
 
-                        cg_meat.addView(chipmeat);
-                        cg_meat.setVisibility(View.VISIBLE);
-                        cg_meat.getLayoutParams();
+                        cg_taste.addView(chiptaste);
+                        cg_taste.setVisibility(View.VISIBLE);
+                        cg_taste.getLayoutParams();
                     }
 
                 }
 
-                // FOR CHIPGROUP MISCELLANEOUS
+                    // FOR CHIPGROUP MISCELLANEOUS
                 for(int g = 0; g < chp_misc_list.size(); g++) {
                     Chip chipmisc = new Chip(getActivity());
                     chipmisc.setText(chp_misc_list.get(g));

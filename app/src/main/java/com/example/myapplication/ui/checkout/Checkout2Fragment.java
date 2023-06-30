@@ -2,6 +2,8 @@ package com.example.myapplication.ui.checkout;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
+import static com.example.myapplication.activities.Home.id;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Bundle;
@@ -11,14 +13,19 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCheckout2Binding;
 import com.example.myapplication.activities.models.OrderModel;
+import com.example.myapplication.ui.payment.GcashSendFragment;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,12 +40,15 @@ public class Checkout2Fragment extends Fragment {
     List<Integer> randomInt;
 
 
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentCheckout2Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
         Bundle bundle = this.getArguments();
+
         if (bundle != null)
             orderModel = bundle.getParcelable("order");
         randomInt = new ArrayList<>();
@@ -85,6 +95,8 @@ public class Checkout2Fragment extends Fragment {
 
         return root;
     }
+
+
 
     @Override
     public void onDestroyView() {

@@ -53,7 +53,7 @@ public class Checkout3Fragment extends Fragment{
     private FragmentCheckout3Binding binding;
     OrderModel orderModel;
 
-    TextView merchant,id, amount;
+    TextView merchant,id, amount, total;
 
     String store_name;
 
@@ -65,6 +65,7 @@ public class Checkout3Fragment extends Fragment{
 
         amount = root.findViewById(R.id.tv_amount3);
         merchant = root.findViewById(R.id.tv_merchantname);
+        total = root.findViewById(R.id.tv_total_amount);
 
         Bundle bundle = this.getArguments();
         if (bundle != null){
@@ -74,6 +75,7 @@ public class Checkout3Fragment extends Fragment{
             merchant.setText(store_name);
             //merchant.setText(orderModel.getStore_name());
             amount.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
+            total.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
         }
 
 

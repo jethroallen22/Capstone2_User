@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 @Override
                 public void run() {
                     requestLocation();
-                    handler2.postDelayed(this,5000);
+                    handler2.postDelayed(this,1000);
 
                 }
             },1000);

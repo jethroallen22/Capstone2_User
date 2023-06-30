@@ -248,7 +248,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 foodfyModel.setPercentage(percentage);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
-                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+//                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
 //                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
@@ -400,7 +400,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setPercentage(percentage);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
 
-                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+                                //tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
                                 //tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
@@ -551,7 +551,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 foodfyModel.setPercentage(percentage);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
-                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+//                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
 //                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){
@@ -921,7 +921,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 foodfyModel.setPercentage(percentage);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
-                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+//                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
 //                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
 
                                 for (TagModel tagModel: tagModelList){

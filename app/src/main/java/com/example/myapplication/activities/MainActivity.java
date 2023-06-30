@@ -78,33 +78,33 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             requestPermissions(PERMISSIONS, PERMISSIONS_ALL);
         }
 
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if(!task.isSuccessful()){
-                    return;
-                }
-
-                String token = task.getResult();
-                Log.d("token", token);
-            }
-        });
-
-        /*FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
-        firebaseMessaging.subscribeToTopic("new_user_forums");
-        firebaseMessaging.subscribeToTopic("sample");*/
-
-        // Enable verbose OneSignal logging to debug issues if needed.
-        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
-
-        // OneSignal Initialization
-        OneSignal.initWithContext(this);
-        OneSignal.setAppId(ONESIGNAL_APP_ID);
-
-        // promptForPushNotifications will show the native Android notification permission prompt.
-        // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 7)
-        OneSignal.promptForPushNotifications();
-        initChat();
+//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+//            @Override
+//            public void onComplete(@NonNull Task<String> task) {
+//                if(!task.isSuccessful()){
+//                    return;
+//                }
+//
+//                String token = task.getResult();
+//                Log.d("token", token);
+//            }
+//        });
+//
+//        /*FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
+//        firebaseMessaging.subscribeToTopic("new_user_forums");
+//        firebaseMessaging.subscribeToTopic("sample");*/
+//
+//        // Enable verbose OneSignal logging to debug issues if needed.
+//        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
+//
+//        // OneSignal Initialization
+//        OneSignal.initWithContext(this);
+//        OneSignal.setAppId(ONESIGNAL_APP_ID);
+//
+//        // promptForPushNotifications will show the native Android notification permission prompt.
+//        // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 7)
+//        OneSignal.promptForPushNotifications();
+//        initChat();
     }
 
     @Override
@@ -232,29 +232,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         return celsius;
     }
 
-    public void initChat(){
-        String appID = "2355792d8c1eed1a"; // Replace with your App ID
-        String region = "us"; // Replace with your App Region ("eu" or "us")
-
-        AppSettings appSettings=new AppSettings.AppSettingsBuilder()
-                .subscribePresenceForAllUsers()
-                .setRegion(region)
-                .autoEstablishSocketConnection(true)
-                .build();
-
-        CometChat.init(this, appID,appSettings, new CometChat.CallbackListener<String>() {
-            @Override
-            public void onSuccess(String successMessage) {
-                Log.d("cometchat", "Initialization completed successfully");
-            }
-
-            @Override
-            public void onError(CometChatException e) {
-                Log.d("cometchat", "Initialization failed with exception: " + e.getMessage());
-            }
-        });
-    }
-
-    //private void setContentView(int activity_main) {
-    //}
+//    public void initChat(){
+//        String appID = "2355792d8c1eed1a"; // Replace with your App ID
+//        String region = "us"; // Replace with your App Region ("eu" or "us")
+//
+//        AppSettings appSettings=new AppSettings.AppSettingsBuilder()
+//                .subscribePresenceForAllUsers()
+//                .setRegion(region)
+//                .autoEstablishSocketConnection(true)
+//                .build();
+//
+//        CometChat.init(this, appID,appSettings, new CometChat.CallbackListener<String>() {
+//            @Override
+//            public void onSuccess(String successMessage) {
+//                Log.d("cometchat", "Initialization completed successfully");
+//            }
+//
+//            @Override
+//            public void onError(CometChatException e) {
+//                Log.d("cometchat", "Initialization failed with exception: " + e.getMessage());
+//            }
+//        });
+//    }
+//
+//    //private void setContentView(int activity_main) {
+//    //}
 }

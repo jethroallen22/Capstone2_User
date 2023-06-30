@@ -379,6 +379,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
         requestQueueInner = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueOuter = Singleton.getsInstance(getActivity()).getRequestQueue();
         extractFoodforyou();
+        extractSearch();
 
         //Search List
         searchView = root.findViewById(R.id.searchView2);
@@ -721,12 +722,10 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
 
     //Popular Recommendation Function
 
-
-    //Food For You
-    public void extractFoodforyou() {
-        HomePageFragment homePageFragment = this;
-
-        tagModelList = new ArrayList<>();
+    public void extractSearch(){
+        List<ProductModel> productModelList = new ArrayList<>();
+        List<String> tag_list = new ArrayList<>();
+        List<TagModel> tagModelList2 = new ArrayList<>();
         JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -736,7 +735,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                         int idProduct = jsonObjectTag.getInt("idProduct");
                         int idStore = jsonObjectTag.getInt("idStore");
                         String tagname = jsonObjectTag.getString("tagname");
-                        tagModelList.add(new TagModel(idProduct, idStore, tagname));
+                        tagModelList2.add(new TagModel(idProduct, idStore, tagname));
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -767,11 +766,10 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                                 SearchModel searchModel = new SearchModel(productImage, productName, productTag);
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
-                                tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-//                                tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
-                                for (TagModel tagModel: tagModelList){
+                                for (TagModel tagModel: tagModelList2){
                                     if(tagModel.getIdProduct() == idProduct){
-//                                        tagModel.setMatch(true);
+                                        Log.d("TagName", tagModel.getTagname());
+                                        tagModel.setMatch(true);
                                         tempTagModelList.add(tagModel);
                                     }
                                 }
@@ -783,6 +781,7 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+
 
                             Collections.shuffle(food_for_you_list);
                             homeFoodForYouAdapter = new HomeFoodForYouAdapter(getActivity(), food_for_you_list, homePageFragment);
@@ -804,6 +803,13 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
             }
         });
         requestQueueTag.add(jsonArrayRequestTag);
+    }
+
+    //Food For You
+    public void extractFoodforyou() {
+        HomePageFragment homePageFragment = this;
+
+
 
         ////////////////////////////////////////////////////////////////////////
         List<ProductModel> productModelList = new ArrayList<>();

@@ -92,7 +92,7 @@ public class NotificationsFragment extends Fragment {
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
                         Log.d("notif_id_json", String.valueOf(jsonObject.getInt("iduser") + " " + userId));
-                        if(jsonObject.getInt("iduser") == userId) {
+                        if(jsonObject.getInt("iduser") == userId || jsonObject.getInt("iduser") == 0) {
                             int iduser = jsonObject.getInt("iduser");
                             String title = jsonObject.getString("title");
                             String description = jsonObject.getString("description");

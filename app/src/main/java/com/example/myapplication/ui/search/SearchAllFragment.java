@@ -112,8 +112,11 @@ public class SearchAllFragment extends Fragment implements RecyclerViewInterface
                 } else {
                     for (TagModel tag : product.getTags_list()) {
                         if (tag.getTagname().toLowerCase().contains(getSearchQuery.toLowerCase())) {
+                            tag.setMatch(true);
                             SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                            Log.d("SearchTagSize", "ProductTagSize: " + product.getTags_list().size());
                             searchModel.setTagModelList(product.getTags_list());
+                            Log.d("SearchTagSize", "TagSize: " + searchModel.getTagModelList().size());
                             searchModelListProduct.add(searchModel);
                             break; // Exit the loop if a matching tag is found
                         }

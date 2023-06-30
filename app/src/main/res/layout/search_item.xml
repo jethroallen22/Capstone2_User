@@ -34,15 +34,27 @@
                 app:layout_constraintStart_toEndOf="@+id/iv_transac_icon"
                 app:layout_constraintTop_toTopOf="@+id/iv_transac_icon" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/cg_tags"
+            <HorizontalScrollView
                 android:layout_width="245dp"
                 android:layout_height="35dp"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                app:chipSpacingHorizontal="5dp"
+                android:scrollbarSize="0dp"
                 app:layout_constraintStart_toStartOf="@+id/tv_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_name">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cg_tags"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:orientation="horizontal"
+                        app:chipSpacingHorizontal="5dp" />
+                </LinearLayout>
+            </HorizontalScrollView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

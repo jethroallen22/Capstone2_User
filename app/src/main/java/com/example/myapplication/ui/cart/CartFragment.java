@@ -84,9 +84,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         rv_cart = root.findViewById(R.id.rv_cart);
         requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueStore = Singleton.getsInstance(getActivity()).getRequestQueue();
-        extractStoreCartItem();
         handler = new Handler();
-//        extractStoreCartItem();
         myRunnable = new Runnable() {
             @Override
             public void run() {
@@ -179,13 +177,13 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
     }
 
-    public void extractStoreCartItem(){
+    public void extractStoreCartItem() {
         order_list = new ArrayList<>();
         order_item_list = new ArrayList<>();
-        JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL+"apicart.php", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                 for (int i=0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     try {
                         int temp_not = 0;
                         JSONObject jsonObjectCart = response.getJSONObject(i);
@@ -201,41 +199,45 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                             String c_storeImage = jsonObjectCart.getString("storeImage");
                             OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, userID, c_productName, (float) c_productPrice, c_productQuantity,
                                     (float) (c_productPrice * c_productQuantity));
+                            // order_item_list.add(orderItemModel);
                             Log.d("BEFORE", String.valueOf(userID));
                             Log.d("BEFOREDB", String.valueOf(c_usersId));
-                            if(order_list.isEmpty()){
+                            Log.d("OItem", "ItemName: " + c_productName);
+                            if (order_list.isEmpty()) {
                                 Log.d("STOREMATCH", c_productName + " Empty " + c_storeName);
                                 order_item_list = new ArrayList<>();
                                 order_item_list.add(orderItemModel);
-                                order_list.add(new OrderModel((float) c_totalProductPrice,"pending",c_storeId,
-                                        c_storeImage,c_storeName,
+                                order_list.add(new OrderModel((float) c_totalProductPrice, "pending", c_storeId,
+                                        c_storeImage, c_storeName,
                                         c_usersId, order_item_list));
-                            }else{
+                            } else {
                                 for (int h = 0; h < order_list.size(); h++) {
                                     Log.d("Inside for", String.valueOf(order_list.size()));
-                                    //Check if Order already exist in CartList
+                                    // Check if Order already exists in CartList
                                     if (order_list.get(h).getStore_name().toLowerCase().trim().compareTo(c_storeName.toLowerCase().trim()) == 0) {
                                         Log.d("STOREMATCH", c_productName + " MATCH " + c_storeName);
-                                        // Check if order item already exist
-                                        for (int k = 0 ; k < order_list.get(h).getOrderItem_list().size() ; k++){
-                                            if(c_productName.toLowerCase().trim().compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName().toLowerCase().trim()) == 0){
-//                                                temp_count = c_productQuantity;
-                                                int tempItemQuantity = 0;
-                                                tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
+                                        // Check if order item already exists
+                                        boolean itemFound = false;
+                                        for (int k = 0; k < order_list.get(h).getOrderItem_list().size(); k++) {
+                                            if (c_productName.toLowerCase().trim().compareTo(order_list.get(h).getOrderItem_list().get(k).getProductName().toLowerCase().trim()) == 0) {
+                                                // Update the quantity of the existing item
+                                                int tempItemQuantity = order_list.get(h).getOrderItem_list().get(k).getItemQuantity();
                                                 tempItemQuantity += c_productQuantity;
                                                 order_list.get(h).getOrderItem_list().get(k).setItemQuantity(tempItemQuantity);
-                                                tempItemQuantity = 0;
-                                                break;
-                                            } else{
-                                                order_list.get(h).getOrderItem_list().add(orderItemModel);
+                                                itemFound = true;
                                                 break;
                                             }
                                         }
-                                    } else{
+                                        if (!itemFound) {
+                                            // If the item doesn't exist, add it to the order_item_list
+                                            order_list.get(h).getOrderItem_list().add(orderItemModel);
+                                        }
+                                    } else {
+                                        // The store doesn't match, continue with the next store
                                         Log.d("STOREMATCH !0", c_productName + " NOT MATCH " + c_storeName);
                                         temp_not++;
                                         Log.d("Temp_not", String.valueOf(temp_not));
-                                        if(temp_not == order_list.size()) {
+                                        if (temp_not == order_list.size()) {
                                             order_item_list = new ArrayList<>();
                                             order_item_list.add(orderItemModel);
                                             order_list.add(new OrderModel((float) c_totalProductPrice, "pending", c_storeId,
@@ -253,24 +255,27 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
                         e.printStackTrace();
                     }
                 }
-                 Log.d("CartSize", String.valueOf(order_list.size()));
-                 float tempTotal = 0;
-                 for (OrderModel orderModel : order_list) {
-                     for (OrderItemModel orderItemModel : orderModel.getOrderItem_list()) {
-                         tempTotal += orderItemModel.getTotalPrice();
-                     }
-                     orderModel.setOrderItemTotalPrice(tempTotal);
-                 }
-                 cartAdapter = new CartAdapter(getActivity(),order_list, CartFragment.this);
-                 rv_cart.setAdapter(cartAdapter);
-                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-                 rv_cart.setLayoutManager(layoutManager);
-                 cartAdapter.setOnItemClickListener(new CartAdapter.OnItemClickListener() {
+
+
+                Log.d("CartSize", String.valueOf(order_list.size()));
+
+                for (OrderModel orderModel : order_list) {
+                    float tempTotal = 0;
+                    for (OrderItemModel orderItemModel : orderModel.getOrderItem_list()) {
+                        tempTotal += orderItemModel.getTotalPrice();
+                    }
+                    orderModel.setOrderItemTotalPrice(tempTotal);
+                }
+                cartAdapter = new CartAdapter(getActivity(), order_list, CartFragment.this);
+                rv_cart.setAdapter(cartAdapter);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                rv_cart.setLayoutManager(layoutManager);
+                cartAdapter.setOnItemClickListener(new CartAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
                         deleteProduct(position);
                     }
-                 });
+                });
 
 
             }
@@ -284,6 +289,7 @@ public class CartFragment extends Fragment implements RecyclerViewInterface {
         Log.d("OUTSIDE LIST", String.valueOf(order_list.size()));
 
     }
+
 
     public void deleteProduct(int position) {
         RequestQueue queue = Singleton.getsInstance(getContext()).getRequestQueue();

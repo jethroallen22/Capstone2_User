@@ -251,7 +251,10 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
                 rv_order_items.setHasFixedSize(true);
                 rv_order_items.setNestedScrollingEnabled(false);
-                tv_total_price.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
+                float temp = 0;
+                for(OrderItemModel orderItem : orderModel.getOrderItem_list())
+                    temp += orderItem.getTotalPrice();
+                tv_total_price.setText(String.valueOf(temp));
                 orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {

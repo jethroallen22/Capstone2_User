@@ -131,6 +131,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
             store_name = orderModel.getStore_name();
             tv_store_name.setText(store_name);
             Log.d("StoreName",store_name);
+            Log.d("orderItem", "========================");
+            for(OrderItemModel orderItemModel : orderModel.getOrderItem_list())
+                Log.d("orderItem", "qty: " + orderItemModel.getItemQuantity());
         }
 
         handler = new Handler();
@@ -246,6 +249,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         Log.d("JSONException", e.getMessage());
                     }
                 }
+                Log.d("orderItem", "========================");
+                for(OrderItemModel orderItemModel : orderModel.getOrderItem_list())
+                    Log.d("orderItem", "qty: " + orderItemModel.getItemQuantity());
                 orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),recyclerViewInterface);
                 rv_order_items.setAdapter(orderItemsAdapter);
                 rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));

@@ -141,10 +141,10 @@ public class HomeFragment extends Fragment {
             curLat = intent.getDoubleExtra("lat",0);
             curLong = intent.getDoubleExtra("long",0);
 
-            Log.d("HOME FRAG name", userName + userId + " Weather: " + weather);
-            Log.d("HOMEuserID", String.valueOf(userId));
-            Log.d("weatherHomeFrag", weather);
-            Log.d("curLatHome", String.valueOf(curLat));
+//            Log.d("HOME FRAG name", userName + userId + " Weather: " + weather);
+//            Log.d("HOMEuserID", String.valueOf(userId));
+//            Log.d("weatherHomeFrag", weather);
+//            Log.d("curLatHome", String.valueOf(curLat));
 
         } else {
             Log.d("HOME FRAG name", "FAIL");

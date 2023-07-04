@@ -59,7 +59,7 @@ import java.util.Map;
 public class ForYouFragment extends Fragment implements RecyclerViewInterface {
 
     private FragmentForYouBinding binding;
-    private RequestQueue requestQueue, requestQueueTag, requestQueueOuter, requestQueueInner;
+    private RequestQueue requestQueue, requestQueueTag, requestQueueOuter, requestQueueInner, requestQueuepf;
     private static String JSON_URL;
     private IPModel ipModel;
     List<ProductModel> food_for_you_list, tempProductModelList;
@@ -84,7 +84,7 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
     boolean exist = false;
 
     FilterAdapter filterAdapter;
-    List<String> tag_list;
+    List<String> tag_list, preferences;
 
 
     @SuppressLint("MissingPermission")
@@ -116,12 +116,14 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
         rv_filter = root.findViewById(R.id.rv_for_you);
         food_for_you_list = new ArrayList<>();
         tag_list = new ArrayList<>();
+        preferences = new ArrayList<>();
         rv_filter.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv_filter.setNestedScrollingEnabled(false);
         requestQueue = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueTag = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueOuter = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueInner = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueuepf = Singleton.getsInstance(getActivity()).getRequestQueue();
         searchView = root.findViewById(R.id.sv_for_you_page);
         btn_filter = root.findViewById(R.id.btn_filter);
         btn_filter.setOnClickListener(new View.OnClickListener() {
@@ -189,138 +191,109 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                 Log.d(TAG, "Frequency: " + tag_list.size());
                 for (String tag : tag_list)
                     Log.d(TAG, "Frequency: " + tag);
-                JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject jsonObjectTag = response.getJSONObject(i);
-                                int idProduct = jsonObjectTag.getInt("idProduct");
-                                int idStore = jsonObjectTag.getInt("idStore");
-                                String tagname = jsonObjectTag.getString("tagname");
-                                tagModelList.add(new TagModel(idProduct, idStore, tagname));
+                if(tag_list.size() != 0) {
+                    Log.d(TAG, "if meron frequency");
+                    JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject jsonObjectTag = response.getJSONObject(i);
+                                    int idProduct = jsonObjectTag.getInt("idProduct");
+                                    int idStore = jsonObjectTag.getInt("idStore");
+                                    String tagname = jsonObjectTag.getString("tagname");
+                                    tagModelList.add(new TagModel(idProduct, idStore, tagname));
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                        Log.d(TAG, "============================================");
-                        Log.d(TAG, "TagProduct: " + tagModelList.size());
-                        for (TagModel tagProduct: tagModelList) {
-                            Log.d(TAG, "TagProduct: " + tagProduct.getTagname());
-                        }
-                        JsonArrayRequest jsonArrayRequestOuter= new JsonArrayRequest(Request.Method.GET, JSON_URL+"apifoodfilter.php", null, new Response.Listener<JSONArray>() {
-                            @Override
-                            public void onResponse(JSONArray response) {
-                                Log.d(TAG, "============================================");
-                                Log.d(TAG, String.valueOf(response));
-                                for (int i=0; i < response.length(); i++){
-                                    try {
-                                        JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
-                                        int idProduct = jsonObjectFoodforyou.getInt("idProduct");
-                                        int idStore = jsonObjectFoodforyou.getInt("idStore");
-                                        String productName = jsonObjectFoodforyou.getString("productName");
-                                        String productDescription = jsonObjectFoodforyou.getString("productDescription");
-                                        float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
-                                        String productImage = jsonObjectFoodforyou.getString("productImage");
-                                        String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
-                                        String productTag = jsonObjectFoodforyou.getString("productTag");
-                                        int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
-                                        String storeName = jsonObjectFoodforyou.getString("storeName");
-                                        String storeImage = jsonObjectFoodforyou.getString("storeImage");
-                                        String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
-                                        String weather = jsonObjectFoodforyou.getString("weather");
-                                        int percentage = jsonObjectFoodforyou.getInt("percentage");
-
-                                        ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
-                                                productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
-                                        foodfyModel.setProductRestoCategory(storeCategory);
-                                        foodfyModel.setPercentage(percentage);
-                                        List<TagModel> tempTagModelList = new ArrayList<>();
-//                                        tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
-                                        //tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
-
-                                        for (TagModel tagModel: tagModelList){
-                                            if(tagModel.getIdProduct() == idProduct){
-                                                tempTagModelList.add(tagModel);
-                                            }
-                                        }
-                                        foodfyModel.setTags_list(tempTagModelList);
-                                        food_for_you_list.add(foodfyModel);
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                Log.d(TAG, "============================================");
-                                Log.d(TAG, String.valueOf("ProductFullSize: " + food_for_you_list.size()));
-                                List<ProductModel> temp = new ArrayList<>();
-                                for (ProductModel productModel: food_for_you_list) {
-                                    boolean isMatch = false;
+                            Log.d(TAG, "============================================");
+                            Log.d(TAG, "TagProduct: " + tagModelList.size());
+                            for (TagModel tagProduct : tagModelList) {
+                                Log.d(TAG, "TagProduct: " + tagProduct.getTagname());
+                            }
+                            JsonArrayRequest jsonArrayRequestOuter = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifoodfilter.php", null, new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
                                     Log.d(TAG, "============================================");
-                                    Log.d(TAG, "ProductModel: " + productModel.getProductName());
-                                    for (TagModel tagModel : productModel.getTags_list()) {
-                                        for (String tag : tag_list) {
-                                            if (tagModel.getTagname().equalsIgnoreCase(tag)) {
-                                                tagModel.setMatch(true);
-                                                isMatch = true;
-                                                Log.d(TAG, productModel.getProductName());
+                                    Log.d(TAG, String.valueOf(response));
+                                    for (int i = 0; i < response.length(); i++) {
+                                        try {
+                                            JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                                            int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                                            int idStore = jsonObjectFoodforyou.getInt("idStore");
+                                            String productName = jsonObjectFoodforyou.getString("productName");
+                                            String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                                            float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                                            String productImage = jsonObjectFoodforyou.getString("productImage");
+                                            String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                                            String productTag = jsonObjectFoodforyou.getString("productTag");
+                                            int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                                            String storeName = jsonObjectFoodforyou.getString("storeName");
+                                            String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                                            String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
+                                            String weather = jsonObjectFoodforyou.getString("weather");
+                                            int percentage = jsonObjectFoodforyou.getInt("percentage");
+
+                                            ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                                    productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                            foodfyModel.setProductRestoCategory(storeCategory);
+                                            foodfyModel.setPercentage(percentage);
+                                            List<TagModel> tempTagModelList = new ArrayList<>();
+//                                        tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+                                            //tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+
+                                            for (TagModel tagModel : tagModelList) {
+                                                if (tagModel.getIdProduct() == idProduct) {
+                                                    tempTagModelList.add(tagModel);
+                                                }
                                             }
+                                            foodfyModel.setTags_list(tempTagModelList);
+                                            food_for_you_list.add(foodfyModel);
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
                                         }
                                     }
-                                    if (isMatch) {
-                                        temp.add(productModel);
-                                        isMatch = false;
-                                    }
-                                }
-                                Log.d(TAG, "============================================");
-                                Log.d(TAG, "Product: " + temp.size());
-                                for (ProductModel productModel: temp)
-                                    Log.d(TAG, "Product: " + productModel.getProductName());
-
-                                searchView.findViewById(R.id.sv_for_you_page);
-                                tempProductModelList = new ArrayList<>();
-                                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                                    @Override
-                                    public boolean onQueryTextSubmit(String query) {
-                                        tempProductModelList.clear();
-                                        for (ProductModel product : food_for_you_list) {
-                                            if (product.getProductName().toLowerCase().contains(query.toLowerCase())) {
-                                                tempProductModelList.add(product);
-                                            } else {
-                                                for (TagModel tag : product.getTags_list()) {
-                                                    if (tag.getTagname().toLowerCase().contains(query.toLowerCase())) {
-                                                        tempProductModelList.add(product);
-                                                        break; // Exit the loop if a matching tag is found
-                                                    }
+                                    Log.d(TAG, "============================================");
+                                    Log.d(TAG, String.valueOf("ProductFullSize: " + food_for_you_list.size()));
+                                    List<ProductModel> temp = new ArrayList<>();
+                                    for (ProductModel productModel : food_for_you_list) {
+                                        boolean isMatch = false;
+                                        Log.d(TAG, "============================================");
+                                        Log.d(TAG, "ProductModel: " + productModel.getProductName());
+                                        for (TagModel tagModel : productModel.getTags_list()) {
+                                            for (String tag : tag_list) {
+                                                if (tagModel.getTagname().equalsIgnoreCase(tag)) {
+                                                    tagModel.setMatch(true);
+                                                    isMatch = true;
+                                                    Log.d(TAG, productModel.getProductName());
                                                 }
                                             }
                                         }
-
-                                        Collections.sort(tempProductModelList, (product1, product2) -> {
-                                            int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
-                                            int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
-                                            return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
-                                        });
-                                        exist = true;
-                                        filterAdapter = new FilterAdapter(getActivity(), tempProductModelList, ForYouFragment.this);
-                                        rv_filter.setAdapter(filterAdapter);
-                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-                                        rv_filter.setLayoutManager(layoutManager);
-
-                                        return false;
+                                        if (isMatch) {
+                                            temp.add(productModel);
+                                            isMatch = false;
+                                        }
                                     }
+                                    Log.d(TAG, "============================================");
+                                    Log.d(TAG, "Product: " + temp.size());
+                                    for (ProductModel productModel : temp)
+                                        Log.d(TAG, "Product: " + productModel.getProductName());
 
-                                    @Override
-                                    public boolean onQueryTextChange(String newText) {
-                                        tempProductModelList.clear();
-                                        if(newText.length()>0){
+                                    searchView.findViewById(R.id.sv_for_you_page);
+                                    tempProductModelList = new ArrayList<>();
+                                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                        @Override
+                                        public boolean onQueryTextSubmit(String query) {
+                                            tempProductModelList.clear();
                                             for (ProductModel product : food_for_you_list) {
-                                                if (product.getProductName().toLowerCase().contains(newText.toLowerCase())) {
+                                                if (product.getProductName().toLowerCase().contains(query.toLowerCase())) {
                                                     tempProductModelList.add(product);
                                                 } else {
                                                     for (TagModel tag : product.getTags_list()) {
-                                                        if (tag.getTagname().toLowerCase().contains(newText.toLowerCase())) {
+                                                        if (tag.getTagname().toLowerCase().contains(query.toLowerCase())) {
                                                             tempProductModelList.add(product);
                                                             break; // Exit the loop if a matching tag is found
                                                         }
@@ -338,7 +311,263 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                             rv_filter.setAdapter(filterAdapter);
                                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
                                             rv_filter.setLayoutManager(layoutManager);
-                                        } else{
+
+                                            return false;
+                                        }
+
+                                        @Override
+                                        public boolean onQueryTextChange(String newText) {
+                                            tempProductModelList.clear();
+                                            if (newText.length() > 0) {
+                                                for (ProductModel product : food_for_you_list) {
+                                                    if (product.getProductName().toLowerCase().contains(newText.toLowerCase())) {
+                                                        tempProductModelList.add(product);
+                                                    } else {
+                                                        for (TagModel tag : product.getTags_list()) {
+                                                            if (tag.getTagname().toLowerCase().contains(newText.toLowerCase())) {
+                                                                tempProductModelList.add(product);
+                                                                break; // Exit the loop if a matching tag is found
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                Collections.sort(tempProductModelList, (product1, product2) -> {
+                                                    int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                                    int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                                    return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                                });
+                                                exist = true;
+                                                filterAdapter = new FilterAdapter(getActivity(), tempProductModelList, ForYouFragment.this);
+                                                rv_filter.setAdapter(filterAdapter);
+                                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                                                rv_filter.setLayoutManager(layoutManager);
+                                            } else {
+                                                Collections.sort(food_for_you_list, (product1, product2) -> {
+                                                    int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                                    int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                                    return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                                });
+                                                exist = false;
+                                                filterAdapter = new FilterAdapter(getActivity(), food_for_you_list, ForYouFragment.this);
+                                                rv_filter.setAdapter(filterAdapter);
+                                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                                                rv_filter.setLayoutManager(layoutManager);
+
+                                            }
+                                            return true;
+                                        }
+                                    });
+
+                                    Collections.sort(food_for_you_list, (product1, product2) -> {
+                                        int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                        int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                        return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                    });
+                                    exist = false;
+                                    filterAdapter = new FilterAdapter(getActivity(), food_for_you_list, ForYouFragment.this);
+                                    rv_filter.setAdapter(filterAdapter);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+
+                                }
+                            });
+                            requestQueueOuter.add(jsonArrayRequestOuter);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    });
+                    requestQueueTag.add(jsonArrayRequestTag);
+                } else {
+                    Log.d(TAG, "else no frequency");
+                    JsonArrayRequest jsonArrayRequestpf = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apipreferences.php", null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject jsonObject = response.getJSONObject(i);
+                                    int idUser = jsonObject.getInt("idUser");
+                                    String tag = jsonObject.getString("tag");
+                                    if(userId == idUser){
+                                        preferences.add(tag);
+                                        Log.d("TAG SIZE during pref", String.valueOf(preferences.size()));
+                                    }
+                                } //list.add(productName);
+                                catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                            JsonArrayRequest jsonArrayRequestTag = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apitag.php", null, new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    for (int i = 0; i < response.length(); i++) {
+                                        try {
+                                            JSONObject jsonObjectTag = response.getJSONObject(i);
+                                            int idProduct = jsonObjectTag.getInt("idProduct");
+                                            int idStore = jsonObjectTag.getInt("idStore");
+                                            String tagname = jsonObjectTag.getString("tagname");
+                                            tagModelList.add(new TagModel(idProduct, idStore, tagname));
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    Log.d(TAG, "============================================");
+                                    Log.d(TAG, "TagProduct: " + tagModelList.size());
+                                    for (TagModel tagProduct : tagModelList) {
+                                        Log.d(TAG, "TagProduct: " + tagProduct.getTagname());
+                                    }
+                                    JsonArrayRequest jsonArrayRequestOuter = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apifoodfilter.php", null, new Response.Listener<JSONArray>() {
+                                        @Override
+                                        public void onResponse(JSONArray response) {
+                                            Log.d(TAG, "============================================");
+                                            Log.d(TAG, String.valueOf(response));
+                                            for (int i = 0; i < response.length(); i++) {
+                                                try {
+                                                    JSONObject jsonObjectFoodforyou = response.getJSONObject(i);
+                                                    int idProduct = jsonObjectFoodforyou.getInt("idProduct");
+                                                    int idStore = jsonObjectFoodforyou.getInt("idStore");
+                                                    String productName = jsonObjectFoodforyou.getString("productName");
+                                                    String productDescription = jsonObjectFoodforyou.getString("productDescription");
+                                                    float productPrice = (float) jsonObjectFoodforyou.getDouble("productPrice");
+                                                    String productImage = jsonObjectFoodforyou.getString("productImage");
+                                                    String productServingSize = jsonObjectFoodforyou.getString("productServingSize");
+                                                    String productTag = jsonObjectFoodforyou.getString("productTag");
+                                                    int productPrepTime = jsonObjectFoodforyou.getInt("productPrepTime");
+                                                    String storeName = jsonObjectFoodforyou.getString("storeName");
+                                                    String storeImage = jsonObjectFoodforyou.getString("storeImage");
+                                                    String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
+                                                    String weather = jsonObjectFoodforyou.getString("weather");
+                                                    int percentage = jsonObjectFoodforyou.getInt("percentage");
+
+                                                    ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
+                                                            productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                                    foodfyModel.setProductRestoCategory(storeCategory);
+                                                    foodfyModel.setPercentage(percentage);
+                                                    List<TagModel> tempTagModelList = new ArrayList<>();
+//                                        tempTagModelList.add(new TagModel(idProduct, idStore, productTag));
+                                                    //tempTagModelList.add(new TagModel(idProduct,idStore,storeCategory));
+
+                                                    for (TagModel tagModel : tagModelList) {
+                                                        if (tagModel.getIdProduct() == idProduct) {
+                                                            tempTagModelList.add(tagModel);
+                                                        }
+                                                    }
+                                                    foodfyModel.setTags_list(tempTagModelList);
+                                                    food_for_you_list.add(foodfyModel);
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                            Log.d(TAG, "============================================");
+                                            Log.d(TAG, String.valueOf("ProductFullSize: " + food_for_you_list.size()));
+                                            List<ProductModel> temp = new ArrayList<>();
+                                            for (ProductModel productModel : food_for_you_list) {
+                                                boolean isMatch = false;
+                                                Log.d(TAG, "============================================");
+                                                Log.d(TAG, "ProductModel: " + productModel.getProductName());
+                                                for (TagModel tagModel : productModel.getTags_list()) {
+                                                    for (String tag : preferences) {
+                                                        if (tagModel.getTagname().equalsIgnoreCase(tag)) {
+                                                            tagModel.setMatch(true);
+                                                            isMatch = true;
+                                                            Log.d(TAG, productModel.getProductName());
+                                                        }
+                                                    }
+                                                }
+                                                if (isMatch) {
+                                                    temp.add(productModel);
+                                                    isMatch = false;
+                                                }
+                                            }
+                                            Log.d(TAG, "============================================");
+                                            Log.d(TAG, "Product: " + temp.size());
+                                            for (ProductModel productModel : temp)
+                                                Log.d(TAG, "Product: " + productModel.getProductName());
+
+                                            searchView.findViewById(R.id.sv_for_you_page);
+                                            tempProductModelList = new ArrayList<>();
+                                            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                                @Override
+                                                public boolean onQueryTextSubmit(String query) {
+                                                    tempProductModelList.clear();
+                                                    for (ProductModel product : food_for_you_list) {
+                                                        if (product.getProductName().toLowerCase().contains(query.toLowerCase())) {
+                                                            tempProductModelList.add(product);
+                                                        } else {
+                                                            for (TagModel tag : product.getTags_list()) {
+                                                                if (tag.getTagname().toLowerCase().contains(query.toLowerCase())) {
+                                                                    tempProductModelList.add(product);
+                                                                    break; // Exit the loop if a matching tag is found
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Collections.sort(tempProductModelList, (product1, product2) -> {
+                                                        int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                                        int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                                        return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                                    });
+                                                    exist = true;
+                                                    filterAdapter = new FilterAdapter(getActivity(), tempProductModelList, ForYouFragment.this);
+                                                    rv_filter.setAdapter(filterAdapter);
+                                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                                                    rv_filter.setLayoutManager(layoutManager);
+
+                                                    return false;
+                                                }
+
+                                                @Override
+                                                public boolean onQueryTextChange(String newText) {
+                                                    tempProductModelList.clear();
+                                                    if (newText.length() > 0) {
+                                                        for (ProductModel product : food_for_you_list) {
+                                                            if (product.getProductName().toLowerCase().contains(newText.toLowerCase())) {
+                                                                tempProductModelList.add(product);
+                                                            } else {
+                                                                for (TagModel tag : product.getTags_list()) {
+                                                                    if (tag.getTagname().toLowerCase().contains(newText.toLowerCase())) {
+                                                                        tempProductModelList.add(product);
+                                                                        break; // Exit the loop if a matching tag is found
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        Collections.sort(tempProductModelList, (product1, product2) -> {
+                                                            int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                                            int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                                            return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                                        });
+                                                        exist = true;
+                                                        filterAdapter = new FilterAdapter(getActivity(), tempProductModelList, ForYouFragment.this);
+                                                        rv_filter.setAdapter(filterAdapter);
+                                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                                                        rv_filter.setLayoutManager(layoutManager);
+                                                    } else {
+                                                        Collections.sort(food_for_you_list, (product1, product2) -> {
+                                                            int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
+                                                            int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
+                                                            return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
+                                                        });
+                                                        exist = false;
+                                                        filterAdapter = new FilterAdapter(getActivity(), food_for_you_list, ForYouFragment.this);
+                                                        rv_filter.setAdapter(filterAdapter);
+                                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                                                        rv_filter.setLayoutManager(layoutManager);
+
+                                                    }
+                                                    return true;
+                                                }
+                                            });
+
                                             Collections.sort(food_for_you_list, (product1, product2) -> {
                                                 int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
                                                 int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
@@ -347,38 +576,31 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                             exist = false;
                                             filterAdapter = new FilterAdapter(getActivity(), food_for_you_list, ForYouFragment.this);
                                             rv_filter.setAdapter(filterAdapter);
-                                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-                                            rv_filter.setLayoutManager(layoutManager);
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
 
                                         }
-                                        return true;
-                                    }
-                                });
+                                    });
+                                    requestQueueOuter.add(jsonArrayRequestOuter);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
 
-                                Collections.sort(food_for_you_list, (product1, product2) -> {
-                                    int matchedTagsCount1 = calculateMatchedTagsCount(product1.getTags_list());
-                                    int matchedTagsCount2 = calculateMatchedTagsCount(product2.getTags_list());
-                                    return Integer.compare(matchedTagsCount2, matchedTagsCount1); // Sort in descending order
-                                });
-                                exist = false;
-                                filterAdapter = new FilterAdapter(getActivity(), food_for_you_list, ForYouFragment.this);
-                                rv_filter.setAdapter(filterAdapter);
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-
-                            }
-                        });
-                        requestQueueOuter.add(jsonArrayRequestOuter);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                });
-                requestQueueTag.add(jsonArrayRequestTag);
+                                }
+                            });
+                            requestQueueTag.add(jsonArrayRequestTag);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+                    requestQueuepf.add(jsonArrayRequestpf);
+                }
             }
         }, new Response.ErrorListener() {
             @Override

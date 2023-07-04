@@ -1136,7 +1136,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                             }
                         } catch (JSONException e) {
                             Log.d("TEMP CART", "catch");
-                            Toast.makeText(getActivity().getApplicationContext(), "Catch ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {

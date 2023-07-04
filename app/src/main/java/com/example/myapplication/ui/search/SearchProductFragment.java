@@ -264,7 +264,6 @@ public class SearchProductFragment extends Fragment implements RecyclerViewInter
                             }
                         } catch (JSONException e) {
                             Log.d("TEMP CART", "catch" );
-                            Toast.makeText(getActivity().getApplicationContext(), "Catch ",Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {

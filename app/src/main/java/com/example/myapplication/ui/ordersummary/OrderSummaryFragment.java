@@ -190,10 +190,10 @@ public class OrderSummaryFragment extends Fragment implements RecyclerViewInterf
                     deleteProduct(position);
                 }else if(order.getOrderStatus().equals("preparing")){
                     Log.d("orderStatusIFSTMNT", "Preparing");
-                    Toast.makeText(getContext(), "We're sorry, but your order is now being prepared and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "We're sorry, but your order is now being prepared and can no longer be\ncancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
                 }else if(order.getOrderStatus().equals("pickup")){
                     Log.d("orderStatusIFSTMNT", "Pickup");
-                    Toast.makeText(getContext(), "We're sorry, but your order is now ready for pickup and can no longer be cancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "We're sorry, but your order is now ready for pickup and can no longer be\ncancelled. We appreciate your understanding and hope you enjoy your meal.", Toast.LENGTH_SHORT).show();
                 }else if(order.getOrderStatus().equals("complete"))
                     Toast.makeText(getContext(), "We're sorry, but your order is already complete", Toast.LENGTH_SHORT).show();
             }

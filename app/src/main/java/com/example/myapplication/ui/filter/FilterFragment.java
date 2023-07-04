@@ -1117,8 +1117,8 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             float tempPrice = 0;
             @Override
             public void onClick(View v) {
-                current = current + (productModelList.get(position).getProductPrice() * product_count);
                 if(current <= budget || continueShop == true) {
+                    current = current + (productModelList.get(position).getProductPrice() * product_count);
                     tv_current.setText("Current: P" + current);
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "tempCart.php", new Response.Listener<String>() {
                         @Override

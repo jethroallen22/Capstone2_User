@@ -1117,6 +1117,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             float tempPrice = 0;
             @Override
             public void onClick(View v) {
+
                 if(current <= budget || continueShop == true) {
                     current = current + (productModelList.get(position).getProductPrice() * product_count);
                     tv_current.setText("Current: P" + current);

@@ -2,8 +2,14 @@ package com.example.myapplication.activities;
 
 import static android.app.PendingIntent.getActivity;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -19,6 +25,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.models.NotificationModel;
+import com.example.myapplication.adapters.NotificationAdapter;
 import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.activities.models.IPModel;
@@ -33,6 +41,8 @@ import com.example.myapplication.ui.profile.ProfileFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -41,6 +51,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.myapplication.databinding.ActivityHomeBinding;
@@ -50,8 +62,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class Home extends AppCompatActivity {
 
@@ -70,13 +87,17 @@ public class Home extends AppCompatActivity {
     List<UserModel> userList;
     UserModel userModel;
     String image, weather;
-    Handler root;
+    Handler root, notif_root;
     Dialog filterDialog;
     float wallet;
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private TabFragmentAdapter adapter;
+    NotificationManager manager;
+    RequestQueue requestQueue;
+    int lastDisplayedNotificationId = -1;
+    Context context = this;
 
 
     @Override
@@ -85,6 +106,7 @@ public class Home extends AppCompatActivity {
 
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 
         ipModel = new IPModel();
         JSON_URL = ipModel.getURL();
@@ -102,6 +124,7 @@ public class Home extends AppCompatActivity {
         }
         userList = new ArrayList();
         requestQueue1 = Singleton.getsInstance(this).getRequestQueue();
+        requestQueue = Singleton.getsInstance(this).getRequestQueue();
 
         root = new Handler();
         root.postDelayed(new Runnable() {
@@ -111,6 +134,15 @@ public class Home extends AppCompatActivity {
                 root.postDelayed(this, 1000);
             }
         }, 1000);
+
+        notif_root = new Handler();
+        notif_root.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                homeNtoification();
+                root.postDelayed(this, 5000);
+            }
+        }, 5000);
         Log.d("USERSIZE", String.valueOf(userList.size()));
         setSupportActionBar(binding.appBarHome.toolbar);
 
@@ -297,6 +329,53 @@ public class Home extends AppCompatActivity {
 //
 //        filterDialog.show();
 //    }
+
+    public void homeNtoification(){
+        JsonArrayRequest jsonArrayRequestBalance = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apihomenotifget.php", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("notif_response", String.valueOf(response.length()));
+                for (int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Log.d("notif_id_json", String.valueOf(jsonObject.getInt("iduser") + " " + id));
+                        if(jsonObject.getInt("iduser") == id && jsonObject.getString("type").equalsIgnoreCase("orderprocess")) {
+                            int idnotifread = jsonObject.getInt("idnotif");
+                            String description = jsonObject.getString("description");
+                            Log.d("notif_id_json", String.valueOf(idnotifread + " " + lastDisplayedNotificationId));
+                            if (idnotifread != lastDisplayedNotificationId) {
+                                // Display the notification only if the ID is different
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "My Notification");
+                                builder.setContentTitle("Mosibus");
+                                builder.setContentText(description);
+                                builder.setSmallIcon(R.drawable.logo);
+                                builder.setAutoCancel(true);
+                                lastDisplayedNotificationId = idnotifread; // Update the last displayed ID
+
+                                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                                managerCompat.notify(1, builder.build());
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_HIGH);
+                                    NotificationManager manager = getSystemService(NotificationManager.class);
+                                    manager.createNotificationChannel(channel);
+                                }
+                            }
+                        }
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle error response
+            }
+        });
+        requestQueue.add(jsonArrayRequestBalance);
+    }
 
     public void profile_user(){
 

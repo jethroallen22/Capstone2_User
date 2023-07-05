@@ -194,8 +194,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 Calendar calendar = Calendar.getInstance();
                 Date currentDateAndTime = calendar.getTime();
                 // Format the date and time as desired
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
                 String formattedDate = dateFormat.format(currentDateAndTime);
                 String formattedTime = timeFormat.format(currentDateAndTime);
 
@@ -666,8 +666,8 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 // Convert Calendar to Date
                 Date time = selectedTime.getTime();
                 //Convert Date to String
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
                 String dateString = dateFormat.format(date);
                 String timeString = timeFormat.format(time);
                 // Concatenate date and time into a single string

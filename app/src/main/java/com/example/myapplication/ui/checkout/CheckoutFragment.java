@@ -33,22 +33,26 @@ public class CheckoutFragment extends Fragment {
     private Handler handler;
     ImageView iv_fingerprint;
     int userId;
-    double wallet;
+    float wallet;
     float amount;
-    public CheckoutFragment(OrderModel orderModel) {
-        this.orderModel = orderModel;
-    }
+    String dateTimeString;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentCheckoutBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        Bundle bundle = this.getArguments();
+        Bundle bundle = getArguments();
         if(bundle != null){
             userId = bundle.getInt("id");
-            wallet = bundle.getDouble("wallet");
+            orderModel = bundle.getParcelable("order");
+            wallet = bundle.getFloat("wallet");
             amount = bundle.getFloat("amount");
+            dateTimeString = bundle.getString("datetime");
+            Log.d("Checkout1" , "wallet: " + wallet);
+            Log.d("Checkout1" , "amount: " + amount);
+            Log.d("Checkout1" , "datetime: " + dateTimeString);
             Log.d("Cashin", userId + " " + wallet);
         }
 
@@ -80,8 +84,9 @@ public class CheckoutFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt("id", id);
                 bundle.putFloat("amount", amount);
-                bundle.putDouble("wallet", wallet);
+                bundle.putFloat("wallet", wallet);
                 bundle.putParcelable("order", orderModel);
+                bundle.putString("datetime", dateTimeString);
                 Checkout2Fragment fragment = new Checkout2Fragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();

@@ -1,0 +1,7 @@
+<!-- button_outlined_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke
+        android:color="@color/mosibusPrimary"
+        android:width="2dp" /> <!-- Set the desired outline width here -->
+    <corners android:radius="3dp" /> <!-- Adjust the radius to change button corner roundness -->
+</shape>

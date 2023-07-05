@@ -52,10 +52,10 @@ public class Checkout3Fragment extends Fragment{
 
     private FragmentCheckout3Binding binding;
     OrderModel orderModel;
-
     TextView merchant,id, amount, total;
-
     String store_name;
+    float wallet;
+    String dateTimeString;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -67,11 +67,15 @@ public class Checkout3Fragment extends Fragment{
         merchant = root.findViewById(R.id.tv_merchantname);
         total = root.findViewById(R.id.tv_total_amount);
 
-        Bundle bundle = this.getArguments();
+        Bundle bundle = getArguments();
         if (bundle != null){
             orderModel = bundle.getParcelable("order");
             store_name = orderModel.getStore_name();
-            Log.d("C3StoreName",store_name);
+            wallet = bundle.getFloat("wallet");
+            dateTimeString = bundle.getString("datetime");
+            Log.d("Checkout3" , "wallet: " + wallet);
+            Log.d("Checkout3" , "amount: " + amount);
+            Log.d("Checkout3" , "datetime: " + dateTimeString);
             merchant.setText(store_name);
             //merchant.setText(orderModel.getStore_name());
             amount.setText(String.valueOf(orderModel.getOrderItemTotalPrice()));
@@ -84,6 +88,8 @@ public class Checkout3Fragment extends Fragment{
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("order", orderModel);
+                bundle.putFloat("wallet", wallet);
+                bundle.putString("datetime", dateTimeString);
                 Checkout4Fragment fragment = new Checkout4Fragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();

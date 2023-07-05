@@ -2,6 +2,7 @@ package com.example.myapplication.ui.order;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -21,9 +22,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -57,11 +61,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +83,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     private FragmentOrderBinding binding;
     TextView tv_store_name;
     TextView tv_total_price;
-    Button btn_place_order;
+    Button btn_place_order, btn_for_later;
     private String store_name;
     //School IP
     private static String JSON_URL;
@@ -98,6 +104,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     VoucherAdapter voucherAdapter;
     Handler handler;
     Runnable myRunnable;
+    String dateTimeString;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -118,6 +125,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         tv_store_name = root.findViewById(R.id.tv_store_name);
         tv_total_price = root.findViewById(R.id.tv_total_price);
         btn_place_order = root.findViewById(R.id.btn_place_order);
+        btn_for_later = root.findViewById(R.id.btn_for_later);
         rg_payment = root.findViewById(R.id.rg_payment);
         radio_gcash = root.findViewById(R.id.radio_gcash);
         radio_wallet = root.findViewById(R.id.radio_wallet);
@@ -145,6 +153,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         };
         handler.postDelayed(myRunnable, 1000);
         btn_place_order.setEnabled(false);
+        btn_for_later.setEnabled(false);
         rv_order_items = root.findViewById(R.id.rv_order_items);
         requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
         getDiscount();
@@ -162,16 +171,36 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 if (selectedOption.equals(walletText)) {
                     payment_method = "wallet";
                     btn_place_order.setEnabled(true);
+                    btn_for_later.setEnabled(true);
                 } else if (selectedOption.equals("Gcash")) {
                     payment_method = "gcash";
                     btn_place_order.setEnabled(true);
+                    btn_for_later.setEnabled(true);
                 }
+            }
+        });
+
+        btn_for_later.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBottomSheet();
             }
         });
 
         btn_place_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Get the current date and time
+                Calendar calendar = Calendar.getInstance();
+                Date currentDateAndTime = calendar.getTime();
+                // Format the date and time as desired
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                String formattedDate = dateFormat.format(currentDateAndTime);
+                String formattedTime = timeFormat.format(currentDateAndTime);
+
+                dateTimeString = formattedDate + " " + formattedTime;
+
                 if(payment_method == "wallet") {
                     if(orderModel.getOrderItemTotalPrice() <= wallet){
                         getDataFromServer();
@@ -180,10 +209,12 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                         Toast.makeText(getContext(), "You don't have sufficient balance in your wallet, please cash in for additional amount", Toast.LENGTH_SHORT).show();
                     }
 
-                } else {
+                } else if (payment_method == "gcash"){
                     Bundle bundle = new Bundle();
+                    CheckoutFragment fragment = new CheckoutFragment();
                     bundle.putParcelable("order", orderModel);
-                    CheckoutFragment fragment = new CheckoutFragment(orderModel);
+                    bundle.putFloat("wallet", wallet);
+                    bundle.putString("datetime", dateTimeString);
                     fragment.setArguments(bundle);
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                 }
@@ -452,6 +483,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                 params.put("orderStatus", "pending");
                 params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
                 params.put("users_id", String.valueOf(orderModel.getUsers_id()));
+                params.put("datetime", dateTimeString);
                 params.put("iduser", String.valueOf(orderModel.getUsers_id()));
                 params.put("type", "order");
                 params.put("title", "Your order from " + orderModel.getStore_name() + " has been placed!");
@@ -586,6 +618,87 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         queue.add(stringRequest);
 
 
+    }
+
+    public void showBottomSheet() {
+        String TAG = "Bottomsheet";
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        Log.d(TAG, "final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);");
+        View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext())
+                .inflate(
+                        R.layout.for_later_bottomsheet_layout,
+                        getActivity().findViewById(R.id.for_later_bottomsheet_container)
+                );
+        Log.d(TAG, "bottomSheetView = LayoutInflater.from");
+
+        DatePicker dp_for_later = bottomSheetView.findViewById(R.id.dp_for_later);
+        TimePicker tp_for_later = bottomSheetView.findViewById(R.id.tp_for_later);
+        Button btn_confirm_order = bottomSheetView.findViewById(R.id.btn_confirm_order);
+        ImageView close_btn2 = bottomSheetView.findViewById(R.id.close_btn2);
+        Date date;
+        Time time;
+
+        close_btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        btn_confirm_order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int year = dp_for_later.getYear();
+                int month = dp_for_later.getMonth();
+                int dayOfMonth = dp_for_later.getDayOfMonth();
+                int hour = tp_for_later.getHour();
+                int minute = tp_for_later.getMinute();
+
+                // Create a Calendar instance and set it to the selected date
+                Calendar selectedDate = Calendar.getInstance();
+                selectedDate.set(year, month, dayOfMonth);
+                // Convert Calendar to Date
+                Date date = selectedDate.getTime();
+                // Create a Calendar instance and set it to the selected time
+                Calendar selectedTime = Calendar.getInstance();
+                selectedTime.set(Calendar.HOUR_OF_DAY, hour);
+                selectedTime.set(Calendar.MINUTE, minute);
+                // Convert Calendar to Date
+                Date time = selectedTime.getTime();
+                //Convert Date to String
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                String dateString = dateFormat.format(date);
+                String timeString = timeFormat.format(time);
+                // Concatenate date and time into a single string
+                dateTimeString = dateString + " " + timeString;
+
+                if(payment_method == "wallet") {
+                    if(orderModel.getOrderItemTotalPrice() <= wallet){
+                        getDataFromServer();
+                        sendtoAvailVoucherDb(orderModel.getUsers_id(), orderModel.getVoucher_id());
+                    } else {
+                        Toast.makeText(getContext(), "You don't have sufficient balance in your wallet, please cash in for additional amount", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else if(payment_method == "gcash"){
+                    Bundle bundle = new Bundle();
+                    CheckoutFragment fragment = new CheckoutFragment();
+                    bundle.putParcelable("order", orderModel);
+                    bundle.putFloat("wallet", wallet);
+                    bundle.putString("datetime", dateTimeString);
+                    fragment.setArguments(bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                }
+
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        //Glide.with(getActivity()).load(food_for_you_list.get(position).getProductImage()).into(product_image);
+
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
     }
 
     public void showVoucherBottomSheet() {

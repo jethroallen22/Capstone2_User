@@ -38,19 +38,22 @@ public class Checkout2Fragment extends Fragment {
     int[] randomNumbers;
     NotificationManager manager;
     List<Integer> randomInt;
-
-
-
-
+    float wallet;
+    String dateTimeString;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentCheckout2Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        Bundle bundle = this.getArguments();
+        Bundle bundle = getArguments();
 
-        if (bundle != null)
+        if (bundle != null){
             orderModel = bundle.getParcelable("order");
+            wallet = bundle.getFloat("wallet");
+            dateTimeString = bundle.getString("datetime");
+            Log.d("Checkout2" , "wallet: " + wallet);
+            Log.d("Checkout2" , "datetime: " + dateTimeString);
+        }
         randomInt = new ArrayList<>();
         randomInt.add(0);
         randomInt.add(1);
@@ -87,6 +90,8 @@ public class Checkout2Fragment extends Fragment {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("order", orderModel);
+                bundle.putFloat("wallet", wallet);
+                bundle.putString("datetime", dateTimeString);
                 Checkout3Fragment fragment = new Checkout3Fragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();

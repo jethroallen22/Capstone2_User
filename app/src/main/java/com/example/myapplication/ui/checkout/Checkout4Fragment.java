@@ -60,6 +60,8 @@ public class Checkout4Fragment extends Fragment {
     TextView total, id3, amount;
 
     Button btn_next;
+    float wallet;
+    String dateTimeString;
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -74,9 +76,15 @@ public class Checkout4Fragment extends Fragment {
         amount = root.findViewById(R.id.tv_amount);
         btn_next = root.findViewById(R.id.btn_next4);
 
-        Bundle bundle = this.getArguments();
-        if (bundle != null)
+        Bundle bundle = getArguments();
+        if (bundle != null) {
             orderModel = bundle.getParcelable("order");
+            wallet = bundle.getFloat("wallet");
+            dateTimeString = bundle.getString("datetime");
+            Log.d("Checkout4" , "wallet: " + wallet);
+            Log.d("Checkout4" , "amount: " + amount);
+            Log.d("Checkout4" , "datetime: " + dateTimeString);
+        }
         orderModelList = new ArrayList<>();
         requestQueueOrder = Singleton.getsInstance(getActivity()).getRequestQueue();
 
@@ -105,6 +113,37 @@ public class Checkout4Fragment extends Fragment {
 
 
     private void getDataFromServer() {
+
+        float temp = wallet - orderModel.getOrderItemTotalPrice();
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, JSON_URL + "update_wallet.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("On Res", "inside on res");
+                        } catch (Throwable e) {
+                            Log.d("Catch", String.valueOf(e));
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> paramV = new HashMap<>();
+                Log.d("Cashin", String.valueOf(temp));
+                paramV.put("id", String.valueOf(orderModel.getUsers_id()));
+                paramV.put("wallet", String.valueOf(temp));
+                Log.d("Cashin", "success");
+                return paramV;
+            }
+        };
+        queue.add(stringRequest1);
+
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorderpost.php", new Response.Listener<String>() {
             @SuppressLint("MissingPermission")
@@ -121,7 +160,7 @@ public class Checkout4Fragment extends Fragment {
                         orderModel.getOrderItem_list().get(k).setIdOrder(orderId);
                     }
 
-                    RequestQueue requestQueue2 = Volley.newRequestQueue(mActivity);
+                    RequestQueue requestQueue2 = Volley.newRequestQueue(getActivity());
                     StringRequest stringRequest2 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderitem.php", new Response.Listener<String>() {
 
                         @Override
@@ -149,7 +188,7 @@ public class Checkout4Fragment extends Fragment {
                     requestQueue2.add(stringRequest2);
 
 
-                    RequestQueue requestQueue3 = Volley.newRequestQueue(mActivity);
+                    RequestQueue requestQueue3 = Volley.newRequestQueue(getActivity());
                     StringRequest stringRequest3 = new StringRequest(Request.Method.POST, JSON_URL + "apiorderhistorypost.php", new Response.Listener<String>() {
 
                         @Override
@@ -198,6 +237,7 @@ public class Checkout4Fragment extends Fragment {
                 Bundle bundle = new Bundle();
                 Log.d("orderStatus", orderModel.getOrderStatus());
                 bundle.putParcelable("order", orderModel);
+                bundle.putFloat("wallet", temp);
                 OrderSummaryFragment fragment = new OrderSummaryFragment();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
@@ -216,7 +256,7 @@ public class Checkout4Fragment extends Fragment {
                 params.put("orderStatus", "pending");
                 params.put("store_idStore", String.valueOf(orderModel.getStore_idstore()));
                 params.put("users_id", String.valueOf(orderModel.getUsers_id()));
-
+                params.put("datetime", dateTimeString);
                 params.put("iduser", String.valueOf(orderModel.getUsers_id()));
                 params.put("type", "order");
                 params.put("title", "Your order from " + orderModel.getStore_name() + " has been placed!");

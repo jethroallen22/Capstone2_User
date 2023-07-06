@@ -21,9 +21,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.databinding.FragmentGcashReceiptBinding;
-import com.example.myapplication.databinding.FragmentSettingsBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

@@ -14,13 +14,12 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.ProductModel;
-import com.example.myapplication.activities.models.TagModel;
+import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.TagModel;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder> {

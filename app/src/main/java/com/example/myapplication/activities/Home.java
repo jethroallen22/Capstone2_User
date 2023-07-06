@@ -2,8 +2,6 @@ package com.example.myapplication.activities;
 
 import static android.app.PendingIntent.getActivity;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,12 +23,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.NotificationModel;
-import com.example.myapplication.adapters.NotificationAdapter;
 import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.UserModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.UserModel;
 import com.example.myapplication.ui.activities.ActivitiesFragment;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
@@ -51,8 +47,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.myapplication.databinding.ActivityHomeBinding;
@@ -62,13 +56,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class Home extends AppCompatActivity {
 

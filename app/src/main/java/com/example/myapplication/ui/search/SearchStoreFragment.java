@@ -17,14 +17,11 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.ProductModel;
-import com.example.myapplication.activities.models.SearchModel;
-import com.example.myapplication.activities.models.StoreModel;
-import com.example.myapplication.activities.models.TagModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.SearchModel;
+import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.adapters.SearchAdapter;
 import com.example.myapplication.databinding.FragmentSearchStoreBinding;
-import com.example.myapplication.databinding.FragmentSettingsBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.ui.store.StoreFragment;
 

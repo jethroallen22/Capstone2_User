@@ -2,8 +2,6 @@ package com.example.myapplication.activities;
 
 import static android.app.PendingIntent.getActivity;
 
-import static com.google.android.material.color.utilities.MaterialDynamicColors.error;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -21,19 +19,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.UserModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.UserModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;

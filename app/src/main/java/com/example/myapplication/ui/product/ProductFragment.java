@@ -19,10 +19,10 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapters.AddonAdapter;
 import com.example.myapplication.adapters.ChooseAdapter;
 import com.example.myapplication.databinding.FragmentProductBinding;
-import com.example.myapplication.activities.models.AddonModel;
-import com.example.myapplication.activities.models.ChooseModel;
-import com.example.myapplication.activities.models.ProductModel;
-import com.example.myapplication.activities.models.StoreModel;
+import com.example.myapplication.models.AddonModel;
+import com.example.myapplication.models.ChooseModel;
+import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.store.StoreFragment;
 
 import java.util.ArrayList;

@@ -3,9 +3,6 @@ package com.example.myapplication.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager2.widget.ViewPager2;
-import com.google.android.material.tabs.TabLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -26,21 +23,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.cometchat.pro.core.AppSettings;
-import com.cometchat.pro.core.CometChat;
-import com.cometchat.pro.exceptions.CometChatException;
 import com.example.myapplication.R;
 
 
-import com.example.myapplication.activities.models.CoordModel;
-import com.example.myapplication.activities.models.WeatherModel;
-import com.example.myapplication.adapters.TabFragmentAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.example.myapplication.models.CoordModel;
+import com.example.myapplication.models.WeatherModel;
 import com.google.gson.Gson;
-import com.onesignal.OneSignal;
 
 import org.json.JSONException;
 import org.json.JSONObject;

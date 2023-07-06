@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.CartAdapter;
-import com.example.myapplication.activities.models.CartModel;
+import com.example.myapplication.models.CartModel;
 
 import java.util.List;
 

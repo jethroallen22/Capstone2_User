@@ -1,4 +1,4 @@
-package com.example.myapplication.activities.models;
+package com.example.myapplication.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

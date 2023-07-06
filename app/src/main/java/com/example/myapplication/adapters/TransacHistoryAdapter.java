@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.TransacHistoryModel;
+import com.example.myapplication.models.TransacHistoryModel;
 
 import java.util.List;
 

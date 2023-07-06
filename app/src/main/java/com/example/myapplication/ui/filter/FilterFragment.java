@@ -3,7 +3,6 @@ package com.example.myapplication.ui.filter;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.nfc.Tag;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,15 +32,15 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.TagModel;
+import com.example.myapplication.models.TagModel;
 import com.example.myapplication.adapters.FilterAdapter;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentFilterBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.ProductModel;
-import com.example.myapplication.activities.models.StoreModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.ProductModel;
+import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -51,7 +50,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +84,7 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
     String mood;
     String TAG = "filter";
     LinearLayout ll_no_result;
-    float current = 0;
+    float current = 0 , temp = 0;
     Dialog bugetDialog, filterDialog;
     boolean continueShop = false;
     ImageView btn_edit_budget;
@@ -1117,8 +1115,9 @@ public class FilterFragment extends Fragment implements RecyclerViewInterface {
             float tempPrice = 0;
             @Override
             public void onClick(View v) {
-
-                if(current <= budget || continueShop == true) {
+                temp = current + (productModelList.get(position).getProductPrice() * product_count);
+                if(temp <= budget || continueShop == true) {
+                    Log.d(TAG, "temp: " + temp + " | budget: " + budget);
                     current = current + (productModelList.get(position).getProductPrice() * product_count);
                     tv_current.setText("Current: P" + current);
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "tempCart.php", new Response.Listener<String>() {

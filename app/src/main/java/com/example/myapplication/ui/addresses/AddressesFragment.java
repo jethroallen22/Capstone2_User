@@ -21,7 +21,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapters.AddressAdapter;
 import com.example.myapplication.databinding.FragmentAddressesBinding;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.AddressModel;
+import com.example.myapplication.models.AddressModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;

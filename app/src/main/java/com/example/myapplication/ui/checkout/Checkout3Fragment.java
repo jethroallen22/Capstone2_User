@@ -1,17 +1,8 @@
 package com.example.myapplication.ui.checkout;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -19,34 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.Home;
-import com.example.myapplication.activities.Login;
-import com.example.myapplication.activities.Preferences;
 import com.example.myapplication.databinding.FragmentCheckout3Binding;
-import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.OrderModel;
-import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.example.myapplication.models.OrderModel;
 
 public class Checkout3Fragment extends Fragment{
 

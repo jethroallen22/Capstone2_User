@@ -1,8 +1,7 @@
-package com.example.myapplication.activities.models;
+package com.example.myapplication.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.nfc.Tag;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;

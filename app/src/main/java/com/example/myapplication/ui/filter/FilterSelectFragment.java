@@ -23,12 +23,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.databinding.FragmentFilterSelectBinding;
-import com.example.myapplication.databinding.FragmentSettingsBinding;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.ui.home.HomeFragment;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 

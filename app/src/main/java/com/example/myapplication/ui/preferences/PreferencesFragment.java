@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -23,12 +22,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.Home;
-import com.example.myapplication.activities.Preferences;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.adapters.WeatherAdapter;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.databinding.FragmentPreferencesBinding;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.ui.home.HomeFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -38,7 +34,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

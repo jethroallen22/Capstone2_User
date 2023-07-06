@@ -26,10 +26,10 @@ import com.example.myapplication.adapters.RefundMethodAdapter;
 import com.example.myapplication.adapters.TransacHistoryAdapter;
 import com.example.myapplication.databinding.FragmentPaymentBinding;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.MethodModel;
-import com.example.myapplication.activities.models.TransacHistoryModel;
-import com.example.myapplication.activities.models.WalletModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.MethodModel;
+import com.example.myapplication.models.TransacHistoryModel;
+import com.example.myapplication.models.WalletModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;

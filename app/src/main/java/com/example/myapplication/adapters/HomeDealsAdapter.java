@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.activities.models.DealsModel;
+import com.example.myapplication.models.DealsModel;
 
 import java.util.List;
 

@@ -29,8 +29,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapters.ProductAdapter;
 import com.example.myapplication.databinding.FragmentWeatherBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.ProductModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.ProductModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
 

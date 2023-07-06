@@ -1,4 +1,4 @@
-package com.example.myapplication.activities.models;
+package com.example.myapplication.models;
 
 public class UserFirebaseModel {
 

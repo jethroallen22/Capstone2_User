@@ -18,7 +18,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapters.HomeStoreRecAdapter;
 import com.example.myapplication.databinding.FragmentCategoryBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
-import com.example.myapplication.activities.models.StoreModel;
+import com.example.myapplication.models.StoreModel;
 import com.example.myapplication.ui.store.StoreFragment;
 
 import java.util.ArrayList;

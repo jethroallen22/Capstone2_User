@@ -12,18 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCashInBinding;
-import com.example.myapplication.activities.models.IPModel;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.myapplication.models.IPModel;
 
 public class CashInFragment extends Fragment {
 

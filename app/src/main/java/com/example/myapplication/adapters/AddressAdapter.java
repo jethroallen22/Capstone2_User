@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.AddressModel;
+import com.example.myapplication.models.AddressModel;
 
 import java.util.List;
 

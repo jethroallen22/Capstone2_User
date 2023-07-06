@@ -14,12 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCheckoutBinding;
-import com.example.myapplication.activities.models.OrderModel;
-import com.example.myapplication.ui.payment.GcashSendFragment;
+import com.example.myapplication.models.OrderModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 public class CheckoutFragment extends Fragment {

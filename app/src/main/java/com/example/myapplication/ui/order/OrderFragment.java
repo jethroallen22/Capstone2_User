@@ -2,7 +2,6 @@ package com.example.myapplication.ui.order;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -39,21 +38,18 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.DealsModel;
-import com.example.myapplication.activities.models.OrderItemModel;
-import com.example.myapplication.activities.models.WalletModel;
-import com.example.myapplication.adapters.HomeDealsAdapter;
+import com.example.myapplication.models.DealsModel;
+import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.adapters.OrderItemsAdapter;
 import com.example.myapplication.adapters.VoucherAdapter;
 import com.example.myapplication.databinding.FragmentOrderBinding;
 import com.example.myapplication.interfaces.RecyclerViewInterface;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.OrderModel;
-import com.example.myapplication.activities.models.VoucherModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.models.VoucherModel;
 import com.example.myapplication.ui.checkout.CheckoutFragment;
 import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
-import com.example.myapplication.ui.payment.PaymentFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
@@ -62,7 +58,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Time;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -94,7 +89,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
     float wallet;
     String walletText;
     NotificationManager manager;
-    RequestQueue requestQueueOrder, requestQueueVoucher, requestQueueAvailVoucher, requestQueueBalance;
+    RequestQueue requestQueueOrder, requestQueueVoucher, requestQueueAvailVoucher, requestQueueBalance, requestQueueCart;
 
     RecyclerView rv_vouchers;
 
@@ -120,6 +115,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
         requestQueueVoucher = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueAvailVoucher = Singleton.getsInstance(getActivity()).getRequestQueue();
         requestQueueBalance = Singleton.getsInstance(getActivity()).getRequestQueue();
+        requestQueueCart = Singleton.getsInstance(getActivity()).getRequestQueue();
 
 
         tv_store_name = root.findViewById(R.id.tv_store_name);
@@ -234,78 +230,132 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
     public void getDiscount(){
         RecyclerViewInterface recyclerViewInterface = OrderFragment.this;
-        JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
+        List<OrderItemModel> orderItemModelList = new ArrayList<>();
+        JsonArrayRequest jsonArrayRequest1 = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apicart.php", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Log.d("DealsResponse", String.valueOf(response));
                 for (int i = 0; i < response.length(); i++) {
                     try {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        int dealId = jsonObject.getInt("dealsId");
-                        int storeId = jsonObject.getInt("storeId");
-                        int percentage = jsonObject.getInt("percentage");
-                        int productId = jsonObject.getInt("productId");
-                        String startDate = jsonObject.getString("startDate");
-                        String endDate = jsonObject.getString("endDate");
-                        DealsModel deal = new DealsModel(dealId, storeId, percentage);
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                        Date currentDate = new Date(); // Current date
-                        try {
-                            Date startDateTemp = dateFormat.parse(startDate);
-                            Date endDateTemp = dateFormat.parse(endDate);
+                        int temp_not = 0;
+                        JSONObject jsonObjectCart = response.getJSONObject(i);
+                        int c_productId = jsonObjectCart.getInt("temp_productId");
+                        int c_storeId = jsonObjectCart.getInt("temp_storeId");
+                        int c_usersId = jsonObjectCart.getInt("temp_usersId");
+                        String c_productName = jsonObjectCart.getString("temp_productName");
+                        double c_productPrice = jsonObjectCart.getDouble("temp_productPrice");
+                        int c_productQuantity = jsonObjectCart.getInt("temp_productQuantity");
+                        double c_totalProductPrice = jsonObjectCart.getDouble("temp_totalProductPrice");
+                        String c_storeName = jsonObjectCart.getString("storeName");
+                        String c_storeImage = jsonObjectCart.getString("storeImage");
 
-                            if (currentDate.after(startDateTemp)) {
-                                if (currentDate.before(endDateTemp)) {
-                                    float temp = 0;
-                                    for (OrderItemModel orderItemModel: orderModel.getOrderItem_list()){
-                                        Log.d("OrderFragment", "ReadDealProdID: " + productId + " OrderItemIdProd: " + orderItemModel.getIdProduct());
-                                        if(orderItemModel.getIdProduct() == productId) {
-                                            orderItemModel.setTotalPrice(orderItemModel.getTotalPrice() - ((orderItemModel.getTotalPrice() * percentage) / 100));
-                                        }
-                                        temp += orderItemModel.getTotalPrice();
-                                    }
-                                    orderModel.setOrderItemTotalPrice(temp);
-                                } else {
-                                    Log.d("InvalidDeal", deal.getStoreName() + ": Date is after end date");
-                                }
+                        if (c_usersId == orderModel.getUsers_id() && c_storeId == orderModel.getStore_idstore()) {
+                            OrderItemModel orderItemModel = new OrderItemModel(c_productId, c_storeId, c_usersId, c_productName, (float) c_productPrice, c_productQuantity,
+                                    (float) (c_productPrice * c_productQuantity));
+
+                            if(orderItemModelList.isEmpty()){
+                                orderItemModelList.add(orderItemModel);
                             } else {
-                                Log.d("InvalidDeal", deal.getStoreName() + ": Date is before start date");
+                                boolean isMatch = false;
+                                for (OrderItemModel orderItem : orderItemModelList){
+                                    if(orderItem.getProductName().equalsIgnoreCase(orderItemModel.getProductName())){
+                                        int tempItemQuantity = orderItem.getItemQuantity();
+                                        tempItemQuantity += orderItemModel.getItemQuantity();
+                                        orderItem.setTotalPrice(orderItem.getItemPrice() * tempItemQuantity);
+                                        orderItem.setItemQuantity(tempItemQuantity);
+                                        isMatch = true;
+                                        break;
+                                    }
+                                }
+                                if (!isMatch){
+                                    orderItemModelList.add(orderItemModel);
+                                }
                             }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                            Log.d("ParseException", e.getMessage());
                         }
-                    } catch (JSONException e) {
+                    }catch (JSONException e) {
                         e.printStackTrace();
-                        Log.d("JSONException", e.getMessage());
                     }
                 }
-                Log.d("orderItem", "========================");
-                for(OrderItemModel orderItemModel : orderModel.getOrderItem_list())
-                    Log.d("orderItem", "qty: " + orderItemModel.getItemQuantity());
-                orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),recyclerViewInterface);
-                rv_order_items.setAdapter(orderItemsAdapter);
-                rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-                rv_order_items.setHasFixedSize(true);
-                rv_order_items.setNestedScrollingEnabled(false);
-                float temp = 0;
-                for(OrderItemModel orderItem : orderModel.getOrderItem_list())
-                    temp += orderItem.getTotalPrice();
-                tv_total_price.setText(String.valueOf(temp));
-                orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
+                orderModel.setOrderItem_list(orderItemModelList);
+                JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
                     @Override
-                    public void onItemClick(int position) {
-                        deleteProduct(position);
+                    public void onResponse(JSONArray response) {
+                        Log.d("DealsResponse", String.valueOf(response));
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                int dealId = jsonObject.getInt("dealsId");
+                                int storeId = jsonObject.getInt("storeId");
+                                int percentage = jsonObject.getInt("percentage");
+                                int productId = jsonObject.getInt("productId");
+                                String startDate = jsonObject.getString("startDate");
+                                String endDate = jsonObject.getString("endDate");
+                                DealsModel deal = new DealsModel(dealId, storeId, percentage);
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                                Date currentDate = new Date(); // Current date
+                                try {
+                                    Date startDateTemp = dateFormat.parse(startDate);
+                                    Date endDateTemp = dateFormat.parse(endDate);
+                                    if (currentDate.after(startDateTemp)) {
+                                        if (currentDate.before(endDateTemp)) {
+                                            float temp = 0;
+                                            for (OrderItemModel orderItemModel: orderModel.getOrderItem_list()){
+                                                Log.d("OrderFragment", "ReadDealProdID: " + productId + " OrderItemIdProd: " + orderItemModel.getIdProduct());
+                                                if(orderItemModel.getIdProduct() == productId) {
+                                                    orderItemModel.setTotalPrice(orderItemModel.getTotalPrice() - ((orderItemModel.getTotalPrice() * percentage) / 100));
+                                                }
+                                                temp += orderItemModel.getTotalPrice();
+                                            }
+                                            orderModel.setOrderItemTotalPrice(temp);
+                                        } else {
+                                            Log.d("InvalidDeal", deal.getStoreName() + ": Date is after end date");
+                                        }
+                                    } else {
+                                        Log.d("InvalidDeal", deal.getStoreName() + ": Date is before start date");
+                                    }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    Log.d("ParseException", e.getMessage());
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Log.d("JSONException", e.getMessage());
+                            }
+                        }
+                        Log.d("orderItem", "========================");
+                        for(OrderItemModel orderItemModel : orderModel.getOrderItem_list())
+                            Log.d("orderItem", "qty: " + orderItemModel.getItemQuantity());
+                        orderItemsAdapter = new OrderItemsAdapter(getActivity(),orderModel.getOrderItem_list(),recyclerViewInterface);
+                        rv_order_items.setAdapter(orderItemsAdapter);
+                        rv_order_items.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+                        rv_order_items.setHasFixedSize(true);
+                        rv_order_items.setNestedScrollingEnabled(false);
+                        float temp = 0;
+                        for(OrderItemModel orderItem : orderModel.getOrderItem_list())
+                            temp += orderItem.getTotalPrice();
+                        tv_total_price.setText(String.valueOf(temp));
+                        orderItemsAdapter.setOnItemClickListener(new OrderItemsAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+                                deleteProduct(position);
+                            }
+                        });
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Log.d("VolleyError", error.getMessage());
                     }
                 });
+                requestQueueOrder.add(jsonArrayRequestDeals);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //Log.d("VolleyError", error.getMessage());
+
             }
         });
-        requestQueueOrder.add(jsonArrayRequestDeals);
+        requestQueueCart.add(jsonArrayRequest1);
+
     }
 
     public void getAvailBalance(){

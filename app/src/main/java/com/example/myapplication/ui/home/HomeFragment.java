@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.IPModel;
+import com.example.myapplication.models.IPModel;
 import com.example.myapplication.adapters.TabFragmentAdapter;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.ui.cart.CartFragment;

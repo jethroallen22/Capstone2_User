@@ -18,12 +18,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.myapplication.R;
-import com.example.myapplication.activities.models.DealsModel;
 import com.example.myapplication.adapters.NotificationAdapter;
 import com.example.myapplication.databinding.FragmentNotificationsBinding;
 import com.example.myapplication.interfaces.Singleton;
-import com.example.myapplication.activities.models.IPModel;
-import com.example.myapplication.activities.models.NotificationModel;
+import com.example.myapplication.models.IPModel;
+import com.example.myapplication.models.NotificationModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

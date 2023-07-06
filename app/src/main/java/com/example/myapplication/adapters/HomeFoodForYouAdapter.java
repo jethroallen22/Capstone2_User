@@ -40,9 +40,6 @@ public class HomeFoodForYouAdapter extends RecyclerView.Adapter<HomeFoodForYouAd
         holder.tv_fff_prod_name.setText(list.get(position).getProductName());
         holder.tv_fff_store_name.setText(list.get(position).getProductRestoName());
         holder.tv_fff_prod_price.setText("P " + list.get(position).getProductPrice());
-        //holder.tv_fff_prod_cal.setText(list.get(position).getProduct_calories() + "cal");
-
-
     }
 
     @Override

@@ -19,10 +19,8 @@ import java.util.List;
 public class HomeDealsAdapter extends RecyclerView.Adapter<HomeDealsAdapter.ViewHolder>{
 
     private final RecyclerViewInterface recyclerViewInterface;
-
     Context context;
     List<DealsModel> list;
-
 
     public HomeDealsAdapter(Context context, List<DealsModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;

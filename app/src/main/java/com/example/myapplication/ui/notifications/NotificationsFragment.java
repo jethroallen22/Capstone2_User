@@ -70,15 +70,6 @@ public class NotificationsFragment extends Fragment {
         rv_notification = root.findViewById(R.id.rv_notification);
         notification_list = new ArrayList<>();
         getNotification();
-//        notification_list.add(new NotificationModel(R.drawable.burger_mcdo,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a sem risus. Suspendisse potenti. Fusce vel commodo est. Phasellus congue odio a lacus blandit elementum."));
-//        notification_list.add(new NotificationModel(R.drawable.chicken_joy,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a sem risus. Suspendisse potenti. Fusce vel commodo est. Phasellus congue odio a lacus blandit elementum."));
-//        notification_list.add(new NotificationModel(R.drawable.whopper_king,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a sem risus. Suspendisse potenti. Fusce vel commodo est. Phasellus congue odio a lacus blandit elementum."));
-//        notificationAdapter = new NotificationAdapter(getActivity(),notification_list);
-//        rv_notification.setAdapter(notificationAdapter);
-//        rv_notification.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
-//        rv_notification.setHasFixedSize(true);
-//        rv_notification.setNestedScrollingEnabled(false);
-
         return root;
     }
 

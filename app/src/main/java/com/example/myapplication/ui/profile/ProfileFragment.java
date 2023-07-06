@@ -88,17 +88,6 @@ public class ProfileFragment extends Fragment {
             password = userModel.getPassword();
             contact = userModel.getContact();
             bitmap = userModel.getBitmapImage();
-            //            for (int i = 0 ; i < userModelList.size() ; i++){
-//                if(id == userModelList.get(i).getId()){
-//                    name = userModelList.get(i).getName();
-//                    email = userModelList.get(i).getEmail();
-//                    password = userModelList.get(i).getPassword();
-//                    contact = userModelList.get(i).getContact();
-//                    bitmap = userModelList.get(i).getBitmapImage();
-//                    Log.d("TESTNAME: ", userModelList.get(i).getName());
-//                }
-//            }
-
         }
 
         //Initialize views

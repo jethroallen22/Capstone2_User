@@ -43,12 +43,9 @@ public class Register extends AppCompatActivity {
             register_confpassword_text_input;
     private Button signup_btn;
     private TextView tv_login_btn;
-
     private static String JSON_URL;
     private IPModel ipModel;
-
     DatabaseReference databaseReference;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,13 +66,11 @@ public class Register extends AppCompatActivity {
             }
         });
         init();
-
         register_name_text_input = findViewById(R.id.name_text_input);
         register_email_text_input = findViewById(R.id.email_text_input);
         register_number_text_input = findViewById(R.id.contact_text_input);
         register_password_text_input = findViewById(R.id.password_text_input);
         register_confpassword_text_input = findViewById(R.id.confpassword_text_input);
-
         tv_login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,7 +79,6 @@ public class Register extends AppCompatActivity {
                 Register.this.startActivity(intent);
             }
         });
-
         signup_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,27 +87,21 @@ public class Register extends AppCompatActivity {
                 String rnumber = register_number_text_input.getText().toString().trim();
                 String rpassword = register_password_text_input.getText().toString().trim();
                 String rconfpassword = register_confpassword_text_input.getText().toString().trim();
-
                 if (!rpassword.equals(rconfpassword)){
                     register_password_text_input.setError("Passwords do not match");
                     register_confpassword_text_input.setError("Passwords do not match");
                 } else if (!rname.equals("")&&!remail.equals("")&&!rnumber.equals("")&&!rpassword.equals("")){
                     SignUp(rname, remail, rnumber, rpassword);
-
                 }
             }
         });
-
     }
-
     public void init(){
         signup_btn = (Button) findViewById(R.id.signup_btn);
         tv_login_btn = (TextView) findViewById(R.id.tv_login_btn);
     }
-
     private void SignUp(String register_name_text_input,  String register_email_text_input,
                         String register_number_text_input, String register_password_text_input){
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"register.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String result) {

@@ -20,10 +20,8 @@ import java.util.List;
 public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapter.ViewHolder> {
 
     private final RecyclerViewInterface recyclerViewInterface;
-
     Context context;
     List<HomeCategoryModel> list;
-
     public HomeCategoryAdapter(Context context, List<HomeCategoryModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.recyclerViewInterface = recyclerViewInterface;
         this.context = context;

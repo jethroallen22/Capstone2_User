@@ -56,13 +56,10 @@ public class Login extends AppCompatActivity {
             weather = intent.getStringExtra("weather");
             curLat = intent.getDoubleExtra("lat",0);
             curLong = intent.getDoubleExtra("long",0);
-
-
             Log.d("loginLat", String.valueOf(curLat));
         }
 
         init();
-
         tv_register_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +75,6 @@ public class Login extends AppCompatActivity {
                 //input checker
                 String mEmail = login_email_text_input.getText().toString().trim();
                 String mPass = login_password_text_input.getText().toString().trim();
-
                 if (mEmail.isEmpty() || mPass.isEmpty()){
                     if (mEmail.isEmpty())
                         login_email_text_input.setError("Please insert Email!");
@@ -102,7 +98,6 @@ public class Login extends AppCompatActivity {
 
     //Login
     private void LogIn(String login_email_text_input, String login_password_text_input){
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL+"login.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -110,44 +105,25 @@ public class Login extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
-
                     JSONArray jsonArray = jsonObject.getJSONArray("login");
                     int id = 0;
                     String name = "";
                     String image = "";
                     float wallet = 0.0F;
                     int loginCtr = 0;
-
                     if (success.equals("1")){
                         for (int i = 0; i < jsonArray.length(); i++){
-
                             JSONObject object = jsonArray.getJSONObject(i);
-
                             name = object.getString("name").trim();
                             String email = object.getString("email").trim();
                             id = object.getInt("id");
                             image = object.getString("image");
                             wallet = Float.parseFloat(String.valueOf(object.getDouble("wallet")));
                             loginCtr = object.getInt("loginCtr");
-
                             Toast.makeText(Login.this, "Success Login. \nYour Name : "
                                     + name + "\nYour Email : "
                                     + email + id, Toast.LENGTH_SHORT).show();
-
                             Log.d("HELLO", name + email + id);
-
-//                            final FragmentManager fragmentManager = getSupportFragmentManager();
-//                            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                            final HomeFragment homeFragment = new HomeFragment();
-
-//                            Log.d("before bundling: ", String.valueOf(id));
-//                            Bundle bundle = new Bundle();
-//                            bundle.putInt("id", id);
-//                            bundle.putString("name",name);
-//                            homeFragment.setArguments(bundle);
-//
-//                            fragmentTransaction.add(R.id.nav_host_fragment_content_home, homeFragment).commit();
-
                         }
                         if(loginCtr == 0) {
                             Intent intent = new Intent(getApplicationContext(), Preferences.class);
@@ -175,20 +151,15 @@ public class Login extends AppCompatActivity {
                                     Log.d("onError", String.valueOf(error));
                                 }
                             }) {
-
                                 protected Map<String, String> getParams() throws AuthFailureError {
                                     Map<String, String> params = new HashMap<>();
-
-
                                     params.put("id", String.valueOf(finalId));
                                     params.put("loginCtr", String.valueOf(finalLoginCtr));
-
                                     return params;
                                 }
                             };
                             RequestQueue requestQueue3 = Volley.newRequestQueue(getApplicationContext());
                             requestQueue3.add(stringRequest2);
-
                             startActivity(intent);
                         }
                         else{
@@ -204,14 +175,10 @@ public class Login extends AppCompatActivity {
                             Log.d("NAME LOGIN: ", name);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-
                         }
                     }
 
                 } catch (JSONException e) {
-                    /*
-                    e.printStackTrace();
-                    Toast.makeText(Login.this, "Error! "+ e.toString(),Toast.LENGTH_SHORT).show();*/
                     Log.d("Catch", String.valueOf(e));
                     Toast.makeText(Login.this, "Invalid Email and/or Password", Toast.LENGTH_SHORT).show();
                 }

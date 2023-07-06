@@ -272,12 +272,6 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                                 e.printStackTrace();
                             }
                         }
-//                        if(dealsModel != null) {
-//                            for (int i = 0; i < food_for_you_list.size(); i++) {
-//                                food_for_you_list.get(i).setPercentage(dealsModel.getPercentage());
-//                                food_for_you_list.get(i).setProductPrice((food_for_you_list.get(i).getProductPrice() * (100 - dealsModel.getPercentage())) / 100);
-//                            }
-//                        }
                         for (DealsModel dealsModel : home_deals_list){
                             for(ProductModel productModel : food_for_you_list) {
                                 if (dealsModel.getStoreId() == productModel.getStore_idStore()) {
@@ -580,16 +574,6 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
         cl_product_add = bottomSheetView.findViewById(R.id.cl_product_add);
         cl_product_minus = bottomSheetView.findViewById(R.id.cl_product_minus);
         tv_counter = bottomSheetView.findViewById(R.id.tv_counter);
-//        for (int i = 0 ; i < product_categ_list.size() ; i++){
-////            for(int j = 0 ; j < product_categ_list.get(i).getList().size() ; j++){
-////                if(product_categ_list.get(i).getCateg().equals( product_categ_list.get(i).getList().get(j).getProductTag())){
-////                    categPos = i;
-////                }
-////            }
-//            if(product_categ_list.get(i).getCateg().equals( product_categ_list.get(i).getList().get(position).getProductTag()))
-//                    categPos = i;
-//        }
-
         Log.d("clickClick", String.valueOf(categPos));
         //product_image.setImageResource(food_for_you_list.get(position).getProductImage());
         product_image.setImageBitmap(product_categ_list.get(categPos).getList().get(position).getBitmapImage());

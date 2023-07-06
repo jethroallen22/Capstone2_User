@@ -23,30 +23,25 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.List;
 
 public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder> {
-
     Context context;
     List<ProductModel> list;
     private final RecyclerViewInterface recyclerViewInterface;
-
     public FilterAdapter(Context context, List<ProductModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;
         this.recyclerViewInterface = recyclerViewInterface;
     }
-
     @NonNull
     @Override
     public FilterAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new FilterAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.filter_item,parent,false));
     }
-
     @Override
     public void onBindViewHolder(@NonNull FilterAdapter.ViewHolder holder, int position) {
         ProductModel productModel = list.get(position);
         holder.iv_product_image.setImageBitmap(productModel.getBitmapImage());
         holder.tv_product_name.setText(productModel.getProductName());
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
-//        holder.tv_product_cal.setText(productModel.getProductTag());
         Log.d("witwiw", productModel.getPercentage() + "%");
         if(productModel.getPercentage() != 0) {
             holder.cv_banner.setVisibility(View.VISIBLE);
@@ -70,37 +65,28 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
                 }
             }
         }
-
     }
-
     @Override
     public int getItemCount() {
         return list.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         ImageView iv_product_image;
         TextView tv_product_name;
         TextView tv_product_price;
         TextView tv_product_cal;
-
         TextView tv_deal_percentage;
-
         ChipGroup cg_tags;
-
         CardView cv_banner;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             iv_product_image = itemView.findViewById(R.id.iv_product_image);
             tv_product_name = itemView.findViewById(R.id.tv_product_name);
             tv_product_price = itemView.findViewById(R.id.tv_product_price);
-            //tv_product_cal = itemView.findViewById(R.id.tv_product_cal);
             cv_banner = itemView.findViewById(R.id.cv_banner);
             tv_deal_percentage = itemView.findViewById(R.id.tv_deal_percentage);
             cg_tags = itemView.findViewById(R.id.cg_tags);
-
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

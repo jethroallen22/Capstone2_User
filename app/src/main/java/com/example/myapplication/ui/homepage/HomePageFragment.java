@@ -96,8 +96,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
 
     private static String JSON_URL;
     private IPModel ipModel;
-
-
     List<OrderItemModel> order_item_temp_list;
     List<OrderModel> order_temp_list;
 
@@ -147,42 +145,22 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     ConstraintLayout cl_product_minus;
     Button btn_add_to_cart;
     int product_count = 0;
-
-    //Filter Bottomsheet
-
-    Chip chip_categ, chip_weather, chip_mood;
-    ImageView close_btn;
-    SeekBar sb_budget;
-    TextView tv_set_budget;
-    Button btn_confirm_filter;
-    List<String> chp_category_list, chp_mood_list, chp_weather_list, chp_budget;
     ImageView btn_filter;
-
     //Category
     List<StoreModel> tempStoreList;
     String category;
-
     //Getting Bundle
     int userId = 0;
     int tempCount = 0;
     String userName = "", weather;
     HomePageFragment homePageFragment = this;
-
     NotificationManager manager;
-
     Dialog moodDialog, weatherDialog;
     List<Integer> modalInt;
-
     Dialog filterDialog;
-
     ImageView iv_hot, iv_cold, iv_old, iv_new, iv_mix, iv_trend;
-
-    ChipGroup chip_group;
-
     float wallet;
-
     private static final int EARTH_RADIUS = 6371; // Radius of the Earth in kilometers
-
     double curLat, curLong;
     private static int moodCtr;
 
@@ -192,8 +170,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
 
     double default_distance = 1;
     Dialog distanceDialog;
-
-
 
     @SuppressLint("MissingPermission")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -935,12 +911,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     public void onItemClickStorePopular(int position) {
         Log.d("CLICKPOPU", "Success");
         Bundle bundle = new Bundle();
-//        bundle.putLong("StoreId", home_pop_store_list.get(position).getStore_id());
-//        bundle.putString("Image", home_pop_store_list.get(position).getStore_image());
-//        bundle.putString("StoreName", home_pop_store_list.get(position).getStore_name());
-//        bundle.putString("StoreAddress", home_pop_store_list.get(position).getStore_location());
-//        bundle.putString("StoreCategory", home_pop_store_list.get(position).getStore_category());
-//        bundle.putString("StoreDescription", home_pop_store_list.get(position).getStore_category());
         StoreModel storeModel = home_pop_store_list.get(position);
         bundle.putParcelable("StoreClass", storeModel);
         bundle.putInt("user", userId);
@@ -959,12 +929,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     public void onItemClickStoreRec(int position) {
         Log.d("CLICKSTOREREC", "Success");
         Bundle bundle = new Bundle();
-//        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
-//        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
-//        bundle.putString("StoreName", home_store_rec_list.get(position).getStore_name());
-//        bundle.putString("StoreAddress", home_store_rec_list.get(position).getStore_location());
-//        bundle.putString("StoreCategory", home_store_rec_list.get(position).getStore_category());
-//        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
         StoreModel storeModel = home_store_rec_list.get(position);
         bundle.putParcelable("StoreClass", storeModel);
         bundle.putInt("user", userId);
@@ -977,12 +941,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
     public void onItemClickDeals(int position) {
         Log.d("CLICKDEALS", "Success");
         Bundle bundle = new Bundle();
-//        bundle.putLong("StoreId", home_store_rec_list.get(position).getStore_id());
-//        bundle.putString("Image", home_store_rec_list.get(position).getStore_image());
-//        bundle.putString("StoreName", home_store_rec_list.get(position).getStore_name());
-//        bundle.putString("StoreAddress", home_store_rec_list.get(position).getStore_location());
-//        bundle.putString("StoreCategory", home_store_rec_list.get(position).getStore_category());
-//        bundle.putString("StoreDescription", home_store_rec_list.get(position).getStore_category());
         DealsModel dealsModel = home_deals_list.get(position);
         bundle.putParcelable("DealsClass", dealsModel);
 

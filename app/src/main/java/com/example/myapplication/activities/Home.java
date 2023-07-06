@@ -77,13 +77,7 @@ public class Home extends AppCompatActivity {
     UserModel userModel;
     String image, weather;
     Handler root, notif_root;
-    Dialog filterDialog;
     float wallet;
-
-    private TabLayout tabLayout;
-    private ViewPager2 viewPager2;
-    private TabFragmentAdapter adapter;
-    NotificationManager manager;
     RequestQueue requestQueue;
     int lastDisplayedNotificationId = -1;
     Context context = this;
@@ -147,9 +141,7 @@ public class Home extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-
         /// Set the Bundle for the specific MenuItem
-
         MenuItem paymentItem = navigationView.getMenu().findItem(R.id.nav_payment);
         Bundle bundle = new Bundle();
         bundle.putInt("userId", id);
@@ -166,7 +158,6 @@ public class Home extends AppCompatActivity {
                     bundle.putFloat("wallet", wallet);
                     HomeFragment fragment = new HomeFragment();
                     fragment.setArguments(bundle);
-//                    fragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
                 } else if (item.getItemId() == R.id.nav_payment) {
                     Bundle bundle = new Bundle();
@@ -211,26 +202,10 @@ public class Home extends AppCompatActivity {
             }
         });
 
-
-        //LOGOUT!!!
-//        navigationView.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(@NonNull MenuItem item) {
-//                Intent intent = new Intent(getApplicationContext(), Login.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
-//                return false;
-//            }
-//        });
-
-
-
         Log.d("USERSIZE", String.valueOf(userList.size()));
         iv_user_image = navigationView.getHeaderView(0).findViewById(R.id.iv_user_image);
         tv_user_name = navigationView.getHeaderView(0).findViewById(R.id.tv_user_name);
         tv_view_profile = navigationView.getHeaderView(0).findViewById(R.id.tv_view_profile);
-
-
         tv_view_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,73 +226,6 @@ public class Home extends AppCompatActivity {
 
 
     }
-
-//    public void filterModal(){
-//        filterDialog = new Dialog(this);
-//        filterDialog.setContentView(R.layout.filter_modal);
-//        filterDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        SeekBar sb_budget;
-//        Button btn_confirm_filter;
-//        ImageView close_modal;
-//        TextView tv_set_budget;
-//
-////        tv_set_budget = filterDialog.findViewById(R.id.tv_set_budget);
-//        sb_budget = filterDialog.findViewById(R.id.sb_budget);
-//        btn_confirm_filter = filterDialog.findViewById(R.id.btn_confirm_filter);
-//        close_modal = filterDialog.findViewById(R.id.close_modal);
-//        int filterValue;
-//
-//
-//        close_modal.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                filterDialog.dismiss();
-//            }
-//        });
-//
-//        sb_budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            int filterValue;
-//
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                filterValue = progress;
-//                String budget = "₱ " + filterValue;
-//                Log.d("budget", String.valueOf(filterValue));
-//                Log.d("budget", budget);
-//
-//                btn_confirm_filter.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Log.d("FilterValue", String.valueOf(filterValue));
-//                        Bundle bundle = new Bundle();
-//                        bundle.putInt("budget", filterValue);
-//                        FilterFragment fragment = new FilterFragment();
-//                        fragment.setArguments(bundle);
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
-//                        filterDialog.dismiss();
-//                    }
-//                });
-//
-////                tv_set_budget.setText(budget);
-////                Log.d("budget", tv_set_budget.getText().toString());
-//
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//        });
-//
-//
-//
-//        filterDialog.show();
-//    }
 
     public void homeNtoification(){
         JsonArrayRequest jsonArrayRequestBalance = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apihomenotifget.php", null, new Response.Listener<JSONArray>() {

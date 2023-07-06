@@ -13,10 +13,8 @@ import java.util.List;
 public class SearchModel implements Parcelable {
     String searchImage;
     String searchName;
-
     String searchCategory;
     List<TagModel> tagModelList;
-
     public SearchModel(String searchImage, String searchName) {
         this.searchImage = searchImage;
         this.searchName = searchName;

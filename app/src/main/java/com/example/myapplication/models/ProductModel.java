@@ -30,27 +30,6 @@ public class ProductModel implements Parcelable {
 
     List<TagModel> tags_list;
 
-
-
-
-    //    public ProductModel(Long product_id, String product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
-//        this.product_id = product_id;
-//        this.product_image = product_image;
-//        this.product_name = product_name;
-//        this.product_description = product_description;
-//        this.store_name = store_name;
-//        this.product_price = product_price;
-//        this.product_calories = product_calories;
-//    }
-//
-//    public ProductModel(String product_image, String product_name, String product_description, String store_name, Float product_price, int product_calories) {
-//        this.product_image = product_image;
-//        this.product_name = product_name;
-//        this.product_description = product_description;
-//        this.store_name = store_name;
-//        this.product_price = product_price;
-//        this.product_calories = product_calories;
-//    }
     public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
         this.idProduct = idProduct;
         this.store_idStore = store_idStore;

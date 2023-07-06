@@ -18,7 +18,6 @@ public class AddonAdapter extends RecyclerView.Adapter<AddonAdapter.ViewHolder> 
 
     Context context;
     List<AddonModel> list;
-
     public AddonAdapter(Context context, List<AddonModel> list) {
         this.context = context;
         this.list = list;

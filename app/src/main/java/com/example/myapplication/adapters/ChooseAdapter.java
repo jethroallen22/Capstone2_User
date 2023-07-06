@@ -15,15 +15,12 @@ import com.example.myapplication.models.ChooseModel;
 import java.util.List;
 
 public class ChooseAdapter extends RecyclerView.Adapter<ChooseAdapter.ViewHolder> {
-
     Context context;
     List<ChooseModel> list;
-
     public ChooseAdapter(Context context, List<ChooseModel> list) {
         this.context = context;
         this.list = list;
     }
-
     @NonNull
     @Override
     public ChooseAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

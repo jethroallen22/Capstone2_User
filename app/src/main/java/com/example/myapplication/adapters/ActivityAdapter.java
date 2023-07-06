@@ -51,11 +51,6 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
         holder.tv_activity_name.setText(list.get(position).getStore_name());
         holder.tv_activity_address.setText("ID: " + list.get(position).getIdOrder());
         holder.tv_activity_price.setText("P " + list.get(position).getOrderItemTotalPrice());
-        //holder.tv_activity_date.setText(list.get(position).getDate_time());
-        /*holder.btn_activity_reorder.setOnClickListener(View view){
-            Snackbar.make(view, "Work in Progress!!! Magreredirect dapat sa cart screen", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        };*/
     }
 
     @Override

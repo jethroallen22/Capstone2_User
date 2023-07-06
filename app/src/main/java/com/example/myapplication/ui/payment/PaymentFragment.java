@@ -112,16 +112,6 @@ public class PaymentFragment extends Fragment {
         };
         handler.postDelayed(myRunnable, 1000);
 
-//        root.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(!stopExecution) {
-//                    getAvailBalance();
-//                    root.postDelayed(this, 3000);
-//                }
-//            }
-//        }, 3000);
-
         binding.btnCashIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

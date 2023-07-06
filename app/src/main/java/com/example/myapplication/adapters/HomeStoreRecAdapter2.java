@@ -21,7 +21,6 @@ public class HomeStoreRecAdapter2 extends RecyclerView.Adapter<HomeStoreRecAdapt
 
     Context context;
     List<StoreModel> list;
-
     public HomeStoreRecAdapter2(Context context, List<StoreModel> list, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
         this.list = list;

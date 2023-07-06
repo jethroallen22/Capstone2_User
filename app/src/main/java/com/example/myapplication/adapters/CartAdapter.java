@@ -46,44 +46,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-//        if(list.size() != 0) {
-//            int i, j = 0;
-//            int total_quantity = 0;
-//            Log.d("CART ADAPTER: ", String.valueOf(list.size()));
-//            Log.d("CART ADAPTER: ", String.valueOf(position));
-//
-//            for (i = 0; i < list.get(position).getOrder_list().size(); i++) {
-//                Log.d("INSIDE FOR LOOP", String.valueOf(i));
-//                for (j=0; j<list.get(position).getOrder_list().get(i).getOrderItem_list().size();j++){
-//                    int temp_quantity = 0;
-//                    temp_quantity = list.get(position).getOrder_list().get(i).getOrderItem_list().get(j).getItemQuantity();
-//
-//                    total_quantity = temp_quantity + total_quantity;
-//
-//                }
-//                Glide.with(context)
-//                        .load(list.get(position).getOrder_list().get(i).getStore_image())
-//                        .into(holder.iv_cart_item_img);
-//                holder.tv_cart_store_name.setText(list.get(position).getOrder_list().get(i).getStore_name());
-//                holder.tv_cart_item_info.setText(total_quantity + " items");
-//
-//            }
-////            holder.tv_order_info.setText(text);
-////            holder.tv_order_item_info.setText("Qty: " + list.get(position).getOrderItem_list().size());
-//        }
-//        Glide.with(context)
-//                .load(list.get(position).getStore_image())
-//                .into(holder.iv_cart_item_img);
-
         holder.iv_cart_item_img.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_cart_store_name.setText(list.get(position).getStore_name() + " " + list.get(position).getOrderItem_list().size());
         holder.tv_cart_item_info.setText(list.get(position).getOrderItem_list().size() + " item/s");
         Log.d("QtyAdapt", String.valueOf(list.get(position).getOrderItem_list().get(0).getProductName()));
-
         Log.d("CARTADAPT", list.get(position).getStore_name());
-
-
     }
 
     @Override

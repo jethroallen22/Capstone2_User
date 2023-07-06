@@ -119,20 +119,6 @@ public class ProductFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d("Test","Success1");
-                //Navigation.findNavController(view).navigate(R.id.action_nav_product_to_nav_home);
-
-                /* storeFragment = new StoreFragment();
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.nav_host_fragment_content_home, storeFragment);
-                transaction.commit();*/
-                //storeFragment.setArguments(bundle);
-                //Log.d("TAG", "Success");
-                //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,storeFragment).commit();
-
-                /*bundle.putInt ("StoreImage", store_image);
-                bundle.putString("StoreName", store_name);
-                bundle.putString("StoreAddress", store_address);
-                bundle.putString("StoreCategory", store_category);*/
                 List<StoreModel> list = new ArrayList<>();
                 list = (List<StoreModel>) getArguments().getSerializable("StoreList");
 
@@ -145,11 +131,6 @@ public class ProductFragment extends Fragment {
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home,fragment).commit();
                     }
                 }
-//                StoreFragment storeFragment = new StoreFragment();
-//                storeFragment.setArguments(bundle);
-//                Log.d("TAG", "Success");
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,storeFragment).commit();
-//                Log.d("Test","Success2");
             }
         });
 

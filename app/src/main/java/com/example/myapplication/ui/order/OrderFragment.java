@@ -70,8 +70,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class OrderFragment extends Fragment implements RecyclerViewInterface {
-
-    //
     RecyclerView rv_order_items;
     OrderModel orderModel;
     OrderItemsAdapter orderItemsAdapter;
@@ -890,17 +888,6 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
 
             });
         }
-        //
-
-
-        //OnClick for Apply in Voucher Bottomsheet
-//        bt_apply_voucher.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                voucherDialog.dismiss();
-//            }
-//        });
 
         voucherDialog.show();
     }

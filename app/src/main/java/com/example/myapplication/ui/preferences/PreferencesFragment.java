@@ -502,6 +502,79 @@ public class PreferencesFragment extends Fragment {
 
                 }
 
+                // FOR CHIPGROUP MEAT
+                for(int e = 0; e < chp_meat_list.size(); e++) {
+                    Chip chipmeat = new Chip(getActivity());
+                    chipmeat.setText(chp_meat_list.get(e));
+
+                    if(preferences.contains(chp_meat_list.get(e))){
+                        chipmeat.setSelected(true);
+                        chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                        chipmeat.setChipStrokeColorResource(R.color.teal_700);
+                        chipmeat.setTextColor(getResources().getColor(R.color.white));
+                        chips.add(chipmeat.getText().toString());
+
+                        chipmeat.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String value = chipmeat.getText().toString();
+                                if (chipmeat.isSelected()) {
+                                    chipmeat.setSelected(false);
+                                    chipmeat.setTextColor(Color.BLACK);
+                                    chipmeat.setChipBackgroundColorResource(R.color.gray);
+                                    chips.remove(value);
+                                } else {
+                                    Log.d("TAG SIZE clicked chip", value);
+                                    chipmeat.setSelected(true);
+                                    chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chipmeat.setChipStrokeColorResource(R.color.teal_700);
+                                    chipmeat.setTextColor(getResources().getColor(R.color.white));
+                                    chips.add(value);
+                                    Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                }
+                            }
+                        });
+
+                        cg_meat.addView(chipmeat);
+                        cg_meat.setVisibility(View.VISIBLE);
+                        cg_meat.getLayoutParams();
+
+                    } else {
+                        chipmeat.setSelected(false);
+                        chipmeat.setTextColor(Color.BLACK);
+                        chipmeat.setChipBackgroundColorResource(R.color.gray);
+                        chips.remove(chipmeat.getText().toString());
+
+                        chipmeat.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String value = chipmeat.getText().toString();
+                                if (chipmeat.isSelected()) {
+                                    chipmeat.setSelected(false);
+                                    chipmeat.setTextColor(Color.BLACK);
+                                    chipmeat.setChipBackgroundColorResource(R.color.gray);
+                                    chips.remove(value);
+                                } else {
+                                    Log.d("TAG SIZE clicked chip", value);
+                                    chipmeat.setSelected(true);
+                                    chipmeat.setChipBackgroundColorResource(R.color.mosibusPrimary);
+                                    chipmeat.setChipStrokeColorResource(R.color.teal_700);
+                                    chipmeat.setTextColor(getResources().getColor(R.color.white));
+                                    chips.add(value);
+                                    Log.d("TAG SIZE clicked chip", String.valueOf(chips.size()));
+
+                                }
+                            }
+                        });
+
+                        cg_meat.addView(chipmeat);
+                        cg_meat.setVisibility(View.VISIBLE);
+                        cg_meat.getLayoutParams();
+                    }
+
+                }
+
                 // FOR CHIPGROUP TASTE
                 for(int f = 0; f < chp_taste_list.size(); f++) {
                     Chip chiptaste = new Chip(getActivity());

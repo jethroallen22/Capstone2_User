@@ -105,12 +105,12 @@ public class PreferencesFragment extends Fragment {
         chp_misc_list = new ArrayList<>();
 
         chp_temp_list = Arrays.asList("Hot", "Cold");
-        chp_mealtime_list = Arrays.asList("Breakfast", "Lunch", "Dessert");
+        chp_mealtime_list = Arrays.asList("Breakfast", "Lunch", "Dessert", "Main Course", "Appetizer");
         chp_noodle_list = Arrays.asList("Noodles", "Pasta", "Ramen");
-        chp_beverages_list = Arrays.asList("Beverages", "Juice", "Soda", "Milktea");
-        chp_cuisine_list = Arrays.asList("American", "Chinese", "Filipino", "Japanese", "Thai");
+        chp_beverages_list = Arrays.asList("Beverages", "Juice", "Soda", "Milktea", "Coffee");
+        chp_cuisine_list = Arrays.asList("American", "Chinese", "Filipino", "Japanese", "Thai", "Italian", "Indian", "French", "Mexican", "Japanese", "Korean", "Mediterranean");
         chp_meat_list = Arrays.asList("Pork", "Chicken", "Beef", "Fish", "Seafood");
-        chp_misc_list = Arrays.asList("Pizza", "Salad", "Fast Food", "Bread", "Quick bites", "Easy to eat", "Heavy meal", "Baked");
+        chp_misc_list = Arrays.asList("Pizza", "Salad", "Fast Food", "Bread", "Quick bites", "Easy to eat", "Heavy meal", "Baked", "Soup", "Fruit", "Sushi");
         chp_taste_list = Arrays.asList("Crispy", "Spicy", "Sweet");
 
         // Initialize the ChipGroup object

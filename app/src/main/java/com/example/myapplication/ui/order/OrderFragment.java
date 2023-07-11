@@ -274,6 +274,11 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                     }
                 }
                 orderModel.setOrderItem_list(orderItemModelList);
+                float tempTotalPrice = 0;
+                for(OrderItemModel orderItem : orderItemModelList) {
+                    tempTotalPrice += orderItem.getTotalPrice();
+                }
+                orderModel.setOrderItemTotalPrice(tempTotalPrice);
                 JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -821,7 +826,9 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                     if (!voucherAvailed) {
                                         if (curdate.before(voucherModel.getEndDate())) {
                                             if (storeId == orderModel.getStore_idstore()) {
-                                                voucher_list.add(voucherModel);
+                                                if(orderModel.getOrderItemTotalPrice() >= voucherModel.getVoucherMin()) {
+                                                    voucher_list.add(voucherModel);
+                                                }
                                             }
                                         }
                                     }
@@ -834,12 +841,16 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                                             Log.d("witwiw", voucher_list.get(position).getVoucherName());
                                             float tempTotalPrice;
                                             tempTotalPrice = orderModel.getOrderItemTotalPrice() - voucher_list.get(position).getVoucherAmount();
+                                            Log.d("witwiw", "OrderTotalPrice: " + orderModel.getOrderItemTotalPrice());
+                                            Log.d("witwiw", "VoucherAmount: " + voucher_list.get(position).getVoucherAmount());
+                                            Log.d("witwiw", "TempTotalPrice: " + tempTotalPrice);
                                             tv_total_price.setText("P" + tempTotalPrice);
                                             orderModel.setOrderItemTotalPrice(tempTotalPrice);
                                             orderModel.setVoucher_id(voucher_list.get(position).getVoucherId());
                                             voucher_list.remove(position);
                                             voucherAdapter.notifyItemRemoved(position);
                                             voucherDialog.dismiss();
+                                            tv_voucher_order.setEnabled(false);
                                         }
 
                                     });
@@ -884,6 +895,7 @@ public class OrderFragment extends Fragment implements RecyclerViewInterface {
                     voucher_list.remove(position);
                     voucherAdapter.notifyItemRemoved(position);
                     voucherDialog.dismiss();
+
                 }
 
             });

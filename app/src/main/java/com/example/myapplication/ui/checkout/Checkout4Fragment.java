@@ -115,34 +115,6 @@ public class Checkout4Fragment extends Fragment {
     private void getDataFromServer() {
 
         float temp = wallet - orderModel.getOrderItemTotalPrice();
-        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-
-        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, JSON_URL + "update_wallet.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            Log.d("On Res", "inside on res");
-                        } catch (Throwable e) {
-                            Log.d("Catch", String.valueOf(e));
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> paramV = new HashMap<>();
-                Log.d("Cashin", String.valueOf(temp));
-                paramV.put("id", String.valueOf(orderModel.getUsers_id()));
-                paramV.put("wallet", String.valueOf(temp));
-                Log.d("Cashin", "success");
-                return paramV;
-            }
-        };
-        queue.add(stringRequest1);
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, JSON_URL + "apiorderpost.php", new Response.Listener<String>() {

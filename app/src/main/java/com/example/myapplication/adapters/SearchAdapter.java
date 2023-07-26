@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -48,6 +49,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         holder.iv_search_item_img.setImageBitmap(list.get(position).getBitmapImage());
         holder.tv_search_item_name.setText(list.get(position).getSearchName());
+        if(list.get(position).getStock() != null) {
+            if (list.get(position).getStock().equals("stocked")) {
+                holder.cv_stock.setVisibility(View.INVISIBLE);
+            } else {
+                holder.cv_stock.setVisibility(View.VISIBLE);
+            }
+        }
         if (list.get(position).getTagModelList() == null){
             Log.d("search", "TAG: null" );
             holder.cg_tags.setVisibility(View.INVISIBLE);
@@ -76,6 +84,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         ImageView iv_search_item_img;
         TextView tv_search_item_name;
         ChipGroup cg_tags;
+        CardView cv_stock;
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface, int recyclerViewId) {
             super(itemView);
@@ -83,14 +92,15 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             iv_search_item_img = itemView.findViewById(R.id.iv_transac_icon);
             tv_search_item_name = itemView.findViewById(R.id.tv_name);
             cg_tags = itemView.findViewById(R.id.cg_tags);
-
+            cv_stock = itemView.findViewById(R.id.cv_stock);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (recyclerViewInterface != null) {
                         int pos = getAdapterPosition();
                         if (pos != RecyclerView.NO_POSITION) {
-                            recyclerViewInterface.onItemClickSearch(pos, recyclerViewId);
+                            if (list.get(pos).getStock() != null && list.get(pos).getStock().equals("stocked"))
+                                recyclerViewInterface.onItemClickSearch(pos, recyclerViewId);
                         }
                     }
                 }

@@ -27,7 +27,7 @@ public class ProductModel implements Parcelable {
 
     String productTag;
     int percentage;
-
+    String stock;
     List<TagModel> tags_list;
 
     public ProductModel(int idProduct, int store_idStore, String productName, String productDescription, float productPrice, String productImage, String productServingSize, String productTag, int productPrepTime, String productRestoName, String productRestoImage, String weather) {
@@ -76,6 +76,7 @@ public class ProductModel implements Parcelable {
         productRestoImage = in.readString();
         productRestoCategory = in.readString();
         weather = in.readString();
+        stock = in.readString();
         tags_list = in.createTypedArrayList(TagModel.CREATOR);
     }
 
@@ -217,6 +218,14 @@ public class ProductModel implements Parcelable {
         return bitmap;
     };
 
+    public String getStock() {
+        return stock;
+    }
+
+    public void setStock(String stock) {
+        this.stock = stock;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -237,6 +246,7 @@ public class ProductModel implements Parcelable {
         parcel.writeString(productRestoImage);
         parcel.writeString(productRestoCategory);
         parcel.writeString(weather);
+        parcel.writeString(stock);
         parcel.writeTypedList(tags_list);
     }
 }

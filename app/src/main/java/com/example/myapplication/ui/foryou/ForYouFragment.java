@@ -226,9 +226,12 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                             String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
                                             String weather = jsonObjectFoodforyou.getString("weather");
                                             int percentage = jsonObjectFoodforyou.getInt("percentage");
+                                            String stock = jsonObjectFoodforyou.getString("stock");
+                                            Log.d("stockRead", stock);
 
                                             ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
                                                     productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                            foodfyModel.setStock(stock);
                                             foodfyModel.setProductRestoCategory(storeCategory);
                                             foodfyModel.setPercentage(percentage);
                                             List<TagModel> tempTagModelList = new ArrayList<>();
@@ -435,9 +438,11 @@ public class ForYouFragment extends Fragment implements RecyclerViewInterface {
                                                     String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
                                                     String weather = jsonObjectFoodforyou.getString("weather");
                                                     int percentage = jsonObjectFoodforyou.getInt("percentage");
+                                                    String stock = jsonObjectFoodforyou.getString("stock");
 
                                                     ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
                                                             productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                                    foodfyModel.setStock(stock);
                                                     foodfyModel.setProductRestoCategory(storeCategory);
                                                     foodfyModel.setPercentage(percentage);
                                                     List<TagModel> tempTagModelList = new ArrayList<>();

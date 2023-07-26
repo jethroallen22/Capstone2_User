@@ -43,6 +43,14 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
         holder.tv_product_name.setText(productModel.getProductName());
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
         Log.d("witwiw", productModel.getPercentage() + "%");
+//        Log.d("stock", list.get(position).getStock());
+        if(list.get(position).getStock() != null) {
+            if (list.get(position).getStock().equals("stocked")) {
+                holder.cv_stock.setVisibility(View.INVISIBLE);
+            } else {
+                holder.cv_stock.setVisibility(View.VISIBLE);
+            }
+        }
         if(productModel.getPercentage() != 0) {
             holder.cv_banner.setVisibility(View.VISIBLE);
             holder.tv_deal_percentage.setText(productModel.getPercentage() + "% off");
@@ -79,6 +87,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
         TextView tv_deal_percentage;
         ChipGroup cg_tags;
         CardView cv_banner;
+        CardView cv_stock;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             iv_product_image = itemView.findViewById(R.id.iv_product_image);
@@ -87,6 +96,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
             cv_banner = itemView.findViewById(R.id.cv_banner);
             tv_deal_percentage = itemView.findViewById(R.id.tv_deal_percentage);
             cg_tags = itemView.findViewById(R.id.cg_tags);
+            cv_stock = itemView.findViewById(R.id.cv_stock);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -94,7 +104,8 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
                         int pos = getAdapterPosition();
 
                         if(pos != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClickCategory(pos);
+                            if (list.get(pos).getStock()!=null && list.get(pos).getStock().equals("stocked"))
+                                recyclerViewInterface.onItemClickCategory(pos);
                         }
                     }
                 }

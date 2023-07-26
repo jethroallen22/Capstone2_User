@@ -44,6 +44,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.tv_product_price.setText(String.valueOf(productModel.getProductPrice()));
         //holder.tv_product_cal.setText(productModel.getProductTag());
         Log.d("witwiw", productModel.getPercentage() + "%");
+        if(list.get(position).getStock() != null) {
+            if (list.get(position).getStock().equals("stocked")) {
+                holder.cv_stock.setVisibility(View.INVISIBLE);
+            } else {
+                holder.cv_stock.setVisibility(View.VISIBLE);
+            }
+        }
         if(productModel.getPercentage() != 0) {
             holder.cv_banner.setVisibility(View.VISIBLE);
             holder.tv_deal_percentage.setText(productModel.getPercentage() + "% off");
@@ -66,6 +73,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         TextView tv_deal_percentage;
 
         CardView cv_banner;
+        CardView cv_stock;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -75,6 +83,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tv_product_cal = itemView.findViewById(R.id.tv_product_cal);
             cv_banner = itemView.findViewById(R.id.cv_banner);
             tv_deal_percentage = itemView.findViewById(R.id.tv_deal_percentage);
+            cv_stock = itemView.findViewById(R.id.cv_stock);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -83,7 +92,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                         int pos = getAdapterPosition();
 
                         if(pos != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClickCategory(pos);
+                            if (list.get(pos).getStock()!=null && list.get(pos).getStock().equals("stocked"))
+                                recyclerViewInterface.onItemClickCategory(pos);
                         }
                     }
                 }

@@ -10,7 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_stock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="-5dp"
+            app:cardBackgroundColor="#F1493D"
+            app:cardCornerRadius="5dp">
+
+            <TextView
+                android:id="@+id/tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="21dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/robotoregular"
+                android:text="Out of Stock"
+                android:textColor="#F3E4E4"
+                android:textSize="16sp" />
+        </androidx.cardview.widget.CardView>
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout7"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp">

@@ -432,12 +432,14 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                         String storeName = jsonObject7.getString("storeName");
                         String storeImage = jsonObject7.getString("storeImage");
                         String weather2 = jsonObject7.getString("weather");
+                        String stock = jsonObject7.getString("stock");
 
                         if (weather.toLowerCase().compareTo(weather2.toLowerCase()) == 0) {
                             Log.d("Weather", weather);
                             Log.d("WeatherRead", weather2);
                             ProductModel weatherModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
                                     productServingSize, productTag, productPrepTime, storeName, storeImage, weather2);
+                            weatherModel.setStock(stock);
                             weather_list.add(weatherModel);
                         }//list.add(productName);
 
@@ -591,8 +593,6 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                             try {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 int store_idStore = jsonObject.getInt("store_idStore");
-
-
                                 for (int j = 0; j < home_store_rec_list.size(); j++) {
                                     if (home_store_rec_list.get(j).getStore_id() == store_idStore) {
                                         Log.d("StorePopuMatch", "Match");
@@ -725,10 +725,13 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                                 String storeImage = jsonObjectFoodforyou.getString("storeImage");
                                 String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
                                 String weather = jsonObjectFoodforyou.getString("weather");
+                                String stock = jsonObjectFoodforyou.getString("stock");
 
                                 ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
                                         productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                foodfyModel.setStock(stock);
                                 SearchModel searchModel = new SearchModel(productImage, productName, productTag);
+                                searchModel.setStock(stock);
                                 foodfyModel.setProductRestoCategory(storeCategory);
                                 List<TagModel> tempTagModelList = new ArrayList<>();
                                 for (TagModel tagModel: tagModelList2){
@@ -838,9 +841,11 @@ public class HomePageFragment extends Fragment implements RecyclerViewInterface 
                                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
                                         String storeCategory = jsonObjectFoodforyou.getString("storeCategory");
                                         String weather = jsonObjectFoodforyou.getString("weather");
+                                        String stock = jsonObjectFoodforyou.getString("stock");
 
                                         ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage,
                                                 productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                        foodfyModel.setStock(stock);
                                         foodfyModel.setProductRestoCategory(storeCategory);
                                         List<TagModel> tempTagModelList = new ArrayList<>();
 

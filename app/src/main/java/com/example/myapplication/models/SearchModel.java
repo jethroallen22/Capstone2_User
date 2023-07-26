@@ -14,6 +14,7 @@ public class SearchModel implements Parcelable {
     String searchImage;
     String searchName;
     String searchCategory;
+    String stock;
     List<TagModel> tagModelList;
     public SearchModel(String searchImage, String searchName) {
         this.searchImage = searchImage;
@@ -30,6 +31,7 @@ public class SearchModel implements Parcelable {
         searchImage = in.readString();
         searchName = in.readString();
         searchCategory = in.readString();
+        stock = in.readString();
         tagModelList = in.createTypedArrayList(TagModel.CREATOR);
     }
 
@@ -44,6 +46,14 @@ public class SearchModel implements Parcelable {
             return new SearchModel[size];
         }
     };
+
+    public String getStock() {
+        return stock;
+    }
+
+    public void setStock(String stock) {
+        this.stock = stock;
+    }
 
     public String getSearchImage() {
         return searchImage;
@@ -93,6 +103,7 @@ public class SearchModel implements Parcelable {
         dest.writeString(searchName);
         dest.writeString(searchCategory);
         dest.writeTypedList(tagModelList);
+        dest.writeString(stock);
 
     }
 }

@@ -104,6 +104,7 @@ public class SearchAllFragment extends Fragment implements RecyclerViewInterface
             for (ProductModel product : productModelList) {
                 if (product.getProductName().toLowerCase().contains(getSearchQuery.toLowerCase())) {
                     SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                    searchModel.setStock(product.getStock());
                     searchModel.setTagModelList(product.getTags_list());
                     searchModelListProduct.add(searchModel);
                 } else {
@@ -111,6 +112,7 @@ public class SearchAllFragment extends Fragment implements RecyclerViewInterface
                         if (tag.getTagname().toLowerCase().contains(getSearchQuery.toLowerCase())) {
                             tag.setMatch(true);
                             SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                            searchModel.setStock(product.getStock());
                             Log.d("SearchTagSize", "ProductTagSize: " + product.getTags_list().size());
                             searchModel.setTagModelList(product.getTags_list());
                             Log.d("SearchTagSize", "TagSize: " + searchModel.getTagModelList().size());
@@ -125,6 +127,7 @@ public class SearchAllFragment extends Fragment implements RecyclerViewInterface
                 if (store.getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
                         store.getStore_category().toLowerCase().contains(getSearchQuery.toLowerCase())) {
                     SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
+                    searchModel.setStock("stocked");
                     searchModelListStore.add(searchModel);
                 }
             }
@@ -179,12 +182,14 @@ public class SearchAllFragment extends Fragment implements RecyclerViewInterface
                     for (ProductModel product : productModelList) {
                         if (product.getProductName().toLowerCase().contains(newText.toLowerCase())) {
                             SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                            searchModel.setStock(product.getStock());
                             searchModel.setTagModelList(product.getTags_list());
                             tempSearchModelListProduct.add(searchModel);
                         } else {
                             for (TagModel tag : product.getTags_list()) {
                                 if (tag.getTagname().toLowerCase().contains(newText.toLowerCase())) {
                                     SearchModel searchModel = new SearchModel(product.getProductImage(), product.getProductName());
+                                    searchModel.setStock(product.getStock());
                                     searchModel.setTagModelList(product.getTags_list());
                                     tempSearchModelListProduct.add(searchModel);
                                     break; // Exit the loop if a matching tag is found
@@ -197,6 +202,7 @@ public class SearchAllFragment extends Fragment implements RecyclerViewInterface
                         if (store.getStore_name().toLowerCase().contains(newText.toLowerCase()) ||
                                 store.getStore_category().toLowerCase().contains(newText.toLowerCase())) {
                             SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
+                            searchModel.setStock("stocked");
                             tempSearchModelListStore.add(searchModel);
                         }
                     }

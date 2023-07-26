@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -40,6 +41,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
         holder.tv_fff_prod_name.setText(list.get(position).getProductName());
         holder.tv_fff_store_name.setText(list.get(position).getProductRestoName());
         holder.tv_fff_prod_price.setText("P " + list.get(position).getProductPrice());
+        if(list.get(position).getStock().equals("stocked")){
+            holder.cl_stock.setVisibility(View.INVISIBLE);
+        } else {
+            holder.cl_stock.setVisibility(View.VISIBLE);
+
+        }
         //holder.tv_fff_prod_cal.setText(list.get(position).getProduct_calories() + "cal");
 
 
@@ -56,6 +63,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
         TextView tv_fff_store_name;
         TextView tv_fff_prod_price;
         TextView tv_fff_prod_cal;
+        ConstraintLayout cl_stock;
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
@@ -64,6 +72,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
             tv_fff_prod_name = itemView.findViewById(R.id.tv_fff_prod_name);
             tv_fff_store_name = itemView.findViewById(R.id.tv_fff_store_name);
             tv_fff_prod_price = itemView.findViewById(R.id.tv_fff_prod_price);
+            cl_stock = itemView.findViewById(R.id.cl_stock);
             //tv_fff_prod_cal = itemView.findViewById(R.id.tv_fff_prod_cal);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +82,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
                         int pos = getAdapterPosition();
 
                         if(pos != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClickWeather(pos);
+                            if(list.get(pos).getStock().equals("stocked"))
+
+                                recyclerViewInterface.onItemClickWeather(pos);
                         }
                     }
                 }

@@ -69,6 +69,7 @@ public class SearchStoreFragment extends Fragment implements RecyclerViewInterfa
                 if (store.getStore_name().toLowerCase().contains(getSearchQuery.toLowerCase()) ||
                         store.getStore_category().toLowerCase().contains(getSearchQuery.toLowerCase())) {
                     SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
+                    searchModel.setStock("stocked");
                     searchModelListStore.add(searchModel);
                 }
             }
@@ -108,6 +109,7 @@ public class SearchStoreFragment extends Fragment implements RecyclerViewInterfa
                         if (store.getStore_name().toLowerCase().contains(newText.toLowerCase()) ||
                                 store.getStore_category().toLowerCase().contains(newText.toLowerCase())) {
                             SearchModel searchModel = new SearchModel(store.getStore_image(), store.getStore_name(), store.getStore_category());
+                            searchModel.setStock("stocked");
                             tempSearchModelListStore.add(searchModel);
                         }
                     }

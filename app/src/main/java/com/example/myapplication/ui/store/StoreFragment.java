@@ -262,9 +262,11 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                                 String storeName = jsonObjectFoodforyou.getString("storeName");
                                 String storeImage = jsonObjectFoodforyou.getString("storeImage");
                                 String weather = jsonObjectFoodforyou.getString("weather");
+                                String stock = jsonObjectFoodforyou.getString("stock");
 
                                 if(idStore == stor_id) {
                                     ProductModel foodfyModel = new ProductModel(idProduct, idStore, productName, productDescription, productPrice, productImage, productServingSize, productTag, productPrepTime, storeName, storeImage, weather);
+                                    foodfyModel.setStock(stock);
                                     food_for_you_list.add(foodfyModel);
                                 }
 
@@ -364,6 +366,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
                         String weather = jsonObjectFoodforyou.getString("weather");
+                        String stock = jsonObjectFoodforyou.getString("stock");
 
                         Log.d("storeid", String.valueOf(stor_id));
                         if(idStore == stor_id){
@@ -371,6 +374,7 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
 
                             ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
                                                             productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                            productModel.setStock(stock);
                             products_list.add(productModel);
                         }
 
@@ -678,12 +682,14 @@ public class StoreFragment extends Fragment implements RecyclerViewInterface {
                         String storeName = jsonObjectFoodforyou.getString("storeName");
                         String storeImage = jsonObjectFoodforyou.getString("storeImage");
                         String weather = jsonObjectFoodforyou.getString("weather");
+                        String stock = jsonObjectFoodforyou.getString("stock");
 
                         if(idStore == stor_id) {
                             Log.d("storeid", String.valueOf(idStore));
 
                             ProductModel productModel = new ProductModel(idProduct,idStore,productName,productDescription,productPrice,
                                     productImage,productServingSize,productTag,productPrepTime,storeName,storeImage, weather);
+                            productModel.setStock(stock);
                             //products_list.add(productModel);
                             JsonArrayRequest jsonArrayRequestDeals = new JsonArrayRequest(Request.Method.GET, JSON_URL + "apideals.php", null, new Response.Listener<JSONArray>() {
                                 boolean dealsExist = false;

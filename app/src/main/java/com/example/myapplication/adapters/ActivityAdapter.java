@@ -26,6 +26,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
 
     public interface OnItemClickListener{
         void onItemClick(int position);
+        void onItemClickFeedback(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener clickListener){
@@ -65,7 +66,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
         TextView tv_activity_address;
         TextView tv_activity_date;
         TextView tv_activity_price;
-        Button btn_activity_reorder;
+        Button btn_activity_reorder, btn_feedback;
 
         public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface, OnItemClickListener listener) {
             super(itemView);
@@ -76,6 +77,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
             tv_activity_date = itemView.findViewById(R.id.tv_activity_date);
             tv_activity_price = itemView.findViewById(R.id.tv_activity_price);
             btn_activity_reorder = itemView.findViewById(R.id.btn_activity_reorder);
+            btn_feedback = itemView.findViewById(R.id.btn_feedback);
 
             btn_activity_reorder.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -85,6 +87,19 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
 
                         if (pos != RecyclerView.NO_POSITION){
                             listener.onItemClick(pos);
+                        }
+                    }
+                }
+            });
+
+            btn_feedback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        int pos = getAdapterPosition();
+
+                        if (pos != RecyclerView.NO_POSITION){
+                            listener.onItemClickFeedback(pos);
                         }
                     }
                 }

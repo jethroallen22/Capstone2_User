@@ -26,6 +26,7 @@ import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.OrderItemModel;
 import com.example.myapplication.models.OrderModel;
+import com.example.myapplication.ui.feedback.FeedbackFragment;
 import com.example.myapplication.ui.order.OrderFragment;
 import com.example.myapplication.ui.ordersummary.OrderSummaryActivityFragment;
 
@@ -134,6 +135,14 @@ public class ActivitiesFragment extends Fragment implements RecyclerViewInterfac
                                                 Bundle bundle = new Bundle();
                                                 bundle.putParcelable("order", orderModelList.get(position));
                                                 OrderFragment fragment = new OrderFragment();
+                                                fragment.setArguments(bundle);
+                                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
+                                            }
+
+                                            public void onItemClickFeedback(int position) {
+                                                Bundle bundle = new Bundle();
+                                                bundle.putParcelable("order", orderModelList.get(position));
+                                                FeedbackFragment fragment = new FeedbackFragment();
                                                 fragment.setArguments(bundle);
                                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_home, fragment).commit();
                                             }

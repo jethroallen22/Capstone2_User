@@ -56,11 +56,14 @@
                 android:id="@+id/tv_activity_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:fontFamily="@font/robotobold"
                 android:text="P 309"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/tv_activity_date"
+                app:layout_constraintTop_toBottomOf="@+id/tv_activity_date" />
 
             <TextView
                 android:id="@+id/tv_activity_date"
@@ -76,14 +79,26 @@
 
             <Button
                 android:id="@+id/btn_activity_reorder"
-                android:layout_width="75dp"
-                android:layout_height="40dp"
+                android:layout_width="85dp"
+                android:layout_height="38dp"
                 android:backgroundTint="@color/mosibusPrimary"
                 android:text="Reorder"
                 android:textAllCaps="false"
                 android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_activity_date"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btn_feedback"
+                android:layout_width="85dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="1dp"
+                android:backgroundTint="#E09F3E"
+                android:text="Feedback"
+                android:textAllCaps="false"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_activity_reorder" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

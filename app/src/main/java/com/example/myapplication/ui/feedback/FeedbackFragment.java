@@ -48,6 +48,7 @@ import com.example.myapplication.databinding.FragmentNotificationsBinding;
 import com.example.myapplication.interfaces.Singleton;
 import com.example.myapplication.models.IPModel;
 import com.example.myapplication.models.NotificationModel;
+import com.example.myapplication.models.OrderModel;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.ordersummary.OrderSummaryFragment;
 import com.google.gson.Gson;
@@ -74,7 +75,7 @@ public class FeedbackFragment extends Fragment {
 
     ImageView iv_valid_id_placeholder;
 
-    Button btn_save_edit;
+    Button btn_save_feedback;
 
     CardView cv_upload_id;
 
@@ -88,6 +89,8 @@ public class FeedbackFragment extends Fragment {
     int userId, iduser, idorder;
     String feedback, proof, status;
 
+    OrderModel orderModel;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -99,6 +102,7 @@ public class FeedbackFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if(bundle != null){
+            orderModel = bundle.getParcelable("order");
             userId = bundle.getInt("id");
             Log.d("notif_id", String.valueOf(userId));
         }
@@ -128,8 +132,9 @@ public class FeedbackFragment extends Fragment {
                 activityResultLauncherValidId.launch(intent);
             }
         });
-
-        btn_save_edit.setOnClickListener(new View.OnClickListener() {
+        feedback = String.valueOf(root.findViewById(R.id.feedbacktext));
+        btn_save_feedback = root.findViewById(R.id.btn_save_feedback);
+        btn_save_feedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ByteArrayOutputStream byteArrayOutputStream;
@@ -138,10 +143,9 @@ public class FeedbackFragment extends Fragment {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                     byte[] bytes = byteArrayOutputStream.toByteArray();
                     final String base64Image = Base64.encodeToString(bytes, Base64.DEFAULT);
-                    final int iduser2 = userId;
-                    final int idorder2 = idorder;
+                    final int idorder2 = orderModel.getIdOrder();
                     final String feedback2 = feedback;
-                    final String status2 = "unresolved";
+                    final String status2 = "pending";
 
                     RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
@@ -153,23 +157,23 @@ public class FeedbackFragment extends Fragment {
 
                                     }
                                     catch (Throwable e) {
-                                        Log.d("Catch", String.valueOf(e));
+                                        e.printStackTrace();
                                         //Toast.makeText(Login.this, "Invalid Email and/or Password", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-//                            Toast.makeText(getActivity().getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            error.printStackTrace();
                         }
                     }){
                         protected Map<String, String> getParams(){
                             Map<String, String> paramV = new HashMap<>();
-                            paramV.put("iduser", String.valueOf(iduser2));
+                            paramV.put("iduser", String.valueOf(orderModel.getUsers_id()));
                             paramV.put("idorder", String.valueOf(idorder2));
                             paramV.put("feedback", feedback2);
                             paramV.put("proof", base64Image);
-                            paramV.put("statys", status2);
+                            paramV.put("status", status2);
                             return paramV;
                         }
                     };

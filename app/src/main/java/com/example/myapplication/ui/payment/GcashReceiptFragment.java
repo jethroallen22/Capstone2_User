@@ -99,6 +99,9 @@ public class GcashReceiptFragment extends Fragment {
                         Log.d("Cashin", String.valueOf(wallet));
                         paramV.put("id", String.valueOf(userId));
                         paramV.put("wallet", String.valueOf(wallet));
+                        paramV.put("transacType", "cash in");
+                        paramV.put("amount", String.valueOf(amount));
+                        paramV.put("userId", String.valueOf(id));
                         Log.d("Cashin", "success");
                         return paramV;
                     }
